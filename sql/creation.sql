@@ -1,4 +1,5 @@
-
+DROP TABLE IF EXISTS allergene_plat;
+DROP TABLE IF EXISTS menu_plat;
 DROP TABLE IF EXISTS plat;
 DROP TABLE IF EXISTS allergene;
 DROP TABLE IF EXISTS image;
@@ -74,3 +75,20 @@ CREATE TABLE plat (
     nom VARCHAR(100) NOT NULL,
     type VARCHAR(10) NOT NULL
 );
+
+CREATE TABLE menu_plat (
+    id_plat INT NOT NULL,
+    id_menu INT NOT NULL,
+    PRIMARY KEY (id_menu, id_plat),
+    FOREIGN KEY (id_plat) REFERENCES plat(id_plat),
+    FOREIGN KEY (id_menu) REFERENCES menu(id_menu)
+);
+
+CREATE TABLE allergene_plat (
+    id_allergene INT NOT NULL,
+    id_plat INT NOT NULL,
+    PRIMARY KEY (id_allergene, id_plat),
+    FOREIGN KEY (id_allergene) REFERENCES allergene(id_allergene),
+    FOREIGN KEY (id_plat) REFERENCES plat(id_plat)
+);
+
