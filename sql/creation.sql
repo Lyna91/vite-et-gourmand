@@ -1,9 +1,12 @@
+
+DROP TABLE IF EXISTS plat;
+DROP TABLE IF EXISTS allergene;
+DROP TABLE IF EXISTS image;
 DROP TABLE IF EXISTS menu;
 DROP TABLE IF EXISTS regime;
 DROP TABLE IF EXISTS theme;
 DROP TABLE IF EXISTS utilisateur;
 DROP TABLE IF EXISTS role;
-
 
 CREATE TABLE role (
     id_role INT AUTO_INCREMENT PRIMARY KEY,
@@ -50,4 +53,24 @@ CREATE TABLE menu (
     id_theme INT NOT NULL,
     FOREIGN KEY (id_regime) REFERENCES regime(id_regime),
     FOREIGN KEY (id_theme) REFERENCES theme(id_theme)
+);
+
+
+CREATE TABLE image (
+    id_image INT AUTO_INCREMENT PRIMARY KEY,
+    chemin VARCHAR(255) NOT NULL,
+    texte_image VARCHAR(255) NOT NULL,
+    id_menu INT NOT NULL,
+    FOREIGN KEY (id_menu) REFERENCES menu(id_menu)
+);
+
+CREATE TABLE allergene (
+    id_allergene INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(50) NOT NULL UNIQUE
+);
+
+CREATE TABLE plat (
+    id_plat INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(100) NOT NULL,
+    type VARCHAR(10) NOT NULL
 );
