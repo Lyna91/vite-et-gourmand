@@ -1,3 +1,7 @@
+DROP TABLE IF EXISTS avis;
+DROP TABLE IF EXISTS suivi_commande ;
+DROP TABLE IF EXISTS commande;
+DROP TABLE IF EXISTS horaire;
 DROP TABLE IF EXISTS allergene_plat;
 DROP TABLE IF EXISTS menu_plat;
 DROP TABLE IF EXISTS plat;
@@ -92,3 +96,54 @@ CREATE TABLE allergene_plat (
     FOREIGN KEY (id_plat) REFERENCES plat(id_plat)
 );
 
+CREATE TABLE horaire (
+    id_horaire INT AUTO_INCREMENT PRIMARY KEY,
+    jour VARCHAR(10) NOT NULL UNIQUE,
+    heure_ouverture TIME,
+    heure_fermeture TIME
+);
+
+CREATE TABLE commande (
+    id_commande INT AUTO_INCREMENT PRIMARY KEY,
+    numero_commande VARCHAR(50) NOT NULL UNIQUE,
+    nbre_personne INT NOT NULL,
+    prix_menu DECIMAL (8,2) NOT NULL,
+    date_commande DATE NOT NULL,
+    date_livraison DATE NOT NULL,
+    heure_livraison TIME NOT NULL,
+    adresse_livraison VARCHAR(255) NOT NULL,
+    cp_livraison VARCHAR (5) NOT NULL,
+    ville_livraison VARCHAR(100) NOT NULL,
+    frais_livraison DECIMAL (5,2) NOT NULL,
+    montant_reduction DECIMAL(6,2) NOT NULL DEFAULT 0,
+    pret_materiel BOOLEAN NOT NULL DEFAULT FALSE,
+    restitution_materiel BOOLEAN NOT NULL DEFAULT FALSE,
+    mode_contact VARCHAR(50),
+    motif_annulation VARCHAR(255),
+    id_utilisateur INT NOT NULL,
+    id_menu INT NOT NULL,
+    FOREIGN KEY (id_utilisateur) REFERENCES utilisateur(id_utilisateur),
+    FOREIGN KEY (id_menu) REFERENCES menu(id_menu)
+);
+
+
+CREATE TABLE suivi_commande (
+    id_suivi_commande INT AUTO_INCREMENT PRIMARY KEY,
+    statut VARCHAR(50) NOT NULL,
+    date_statut DATE NOT NULL,
+    heure_statut TIME NOT NULL,
+    id_commande INT NOT NULL,
+    FOREIGN KEY (id_commande) REFERENCES commande(id_commande)
+);
+
+
+CREATE TABLE avis (
+    id_avis INT AUTO_INCREMENT PRIMARY KEY,
+    description_avis TEXT NOT NULL,
+    note INT NOT NULL,
+    statut VARCHAR(50) NOT NULL,
+    date_avis DATE NOT NULL,
+    id_commande INT NOT NULL UNIQUE,
+    FOREIGN KEY (id_commande) REFERENCES commande(id_commande),
+    CHECK (note BETWEEN 1 AND 5)
+);
