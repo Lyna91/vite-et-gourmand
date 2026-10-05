@@ -192,3 +192,34 @@ INSERT INTO menu (titre, description, conditions, stock, prix_par_personne, nbre
     ('Veg. Anniv', 'Un menu anniversaire pour les vegans', 'Commander 2 semaines avant la date', 200, 15.00, 10, 7, 3),
     ('Bonne Continuation', 'Un menu pour souhaiter bonne route pour la deuxième vie', 'Commander trois semaines avant la date', 150, 30.00, 20, 8, 2);
 
+INSERT INTO allergene (nom) VALUES
+    ('Oeufs'),
+    ('Gluten'),
+    ('Fruits à coque'),
+    ('Lait'),
+    ('Poissons'),
+    ('Arachides'),
+    ('Céleri'),
+    ('Soja'),
+    ('Moutarde'),
+    ('Crustacés');
+
+INSERT INTO plat (nom, type) VALUES
+    ('Foie gras de canard, chutney de figues', 'Entrée'),
+    ('Verrine avocat et crevette pamplemousse', 'Entrée'),
+    ('Oeuf mimosa et mayonnaise maison', 'Entrée'),
+    ('Assortiment charcuterie & fromages', 'Entrée'),
+    ('Velouté de potimarron au lait de coco', 'Entrée'),
+    ('Dos de cabillaud et riz sauvage', 'Plat'),
+    ('Suprême de poulet et pomme de terre grenailles', 'Plat'),
+    ('Curry de légumes et riz basmati', 'Plat'),
+    ('Blanquette de veau et tagliatelles', 'Plat'),
+    ('Filet de bar et risotto champignons', 'Plat'),
+    ('Pièce montée de choux vanille chocolat', 'Dessert'),
+    ('Fraisier pistache', 'Dessert'),
+    ('Salade de fruits frais', 'Dessert'),
+    ('Café gourmand ou thé gourmand', 'Dessert'),
+    ('Crème brûlée vanille bourbon', 'Dessert');
+
+
+
