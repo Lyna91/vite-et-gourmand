@@ -222,4 +222,19 @@ INSERT INTO plat (nom, type) VALUES
     ('Crème brûlée vanille bourbon', 'Dessert');
 
 
-
+INSERT INTO menu_plat (id_menu, id_plat) VALUES
+    (1, 2),
+    (1, 10),
+    (1, 11),
+    (2, 2),
+    (2, 6),
+    (2, 15),
+    (3, 1),
+    (3, 7),
+    (3, 12),
+    (4, 5),
+    (4, 8),
+    (4, 13),
+    (5, 3),
+    (5, 8),
+    (5, 14);
