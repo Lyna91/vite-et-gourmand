@@ -184,3 +184,11 @@ INSERT INTO utilisateur (id_role, nom, prenom, mot_de_passe, email, telephone, a
     (1, 'Gourmand', 'José', '$2y$10$06rWw2DjRTEKrDhPvLZgqeLIPWEtZ88sUN3UHBQjBhlUkbkyGHtbS', 'joseg@vite-gourmand.fr', '0102202020', '1 rue de la Place', '33000','Bordeaux'),
     (2, 'Durand', 'Philippe', '$2y$10$50BoCXZd8DnVs1jP9FHJy.p/T7.AJ2h89qlR.FxbbD./nXJen189u', 'philipe.durand@vite-gourmand.fr', '0102030201', '3 rue de la mairie', '33300', 'Bordeaux'),
     (3, 'Dupond', 'Marie', '$2y$10$6Q7/2rFODwM4scCrEfp8Qer55qzj4NgdRn85BycOXWi6Rk614PwUu', 'marie.dupond@utilisateur.fr', '0202030401', '20 avenue du monde', '13000', 'Marseille');
+
+INSERT INTO menu (titre, description, conditions, stock, prix_par_personne, nbre_personne_mini, id_theme, id_regime) VALUES
+    ('Pour la vie', 'Un menu dédié aux amoureux du jour, composé avec amour', 'Commander six mois avant la date, à conserver au frais, prêt de matériel possible (voir CGV)', 450, 60.00, 50, 1, 1),
+    ('Réveillon de la mer', 'Un Noël sous le signe de la mer et de la convivialité', 'Commander deux mois avant la date', 150, 35.00, 15, 2, 4),
+    ('Réveillon magique', 'Un menu de Noël façon traditionnelle et familiale', 'Commander trois mois avant la date', 400, 25.00, 15, 2, 1),
+    ('Veg. Anniv', 'Un menu anniversaire pour les vegans', 'Commander 2 semaines avant la date', 200, 15.00, 10, 7, 3),
+    ('Bonne Continuation', 'Un menu pour souhaiter bonne route pour la deuxième vie', 'Commander trois semaines avant la date', 150, 30.00, 20, 8, 2);
+
