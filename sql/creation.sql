@@ -147,3 +147,40 @@ CREATE TABLE avis (
     FOREIGN KEY (id_commande) REFERENCES commande(id_commande),
     CHECK (note BETWEEN 1 AND 5)
 );
+
+# Insertion des données
+
+INSERT INTO role (libelle) VALUES
+    ('Administrateur'),
+    ('Employé'),
+    ('Utilisateur');
+
+INSERT INTO theme (libelle) VALUES
+    ('Mariage'),
+    ('Noël'),
+    ('Cremallière'),
+    ('Séminaire'),
+    ('Anniversaire'),
+    ('Retraite'),
+    ('Evènement de vie'),
+    ('Religieux');
+
+INSERT INTO regime (libelle) VALUES
+    ('Classique'),
+    ('Végétarien'),
+    ('Végétalien'),
+    ('Pescétarien');
+
+INSERT INTO horaire (jour, heure_ouverture, heure_fermeture) VALUES
+    ('Lundi', '10:00', '19:00'),
+    ('Mardi', '10:00', '19:00'),
+    ('Mercredi', '10:00', '19:00'),
+    ('Jeudi', '10:00', '20:00'),
+    ('Vendredi', '10:00', '20:00'),
+    ('Samedi', '10:00', '20:00'),
+    ('Dimanche', '14:00', '17:00');
+
+INSERT INTO utilisateur (id_role, nom, prenom, mot_de_passe, email, telephone, adresse, cp, ville) VALUES
+    (1, 'Gourmand', 'José', '$2y$10$06rWw2DjRTEKrDhPvLZgqeLIPWEtZ88sUN3UHBQjBhlUkbkyGHtbS', 'joseg@vite-gourmand.fr', '0102202020', '1 rue de la Place', '33000','Bordeaux'),
+    (2, 'Durand', 'Philippe', '$2y$10$50BoCXZd8DnVs1jP9FHJy.p/T7.AJ2h89qlR.FxbbD./nXJen189u', 'philipe.durand@vite-gourmand.fr', '0102030201', '3 rue de la mairie', '33300', 'Bordeaux'),
+    (3, 'Dupond', 'Marie', '$2y$10$6Q7/2rFODwM4scCrEfp8Qer55qzj4NgdRn85BycOXWi6Rk614PwUu', 'marie.dupond@utilisateur.fr', '0202030401', '20 avenue du monde', '13000', 'Marseille');
