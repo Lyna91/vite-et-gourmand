@@ -147,3 +147,141 @@ CREATE TABLE avis (
     FOREIGN KEY (id_commande) REFERENCES commande(id_commande),
     CHECK (note BETWEEN 1 AND 5)
 );
+
+# Insertion des données
+
+INSERT INTO role (libelle) VALUES
+    ('Administrateur'),
+    ('Employé'),
+    ('Utilisateur');
+
+INSERT INTO theme (libelle) VALUES
+    ('Mariage'),
+    ('Noël'),
+    ('Cremallière'),
+    ('Séminaire'),
+    ('Anniversaire'),
+    ('Retraite'),
+    ('Evènement de vie'),
+    ('Religieux');
+
+INSERT INTO regime (libelle) VALUES
+    ('Classique'),
+    ('Végétarien'),
+    ('Végétalien'),
+    ('Pescétarien');
+
+INSERT INTO horaire (jour, heure_ouverture, heure_fermeture) VALUES
+    ('Lundi', '10:00', '19:00'),
+    ('Mardi', '10:00', '19:00'),
+    ('Mercredi', '10:00', '19:00'),
+    ('Jeudi', '10:00', '20:00'),
+    ('Vendredi', '10:00', '20:00'),
+    ('Samedi', '10:00', '20:00'),
+    ('Dimanche', '14:00', '17:00');
+
+INSERT INTO utilisateur (id_role, nom, prenom, mot_de_passe, email, telephone, adresse, cp, ville) VALUES
+    (1, 'Gourmand', 'José', '$2y$10$06rWw2DjRTEKrDhPvLZgqeLIPWEtZ88sUN3UHBQjBhlUkbkyGHtbS', 'joseg@vite-gourmand.fr', '0102202020', '1 rue de la Place', '33000','Bordeaux'),
+    (2, 'Durand', 'Philippe', '$2y$10$50BoCXZd8DnVs1jP9FHJy.p/T7.AJ2h89qlR.FxbbD./nXJen189u', 'philipe.durand@vite-gourmand.fr', '0102030201', '3 rue de la mairie', '33300', 'Bordeaux'),
+    (3, 'Dupond', 'Marie', '$2y$10$6Q7/2rFODwM4scCrEfp8Qer55qzj4NgdRn85BycOXWi6Rk614PwUu', 'marie.dupond@utilisateur.fr', '0202030401', '20 avenue du monde', '13000', 'Marseille');
+
+INSERT INTO menu (titre, description, conditions, stock, prix_par_personne, nbre_personne_mini, id_theme, id_regime) VALUES
+    ('Pour la vie', 'Un menu dédié aux amoureux du jour, composé avec amour', 'Commander six mois avant la date, à conserver au frais, prêt de matériel possible (voir CGV)', 450, 60.00, 50, 1, 1),
+    ('Réveillon de la mer', 'Un Noël sous le signe de la mer et de la convivialité', 'Commander deux mois avant la date', 150, 35.00, 15, 2, 4),
+    ('Réveillon magique', 'Un menu de Noël façon traditionnelle et familiale', 'Commander trois mois avant la date', 400, 25.00, 15, 2, 1),
+    ('Veg. Anniv', 'Un menu anniversaire pour les vegans', 'Commander 2 semaines avant la date', 200, 15.00, 10, 7, 3),
+    ('Bonne Continuation', 'Un menu pour souhaiter bonne route pour la deuxième vie', 'Commander trois semaines avant la date', 150, 30.00, 20, 8, 2);
+
+INSERT INTO allergene (nom) VALUES
+    ('Oeufs'),
+    ('Gluten'),
+    ('Fruits à coque'),
+    ('Lait'),
+    ('Poissons'),
+    ('Arachides'),
+    ('Céleri'),
+    ('Soja'),
+    ('Moutarde'),
+    ('Crustacés');
+
+INSERT INTO plat (nom, type) VALUES
+    ('Foie gras de canard, chutney de figues', 'Entrée'),
+    ('Verrine avocat et crevette pamplemousse', 'Entrée'),
+    ('Oeuf mimosa et mayonnaise maison', 'Entrée'),
+    ('Assortiment charcuterie & fromages', 'Entrée'),
+    ('Velouté de potimarron au lait de coco', 'Entrée'),
+    ('Dos de cabillaud et riz sauvage', 'Plat'),
+    ('Suprême de poulet et pomme de terre grenailles', 'Plat'),
+    ('Curry de légumes et riz basmati', 'Plat'),
+    ('Blanquette de veau et tagliatelles', 'Plat'),
+    ('Filet de bar et risotto champignons', 'Plat'),
+    ('Pièce montée de choux vanille chocolat', 'Dessert'),
+    ('Fraisier pistache', 'Dessert'),
+    ('Salade de fruits frais', 'Dessert'),
+    ('Café gourmand ou thé gourmand', 'Dessert'),
+    ('Crème brûlée vanille bourbon', 'Dessert');
+
+
+INSERT INTO menu_plat (id_menu, id_plat) VALUES
+    (1, 2),
+    (1, 10),
+    (1, 11),
+    (2, 2),
+    (2, 6),
+    (2, 15),
+    (3, 1),
+    (3, 7),
+    (3, 12),
+    (4, 5),
+    (4, 8),
+    (4, 13),
+    (5, 3),
+    (5, 8),
+    (5, 14);
+
+INSERT INTO allergene_plat (id_plat, id_allergene) VALUES
+    (2, 10),
+    (3, 1),
+    (3, 9),
+    (4, 4),
+    (6, 5),
+    (7, 2),
+    (9, 1),
+    (9, 2),
+    (9, 4),
+    (10, 5),
+    (11, 1),
+    (11, 2),
+    (11, 3),
+    (11, 4),
+    (12, 1),
+    (12, 2),
+    (12, 3),
+    (12, 4),
+    (14, 1),
+    (14, 2),
+    (14, 3),
+    (14, 4),
+    (15, 1),
+    (15, 4);
+
+INSERT INTO image (chemin, texte_image, id_menu) VALUES
+    ('images/menus/pour-la-vie-1.jpg', 'buffet de mariage en plan large', 1),
+    ('images/menus/pour-la-vie-2.jpg', 'buffet de mariage avec table', 1),
+    ('images/menus/pour-la-vie-3.jpg', 'buffet de mariage avec les mets', 1),
+    ('images/menus/reveillon-de-la-mer-1.jpg', 'buffet de Noël avec des produits de la mer', 2),
+    ('images/menus/reveillon-de-la-mer-2.jpg', 'buffet de Noël avec des produits de la mer sur la table', 2),
+    ('images/menus/reveillon-de-la-mer-3.jpg', 'buffet de Noël avec des produits de la mer avec les mets', 2),
+    ('images/menus/reveillon-magique-1.jpg', 'buffet de réveillon de Noël plan large avec décoration et sapin de Noël derrière', 3),
+    ('images/menus/reveillon-magique-2.jpg', 'buffet de réveillon de Noël avec les produits sur une table', 3),
+    ('images/menus/reveillon-magique-3.jpg', 'buffet de réveillon de Noël avec un autre plan des produits', 3),
+    ('images/menus/veg-anniv-1.jpg', 'buffet d''un anniversaire plan large', 4),
+    ('images/menus/veg-anniv-2.jpg', 'buffet d''un anniversaire plan large avec les plats sur une table, décoration de fête derrière', 4),
+    ('images/menus/veg-anniv-3.jpg', 'buffet d''un anniversaire avec un autre plan sur les produits', 4),
+    ('images/menus/bonne-continuation-1.jpg', 'buffet pour un départ à la retraite, plan large sur les produits', 5),
+    ('images/menus/bonne-continuation-2.jpg', 'buffet pour un départ à la retraite, plan avec les plats sur une table', 5),
+    ('images/menus/bonne-continuation-3.jpg', 'buffet pour un départ à la retraite, autre plan sur les produits', 5);
+
+
+
+    
