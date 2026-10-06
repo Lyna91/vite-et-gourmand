@@ -265,3 +265,23 @@ INSERT INTO allergene_plat (id_plat, id_allergene) VALUES
     (15, 1),
     (15, 4);
 
+INSERT INTO image (chemin, texte_image, id_menu) VALUES
+    ('images/menus/pour-la-vie-1.jpg', 'buffet de mariage en plan large', 1),
+    ('images/menus/pour-la-vie-2.jpg', 'buffet de mariage avec table', 1),
+    ('images/menus/pour-la-vie-3.jpg', 'buffet de mariage avec les mets', 1),
+    ('images/menus/reveillon-de-la-mer-1.jpg', 'buffet de Noël avec des produits de la mer', 2),
+    ('images/menus/reveillon-de-la-mer-2.jpg', 'buffet de Noël avec des produits de la mer sur la table', 2),
+    ('images/menus/reveillon-de-la-mer-3.jpg', 'buffet de Noël avec des produits de la mer avec les mets', 2),
+    ('images/menus/reveillon-magique-1.jpg', 'buffet de réveillon de Noël plan large avec décoration et sapin de Noël derrière', 3),
+    ('images/menus/reveillon-magique-2.jpg', 'buffet de réveillon de Noël avec les produits sur une table', 3),
+    ('images/menus/reveillon-magique-3.jpg', 'buffet de réveillon de Noël avec un autre plan des produits', 3),
+    ('images/menus/veg-anniv-1.jpg', 'buffet d''un anniversaire plan large', 4),
+    ('images/menus/veg-anniv-2.jpg', 'buffet d''un anniversaire plan large avec les plats sur une table, décoration de fête derrière', 4),
+    ('images/menus/veg-anniv-3.jpg', 'buffet d''un anniversaire avec un autre plan sur les produits', 4),
+    ('images/menus/bonne-continuation-1.jpg', 'buffet pour un départ à la retraite, plan large sur les produits', 5),
+    ('images/menus/bonne-continuation-2.jpg', 'buffet pour un départ à la retraite, plan avec les plats sur une table', 5),
+    ('images/menus/bonne-continuation-3.jpg', 'buffet pour un départ à la retraite, autre plan sur les produits', 5);
+
+
+
+    
