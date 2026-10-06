@@ -1,18 +1,17 @@
 <?php
-
-$host = 'mysql';                    // le nom du service MySQL dans docker-compose
-$user = getenv('MYSQL_USER');       // lit la valeur de MYSQL_USER dans le .env
-$db   = getenv('MYSQL_DATABASE');                         // à toi : le nom de la base
-$password = getenv('MYSQL_PASSWORD');                         // à toi : le mot de passe
-
-$dsn = "mysql:host=$host;dbname=$db;charset=utf8mb4";
+require __DIR__ . '/../src/database.php'; // require insère le contenu d'un autre fichier, __DIR__ indique le chemin du dossier du fichier actuel
 
 
 try {
-    $pdo = new PDO($dsn, $user, $password, [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-    ]);
-    echo "Connexion MySQL OK";   // message si ça marche
+    $pdo = getPdo();
+
+    $requete = $pdo->query("SELECT titre, prix_par_personne FROM menu");   // envoie la requête SQL à MySQL (prendre les titres et prix par personne de la table menu)
+    $menus = $requete->fetchAll(PDO::FETCH_ASSOC);                          // récupère toutes les lignes sous forme de tableaux associatifs   
+
+    foreach ($menus as $menu) {
+        echo "<h2>" . htmlspecialchars($menu['titre']) . "</h2>";
+        echo "<p>" . number_format($menu['prix_par_personne'], 2, ',', ' ') . " €</p>"; //number_format renvoie un texte qui ne contient que des chiffres, une virgule et des espaces
+    }
 } catch (PDOException $e) {
-    echo "Erreur de connexion : " . $e->getMessage();
+    echo "Erreur de base de données : " . $e->getMessage();
 }
