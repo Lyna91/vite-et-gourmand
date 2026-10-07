@@ -1,6 +1,8 @@
 <?php
 require __DIR__ . '/../src/database.php'; // require insère le contenu d'un autre fichier, __DIR__ indique le chemin du dossier du fichier actuel
 
+require __DIR__ . '/../src/menu.php';
+
 $menus = [];
 $erreur = null;
 
@@ -34,7 +36,9 @@ try {
         echo "<h2>" . htmlspecialchars($menu['titre']) . "</h2>";
         echo "<p>" . number_format($menu['prix_par_personne'], 2, ',', ' ') . " €</p>"; //number_format renvoie un texte qui ne contient que des chiffres, une virgule et des espaces
     }
+
     ?>
+
 
 </body>
 
