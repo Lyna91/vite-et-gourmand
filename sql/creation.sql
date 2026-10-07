@@ -1,3 +1,5 @@
+SET NAMES utf8mb4;
+
 DROP TABLE IF EXISTS avis;
 DROP TABLE IF EXISTS suivi_commande ;
 DROP TABLE IF EXISTS commande;

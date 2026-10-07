@@ -1,5 +1,5 @@
 FROM php:8.3-fpm
-
+RUN cp "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 # Extension pour se connecter à MySQL avec PDO installe le pilote PDO pour MySQL / docker-php-ext-install est un petit outil fourni dans l'image PHP officielle pour ajouter des extensions.
 RUN docker-php-ext-install pdo_mysql 
 
