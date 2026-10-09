@@ -6,15 +6,15 @@ class Menu
     private int $id;
     private string $titre;
     private string $description;
-    private float $prix_par_personne;
+    private float $prixParPersonne;
 
     // 2. Le CONSTRUCTEUR : appelé automatiquement à la création, il remplit les propriétés
-    public function __construct(int $id, string $titre, string $description, float $prix_par_personne)
+    public function __construct(int $id, string $titre, string $description, float $prixParPersonne)
     {
         $this->id = $id;
         $this->titre = $titre;
         $this->description = $description;
-        $this->prix_par_personne = $prix_par_personne;
+        $this->prixParPersonne = $prixParPersonne;
     }
 
     // 3. Les GETTERS : des fonctions pour LIRE les propriétés depuis l'extérieur
@@ -35,8 +35,6 @@ class Menu
 
     public function getPrixParPersonne(): float
     {
-        return $this->prix_par_personne;
+        return $this->prixParPersonne;
     }
 }
-
-$menu = new Menu(1, 'Pour la vie', 'Un menu dédié aux amoureux du jour, composé avec amour', 60.00);   // new = fabrique un objet avec le moule
