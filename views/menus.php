@@ -1,15 +1,13 @@
-<!DOCTYPE html>
-<html lang="fr">
+   <?php
+    /** @var Menu[] $menus */
+    /** @var string|null $erreur */
+    require __DIR__ . '/morceaux/header.php';
+    ?>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menus Vite &amp; Gourmand</title>
-</head>
+   <?php require __DIR__ . '/morceaux/header.php'; ?>
 
-<body>
-    <h1>Nos menus</h1>
-    <?php
+   <h1>Nos menus</h1>
+   <?php
     if ($erreur) {
         echo "<p>" . htmlspecialchars($erreur) . "</p>";
     }
@@ -21,6 +19,4 @@
     ?>
 
 
-</body>
-
-</html>
+   <?php require __DIR__ . '/morceaux/footer.php'; ?>

@@ -5,6 +5,7 @@ class MenuController
     public function liste(): void //: void veut dire « cette méthode ne renvoie rien ». Elle affiche, mais elle ne fait pas de return.
     {
         // 1. préparer les données
+        $titre = 'Nos menus';
         $menus = [];
         $erreur = null;
 
