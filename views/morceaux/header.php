@@ -12,3 +12,13 @@
 </head>
 
 <body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/">Accueil</a></li>
+                <li><a href="/menus">Les Menus</a></li>
+                <li><a href="/contact">Contact</a></li>
+                <li><a href="/connexion">Connexion</a></li>
+            </ul>
+        </nav>
+    </header>
