@@ -10,6 +10,11 @@ require __DIR__ . '/../src/MenuController.php';
 
 require __DIR__ . '/../src/PageController.php';
 
+require __DIR__ . '/../src/Horaire.php';
+
+require __DIR__ . '/../src/HoraireManager.php';
+
+
 
 $chemin = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 if ($chemin === '/') {
