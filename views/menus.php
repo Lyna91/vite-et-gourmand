@@ -1,7 +1,6 @@
    <?php
     /** @var Menu[] $menus */
     /** @var string|null $erreur */
-    require __DIR__ . '/morceaux/header.php';
     ?>
 
    <?php require __DIR__ . '/morceaux/header.php'; ?>
