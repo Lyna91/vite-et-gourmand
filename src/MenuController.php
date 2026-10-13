@@ -1,6 +1,6 @@
 <?php
 
-class MenuController
+class MenuController extends Controller
 {
     public function liste(): void //: void veut dire « cette méthode ne renvoie rien ». Elle affiche, mais elle ne fait pas de return.
     {
@@ -16,7 +16,11 @@ class MenuController
             $erreur = "Erreur de base de données : " . $e->getMessage();
         }
 
-        // 2. afficher : charger la vue
-        require __DIR__ . '/../views/menus.php';
+        // 2. afficher la vue avec les données
+        $this->afficher('menus', [
+            'titre' => $titre,
+            'menus' => $menus,
+            'erreur' => $erreur,
+        ]);
     }
 }
