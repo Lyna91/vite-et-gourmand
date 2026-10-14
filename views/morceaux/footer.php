@@ -2,19 +2,20 @@
 
 <footer class="py-4">
     <div class="container">
-        <div class="row">
+        <div class="row align-items md-center">
             <div class="col-12 col-md-4 text-center text-md-start ">
                 <h2>Horaires</h2>
-                <ul class="list-unstyled"> <?php
-                                            foreach ($horaires as $horaire) {
-                                                if ($horaire->getHeureOuverture() === null) {
-                                                    $heures = 'Fermé';
-                                                } else {
-                                                    $heures = substr($horaire->getHeureOuverture(), 0, 5) . " - " . substr($horaire->getHeureFermeture(), 0, 5);
-                                                }
-                                                echo "<li>" . htmlspecialchars($horaire->getJour()) . " : " . $heures . "</li>";
-                                            }
-                                            ?>
+                <ul class="list-unstyled">
+                    <?php
+                    foreach ($horaires as $horaire) {
+                        if ($horaire->getHeureOuverture() === null) {
+                            $heures = 'Fermé';
+                        } else {
+                            $heures = substr($horaire->getHeureOuverture(), 0, 5) . " - " . substr($horaire->getHeureFermeture(), 0, 5);
+                        }
+                        echo "<li>" . htmlspecialchars($horaire->getJour()) . " : " . $heures . "</li>";
+                    }
+                    ?>
                 </ul>
             </div>
             <div class="text-center col-12 col-md-4">
@@ -22,8 +23,10 @@
                 <address>3 rue Notre-Dame, 33000 Bordeaux</address>
             </div>
             <div class="col-12 col-md-4 text-center text-md-end">
-                <p><a href="/mentions-legales">Mentions légales</a></p>
-                <p><a href="/cgv">Conditions générales de vente</a></p>
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-2"><a href="/mentions-legales">Mentions légales</a></li>
+                    <li><a href="/cgv">Conditions générales de vente</a></li>
+                </ul>
             </div>
         </div>
     </div>
