@@ -1,21 +1,24 @@
 <?php
 
-class PageController {
+class PageController extends Controller
+{
 
 
-   public function accueil(): void //: void veut dire « cette méthode ne renvoie rien ». Elle affiche, mais elle ne fait pas de return.
+    public function accueil(): void //: void veut dire « cette méthode ne renvoie rien ». Elle affiche, mais elle ne fait pas de return.
     {
         // 1. préparer les données
         $titre = 'Accueil';
-        
-        require __DIR__ . '/../views/accueil.php';
+
+        $this->afficher('accueil', [
+            'titre' => $titre,
+        ]);
     }
 
     public function introuvable(): void
-        {
-            http_response_code(404);
-            $titre = 'Page introuvable';
-
-        require __DIR__ . '/../views/introuvable.php';
-        }
+    {
+        http_response_code(404);
+        $this->afficher('introuvable', [
+            'titre' => 'Page introuvable',
+        ]);
+    }
 }
