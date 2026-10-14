@@ -1,45 +1,34 @@
 <?php
+
+//base de données
 require __DIR__ . '/../src/database.php'; // require insère le contenu d'un autre fichier, __DIR__ indique le chemin du dossier du fichier actuel
 
+//modèles
 require __DIR__ . '/../src/Menu.php';
 
 require __DIR__ . '/../src/MenuManager.php';
 
+require __DIR__ . '/../src/Horaire.php';
 
-$menus = [];
-$erreur = null;
+require __DIR__ . '/../src/HoraireManager.php';
 
-try {
-    $menuManager = new MenuManager(getPdo());
-    $menus = $menuManager->findAll();
-} catch (PDOException $e) {
-    $erreur = "Erreur de base de données : " . $e->getMessage();
+//controlleurs
+require __DIR__ . '/../src/Controller.php';
+
+require __DIR__ . '/../src/MenuController.php';
+
+require __DIR__ . '/../src/PageController.php';
+
+
+
+$chemin = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+if ($chemin === '/') {
+    $controller = new PageController();
+    $controller->accueil();
+} elseif ($chemin === '/menus') {
+    $controller = new MenuController();
+    $controller->liste();
+} else {
+    $controller = new PageController();
+    $controller->introuvable();
 }
-?>
-
-<!DOCTYPE html>
-<html lang="fr">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menus Vite &amp; Gourmand</title>
-</head>
-
-<body>
-    <h1>Nos menus</h1>
-    <?php
-    if ($erreur) {
-        echo "<p>" . htmlspecialchars($erreur) . "</p>";
-    }
-    foreach ($menus as $menu) {
-        echo "<h2>" . htmlspecialchars($menu->getTitre()) . "</h2>";
-        echo "<p>" . number_format($menu->getPrixParPersonne(), 2, ',', ' ') . " €</p>"; //number_format renvoie un texte qui ne contient que des chiffres, une virgule et des espaces
-    }
-
-    ?>
-
-
-</body>
-
-</html>
