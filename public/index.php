@@ -28,10 +28,15 @@ if ($chemin === '/') {
 } elseif ($chemin === '/menus') {
     $controller = new MenuController();
     $controller->liste();
-    
 } elseif ($chemin === '/menu') {
     $controller = new MenuController();
     $controller->detail();
+} elseif ($chemin === '/mentions-legales') {
+    $controller = new PageController();
+    $controller->mentionsLegales();
+} elseif ($chemin === '/cgv') {
+    $controller = new PageController();
+    $controller->cgv();
 } else {
     $controller = new PageController();
     $controller->introuvable();

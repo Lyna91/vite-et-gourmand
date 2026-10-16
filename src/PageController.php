@@ -21,4 +21,22 @@ class PageController extends Controller
             'titre' => 'Page introuvable',
         ]);
     }
+
+    public function mentionsLegales(): void
+    {
+        $titre = 'Mentions légales';
+
+        $this->afficher('mentions-legales', [
+            'titre' => $titre,
+        ]);
+    }
+
+    public function cgv(): void
+    {
+        $titre = 'Conditions générales de Vente';
+
+        $this->afficher('cgv', [
+            'titre' => $titre,
+        ]);
+    }
 }
