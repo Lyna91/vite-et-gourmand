@@ -28,6 +28,10 @@ if ($chemin === '/') {
 } elseif ($chemin === '/menus') {
     $controller = new MenuController();
     $controller->liste();
+    
+} elseif ($chemin === '/menu') {
+    $controller = new MenuController();
+    $controller->detail();
 } else {
     $controller = new PageController();
     $controller->introuvable();

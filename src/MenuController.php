@@ -23,4 +23,29 @@ class MenuController extends Controller
             'erreur' => $erreur,
         ]);
     }
+
+    public function detail(): void
+    {
+        $id = (int) ($_GET['id'] ?? 0);
+        $menu = null;
+
+
+        try {
+            $menuManager = new MenuManager(getPdo());
+            $menu = $menuManager->findById($id);
+        } catch (PDOException $e) {
+            $erreur = "Erreur de base de données : " . $e->getMessage();
+        }
+        if ($menu === null) {
+            http_response_code(404);
+            $this->afficher('introuvable', [
+                'titre' => 'Menu introuvable',
+            ]);
+        }
+        
+        $this->afficher('menu-detail', [
+            'titre' => $menu->getTitre(),
+            'menu' => $menu,
+        ]);
+    }
 }
