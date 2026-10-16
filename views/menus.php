@@ -13,6 +13,7 @@
     foreach ($menus as $menu) {
         echo "<h2>" . htmlspecialchars($menu->getTitre()) . "</h2>";
         echo "<p>" . number_format($menu->getPrixParPersonne(), 2, ',', ' ') . " €</p>"; //number_format renvoie un texte qui ne contient que des chiffres, une virgule et des espaces
+        echo "<a href='/menu?id=" . $menu->getId() . "'>Détails</a>";
     }
 
     ?>

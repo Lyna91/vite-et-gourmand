@@ -42,5 +42,10 @@ class MenuController extends Controller
                 'titre' => 'Menu introuvable',
             ]);
         }
+        
+        $this->afficher('menu-detail', [
+            'titre' => $menu->getTitre(),
+            'menu' => $menu,
+        ]);
     }
 }
