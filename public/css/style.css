@@ -1,0 +1,25 @@
+   :root {
+       --beige: #EAE0D5;
+       --bordeaux: #4A0818;
+       --noir: #0A0908;
+       --bleu-gris: #22333B;
+       --jaune: #E0BF53;
+   }
+
+   body {
+    background-color: var(--beige);
+    font-family: "Andika", sans-serif;
+   }
+
+   h1, h2, h3 {
+    font-family: "Akaya Kanadaka", sans-serif;
+   }
+
+   header, footer {
+    background-color: var(--noir);
+    color: var(--beige);
+   }
+
+     header a, footer a {
+      color: var(--jaune);
+  }
