@@ -13,7 +13,8 @@ class MenuController extends Controller
             $menuManager = new MenuManager(getPdo());
             $menus = $menuManager->findAll();
         } catch (PDOException $e) {
-            $erreur = "Erreur de base de données : " . $e->getMessage();
+            error_log($e->getMessage());
+            $erreur = "Les menus sont momentanément indisponibles. Merci de réessayer plus tard.";
         }
 
         // 2. afficher la vue avec les données
