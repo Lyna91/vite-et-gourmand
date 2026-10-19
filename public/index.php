@@ -8,9 +8,14 @@ require __DIR__ . '/../src/Menu.php';
 
 require __DIR__ . '/../src/MenuManager.php';
 
+require __DIR__ . '/../src/Plat.php';
+
+require __DIR__ . '/../src/PlatManager.php';
+
 require __DIR__ . '/../src/Horaire.php';
 
 require __DIR__ . '/../src/HoraireManager.php';
+
 
 //controlleurs
 require __DIR__ . '/../src/Controller.php';
@@ -28,7 +33,6 @@ if ($chemin === '/') {
 } elseif ($chemin === '/menus') {
     $controller = new MenuController();
     $controller->liste();
-    
 } elseif ($chemin === '/menu') {
     $controller = new MenuController();
     $controller->detail();
