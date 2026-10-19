@@ -1,6 +1,7 @@
 <?php
 
 /** @var Menu $menu */
+/** @var Plat[] $plats */
 require __DIR__ . '/morceaux/header.php';
 ?>
 
@@ -17,4 +18,18 @@ require __DIR__ . '/morceaux/header.php';
 <div class="alert alert-warning">
     <p class="mb-0"><strong>Les conditions : </strong> <?= htmlspecialchars($menu->getConditions()) ?></p>
 </div>
+
+<h2>Composition du menu</h2>
+
+<?php foreach (['Entrée', 'Plat', 'Dessert'] as $type): ?>
+    <h3><?= $type ?></h3>
+    <ul>
+        <?php foreach ($plats as $plat): ?>
+            <?php if ($plat->getType() === $type): ?>
+                <li><?= htmlspecialchars($plat->getNom()) ?></li>
+            <?php endif; ?>
+        <?php endforeach; ?>
+    </ul>
+<?php endforeach; ?>
+
 <?php require __DIR__ . '/morceaux/footer.php'; ?>
