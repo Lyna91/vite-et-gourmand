@@ -25,5 +25,5 @@
        <?php endforeach; ?>
    </div>
 
-
+   <script src="/js/menus.js"></script>
    <?php require __DIR__ . '/morceaux/footer.php'; ?>
