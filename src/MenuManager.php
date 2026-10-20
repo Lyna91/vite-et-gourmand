@@ -36,6 +36,36 @@ class MenuManager
         return $menus;
     }
 
+    // tous les menus, avec des filtres facultatifs
+    public function findByFiltres(?float $prixMax): array
+    {
+        $sql = "
+        SELECT menu.*, regime.libelle AS regime, theme.libelle AS theme
+        FROM menu
+        JOIN regime ON menu.id_regime = regime.id_regime
+        JOIN theme ON menu.id_theme = theme.id_theme
+        WHERE 1 = 1
+    ";
+        $parametres = [];
+
+        if ($prixMax !== null) {
+            $sql .= " AND menu.prix_par_personne <= :prixMax";
+            $parametres['prixMax'] = $prixMax;
+        }
+
+        $sql .= " ORDER BY menu.id_menu";
+
+        $requete = $this->pdo->prepare($sql);
+        $requete->execute($parametres);
+        $lignes = $requete->fetchAll(PDO::FETCH_ASSOC);
+
+        $menus = [];
+        foreach ($lignes as $ligne) {
+            $menus[] = new Menu($ligne['id_menu'], $ligne['titre'], $ligne['description'], $ligne['prix_par_personne'], $ligne['conditions'], $ligne['stock'], $ligne['nbre_personne_mini'], $ligne['regime'], $ligne['theme']);
+        }
+        return $menus;
+    }
+
     public function findById(int $id): ?Menu
     {
         $requete = $this->pdo->prepare("
