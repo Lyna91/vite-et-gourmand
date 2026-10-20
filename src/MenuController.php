@@ -6,12 +6,14 @@ class MenuController extends Controller
     {
         // 1. préparer les données
         $titre = 'Nos menus';
-        $menus = [];
+        $menus = []; $themes = []; $regimes = [];
         $erreur = null;
 
         try {
             $menuManager = new MenuManager(getPdo());
             $menus = $menuManager->findAll();
+            $themes = $menuManager->findThemes();
+            $regimes = $menuManager->findRegimes();
         } catch (PDOException $e) {
             error_log($e->getMessage());
             $erreur = "Les menus sont momentanément indisponibles. Merci de réessayer plus tard.";
@@ -22,6 +24,8 @@ class MenuController extends Controller
             'titre' => $titre,
             'menus' => $menus,
             'erreur' => $erreur,
+            'themes' => $themes,
+            'regimes' => $regimes,
         ]);
     }
 
@@ -54,5 +58,31 @@ class MenuController extends Controller
             'menu' => $menu,
             'plats' => $plats,
         ]);
+    }
+    // renvoie la liste des menus en JSON, pour le JavaScript (fetch)
+    public function apiListe(): void
+    {
+        header('Content-Type: application/json; charset=utf-8');
+
+        try {
+            $prixMin = isset($_GET['prixMin']) && $_GET['prixMin'] !== '' ? (float) $_GET['prixMin'] : null;
+            $prixMax = isset($_GET['prixMax']) && $_GET['prixMax'] !== '' ? (float) $_GET['prixMax'] : null;
+            $nbrePersonnes = isset($_GET['nbrePersonnes']) && $_GET['nbrePersonnes'] !== '' ? (int) $_GET['nbrePersonnes'] : null;
+            $theme = isset($_GET['theme']) && $_GET['theme'] !== '' ? $_GET['theme'] : null;
+            $regime = isset($_GET['regime']) && $_GET['regime'] !== '' ? $_GET['regime'] : null;
+            $menuManager = new MenuManager(getPdo());
+            $menus = $menuManager->findByFiltres($prixMin, $prixMax, $nbrePersonnes, $theme, $regime);
+
+            $donnees = [];
+            foreach ($menus as $menu) {
+                $donnees[] = $menu->toArray();
+            }
+
+            echo json_encode($donnees, JSON_UNESCAPED_UNICODE);
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            http_response_code(500);
+            echo json_encode(['erreur' => 'Menus indisponibles'], JSON_UNESCAPED_UNICODE);
+        }
     }
 }

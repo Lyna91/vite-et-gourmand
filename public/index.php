@@ -36,6 +36,9 @@ if ($chemin === '/') {
 } elseif ($chemin === '/menu') {
     $controller = new MenuController();
     $controller->detail();
+} elseif ($chemin === '/api/menus') {
+    $controller = new MenuController();
+    $controller->apiListe();
 } else {
     $controller = new PageController();
     $controller->introuvable();
