@@ -9,7 +9,7 @@
    <?php if ($erreur): ?>
        <div class="alert alert-danger"><?= htmlspecialchars($erreur) ?></div>
    <?php endif; ?>
-   <div class="row">
+   <div class="row" id="liste-menus">>
        <?php foreach ($menus as $menu): ?>
            <div class="col-12 col-md-6 col-lg-4 mb-4">
                <div class="card h-100">
