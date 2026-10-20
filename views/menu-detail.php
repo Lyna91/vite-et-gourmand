@@ -26,7 +26,15 @@ require __DIR__ . '/morceaux/header.php';
     <ul>
         <?php foreach ($plats as $plat): ?>
             <?php if ($plat->getType() === $type): ?>
-                <li><?= htmlspecialchars($plat->getNom()) ?></li>
+                <li>
+                    <?= htmlspecialchars($plat->getNom()) ?>
+                    <?php if (!empty($plat->getAllergenes())): ?>
+                        <br>
+                        <small class="text-muted">
+                            Allergènes : <?= htmlspecialchars(implode(', ', $plat->getAllergenes())) ?>
+                        </small>
+                    <?php endif; ?>
+                </li>
             <?php endif; ?>
         <?php endforeach; ?>
     </ul>
