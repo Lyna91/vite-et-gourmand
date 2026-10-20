@@ -37,7 +37,7 @@ class MenuManager
     }
 
     // tous les menus, avec des filtres facultatifs
-    public function findByFiltres(?float $prixMax): array
+    public function findByFiltres(?float $prixMin, ?float $prixMax): array
     {
         $sql = "
         SELECT menu.*, regime.libelle AS regime, theme.libelle AS theme
@@ -48,6 +48,10 @@ class MenuManager
     ";
         $parametres = [];
 
+        if ($prixMin !== null) {
+            $sql .= " AND menu.prix_par_personne >= :prixMin";
+            $parametres['prixMin'] = $prixMin;
+        }
         if ($prixMax !== null) {
             $sql .= " AND menu.prix_par_personne <= :prixMax";
             $parametres['prixMax'] = $prixMax;

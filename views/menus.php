@@ -11,6 +11,8 @@
    <?php endif; ?>
    <form class="row g-3 mb-4">
        <div class="col-12 col-md-4">
+           <label for="prix-min" class="form-label">Prix minimum par personne (€)</label>
+           <input type="number" id="prix-min" class="form-control" min="0" step="1">
            <label for="prix-max" class="form-label">Prix maximum par personne (€)</label>
            <input type="number" id="prix-max" class="form-control" min="0" step="1">
        </div>

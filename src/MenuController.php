@@ -61,9 +61,10 @@ class MenuController extends Controller
         header('Content-Type: application/json; charset=utf-8');
 
         try {
+            $prixMin = isset($_GET['prixMin']) && $_GET['prixMin'] !== '' ? (float) $_GET['prixMin'] : null;
             $prixMax = isset($_GET['prixMax']) && $_GET['prixMax'] !== '' ? (float) $_GET['prixMax'] : null;
             $menuManager = new MenuManager(getPdo());
-            $menus = $menuManager->findByFiltres($prixMax);
+            $menus = $menuManager->findByFiltres($prixMin, $prixMax);
 
             $donnees = [];
             foreach ($menus as $menu) {
