@@ -63,8 +63,9 @@ class MenuController extends Controller
         try {
             $prixMin = isset($_GET['prixMin']) && $_GET['prixMin'] !== '' ? (float) $_GET['prixMin'] : null;
             $prixMax = isset($_GET['prixMax']) && $_GET['prixMax'] !== '' ? (float) $_GET['prixMax'] : null;
+            $nbrePersonnes = isset($_GET['nbrePersonnes']) && $_GET['nbrePersonnes'] !== '' ? (int) $_GET['nbrePersonnes'] : null;
             $menuManager = new MenuManager(getPdo());
-            $menus = $menuManager->findByFiltres($prixMin, $prixMax);
+            $menus = $menuManager->findByFiltres($prixMin, $prixMax, $nbrePersonnes);
 
             $donnees = [];
             foreach ($menus as $menu) {

@@ -15,6 +15,8 @@
            <input type="number" id="prix-min" class="form-control" min="0" step="1">
            <label for="prix-max" class="form-label">Prix maximum par personne (€)</label>
            <input type="number" id="prix-max" class="form-control" min="0" step="1">
+           <label for="nbre-personnes" class="form-label">Nombre de personnes</label>
+           <input type="number" id="nbre-personnes" class="form-control" min="1" step="1">
        </div>
    </form>
    <div class="row" id="liste-menus">>

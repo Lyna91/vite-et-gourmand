@@ -40,7 +40,8 @@ function afficherMenus(menus) {
 async function chargerMenus() {                             // "async" obligatoire pour avoir le droit d’utiliser await dans la fonction ;
     const prixMax = document.getElementById('prix-max').value;
     const prixMin = document.getElementById('prix-min').value;     
-    const reponse = await fetch(`/api/menus?prixMin=${prixMin}&prixMax=${prixMax}`); 
+    const nbrePersonnes = document.getElementById('nbre-personnes').value; 
+    const reponse = await fetch(`/api/menus?prixMin=${prixMin}&prixMax=${prixMax}&nbrePersonnes=${nbrePersonnes}`); 
     const menus = await reponse.json();                     //attends la réponse avant de passer à la ligne suivante ». Le serveur met quelques millisecondes à répondre, et sans await, la ligne suivante s’exécuterait trop tôt, avec rien dedans ;
     afficherMenus(menus);
 }
@@ -50,6 +51,8 @@ chargerMenus();     //l’affiche dans la console, pour vérifier.
 // à chaque fois que le visiteur tape dans le champ, on recharge les menus
 document.getElementById('prix-min').addEventListener('input', chargerMenus);
 document.getElementById('prix-max').addEventListener('input', chargerMenus);
+document.getElementById('nbre-personnes').addEventListener('input', chargerMenus);
+
 
 //addEventListener('input', ...) veut dire « écoute le champ, et à chaque modification, lance chargerMenus ». C’est ce qui rend le filtre instantané.
                     
