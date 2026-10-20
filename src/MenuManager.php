@@ -37,7 +37,7 @@ class MenuManager
     }
 
     // tous les menus, avec des filtres facultatifs
-    public function findByFiltres(?float $prixMin, ?float $prixMax, ?int $nbrePersonnes): array
+    public function findByFiltres(?float $prixMin, ?float $prixMax, ?int $nbrePersonnes, ?string $theme, ?string $regime): array
     {
         $sql = "
         SELECT menu.*, regime.libelle AS regime, theme.libelle AS theme
@@ -60,6 +60,14 @@ class MenuManager
             $sql .= " AND menu.nbre_personne_mini <= :nbrePersonnes";
             $parametres['nbrePersonnes'] = $nbrePersonnes;
         }
+        if ($theme !== null) {
+            $sql .= " AND theme.libelle = :theme";
+            $parametres['theme'] = $theme;
+        }
+        if ($regime !== null) {
+            $sql .= " AND regime.libelle = :regime";
+            $parametres['regime'] = $regime;
+        }
 
         $sql .= " ORDER BY menu.id_menu";
 
@@ -72,6 +80,18 @@ class MenuManager
             $menus[] = new Menu($ligne['id_menu'], $ligne['titre'], $ligne['description'], $ligne['prix_par_personne'], $ligne['conditions'], $ligne['stock'], $ligne['nbre_personne_mini'], $ligne['regime'], $ligne['theme']);
         }
         return $menus;
+    }
+
+    // la liste des thèmes, pour remplir la liste déroulante du filtre
+    public function findThemes(): array
+    {
+        $requete = $this->pdo->query("SELECT libelle FROM theme ORDER BY libelle");
+        return $requete->fetchAll(PDO::FETCH_COLUMN);
+    }
+    public function findRegimes(): array
+    {
+        $requete = $this->pdo->query("SELECT libelle FROM regime ORDER BY libelle");
+        return $requete->fetchAll(PDO::FETCH_COLUMN);
     }
 
     public function findById(int $id): ?Menu

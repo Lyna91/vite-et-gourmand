@@ -1,6 +1,8 @@
    <?php
     /** @var Menu[] $menus */
     /** @var string|null $erreur */
+    /** @var string[] $themes */
+    /** @var string[] $regimes */
     ?>
 
    <?php require __DIR__ . '/morceaux/header.php'; ?>
@@ -17,6 +19,24 @@
            <input type="number" id="prix-max" class="form-control" min="0" step="1">
            <label for="nbre-personnes" class="form-label">Nombre de personnes</label>
            <input type="number" id="nbre-personnes" class="form-control" min="1" step="1">
+           <div class="col-12 col-md-4">
+               <label for="theme" class="form-label">Thème</label>
+               <select id="theme" class="form-select">
+                   <option value="">Tous les thèmes</option>
+                   <?php foreach ($themes as $theme): ?>
+                       <option value="<?= htmlspecialchars($theme) ?>"><?= htmlspecialchars($theme) ?></option>
+                   <?php endforeach; ?>
+               </select>
+           </div>
+           <div class="col-12 col-md-4">
+               <label for="regime" class="form-label">Régime</label>
+               <select id="regime" class="form-select">
+                   <option value="">Tous les régimes</option>
+                   <?php foreach ($regimes as $regime): ?>
+                       <option value="<?= htmlspecialchars($regime) ?>"><?= htmlspecialchars($regime) ?></option>
+                   <?php endforeach; ?>
+               </select>
+           </div>
        </div>
    </form>
    <div class="row" id="liste-menus">>

@@ -23,7 +23,7 @@ function afficherMenus(menus) {
                     <div class="card-body">
                         <h2 class="card-title h5"> ${echapper(menu.titre)}</h2>
                         <p class="card-text">${echapper(menu.description)}</p>
-                        <p>À partir de ${menu.nbrePersonneMini} personnes</p>
+                        <p>À partir de ${menu.minimum} personnes</p>
                         <p><strong>${prix} € / personne</strong></p>
                         <a href="/menu?id=${menu.id}" class="btn btn-primary">Voir le détail</a>
                     </div>
@@ -41,17 +41,21 @@ async function chargerMenus() {                             // "async" obligatoi
     const prixMax = document.getElementById('prix-max').value;
     const prixMin = document.getElementById('prix-min').value;     
     const nbrePersonnes = document.getElementById('nbre-personnes').value; 
-    const reponse = await fetch(`/api/menus?prixMin=${prixMin}&prixMax=${prixMax}&nbrePersonnes=${nbrePersonnes}`); 
+    const theme = document.getElementById('theme').value;
+    const regime = document.getElementById('regime').value;
+    const reponse = await fetch(`/api/menus?prixMin=${prixMin}&prixMax=${prixMax}&nbrePersonnes=${nbrePersonnes}&theme=${encodeURIComponent(theme)}&regime=${encodeURIComponent(regime)}`); 
     const menus = await reponse.json();                     //attends la réponse avant de passer à la ligne suivante ». Le serveur met quelques millisecondes à répondre, et sans await, la ligne suivante s’exécuterait trop tôt, avec rien dedans ;
     afficherMenus(menus);
 }
 //reponse.json() : transforme le texte JSON en vrai tableau JavaScript, qu’on peut utiliser ;
-chargerMenus();     //l’affiche dans la console, pour vérifier.
+chargerMenus();    //affiche les cartes
 
 // à chaque fois que le visiteur tape dans le champ, on recharge les menus
 document.getElementById('prix-min').addEventListener('input', chargerMenus);
 document.getElementById('prix-max').addEventListener('input', chargerMenus);
 document.getElementById('nbre-personnes').addEventListener('input', chargerMenus);
+document.getElementById('theme').addEventListener('change', chargerMenus);
+document.getElementById('regime').addEventListener('change', chargerMenus);
 
 
 //addEventListener('input', ...) veut dire « écoute le champ, et à chaque modification, lance chargerMenus ». C’est ce qui rend le filtre instantané.
