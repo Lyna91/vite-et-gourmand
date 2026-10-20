@@ -67,9 +67,23 @@ class Menu
     {
         return $this->regime;
     }
-    
+
     public function getTheme(): string
     {
         return $this->theme;
+    }
+
+    // transforme le menu en tableau, pour json_encode
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'titre' => $this->titre,
+            'description' => $this->description,
+            'prix' => $this->prixParPersonne,
+            'minimum' => $this->nbrePersonneMini,
+            'regime' => $this->regime,
+            'theme' => $this->theme,
+        ];
     }
 }

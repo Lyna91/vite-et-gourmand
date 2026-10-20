@@ -55,4 +55,25 @@ class MenuController extends Controller
             'plats' => $plats,
         ]);
     }
+    // renvoie la liste des menus en JSON, pour le JavaScript (fetch)
+    public function apiListe(): void
+    {
+        header('Content-Type: application/json; charset=utf-8');
+
+        try {
+            $menuManager = new MenuManager(getPdo());
+            $menus = $menuManager->findAll();
+
+            $donnees = [];
+            foreach ($menus as $menu) {
+                $donnees[] = $menu->toArray();
+            }
+
+            echo json_encode($donnees, JSON_UNESCAPED_UNICODE);
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            http_response_code(500);
+            echo json_encode(['erreur' => 'Menus indisponibles'], JSON_UNESCAPED_UNICODE);
+        }
+    }
 }
