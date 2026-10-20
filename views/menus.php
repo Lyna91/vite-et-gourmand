@@ -9,6 +9,12 @@
    <?php if ($erreur): ?>
        <div class="alert alert-danger"><?= htmlspecialchars($erreur) ?></div>
    <?php endif; ?>
+   <form class="row g-3 mb-4">
+       <div class="col-12 col-md-4">
+           <label for="prix-max" class="form-label">Prix maximum par personne (€)</label>
+           <input type="number" id="prix-max" class="form-control" min="0" step="1">
+       </div>
+   </form>
    <div class="row" id="liste-menus">>
        <?php foreach ($menus as $menu): ?>
            <div class="col-12 col-md-6 col-lg-4 mb-4">
