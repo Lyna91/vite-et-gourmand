@@ -25,10 +25,23 @@ class PlatManager
 
         $plats = [];
         foreach ($lignes as $ligne) {
-            $plats[] = new Plat($ligne['id_plat'], $ligne['nom'], $ligne['type']);
+            $plats[] = new Plat($ligne['id_plat'], $ligne['nom'], $ligne['type'], $this->findAllergenes($ligne['id_plat']));
         }
-
         // renvoyer le tableau d'objets
         return $plats;
+    }
+
+    public function findAllergenes(int $idPlat): array
+    {
+        $requete = $this->pdo->prepare("
+        SELECT allergene.nom
+        FROM allergene
+        JOIN allergene_plat ON allergene.id_allergene = allergene_plat.id_allergene
+        WHERE allergene_plat.id_plat = :id_plat
+        ORDER BY allergene.nom
+    ");
+        $requete->execute(['id_plat' => $idPlat]);
+
+        return $requete->fetchAll(PDO::FETCH_COLUMN);
     }
 }
