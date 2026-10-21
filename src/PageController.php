@@ -33,7 +33,7 @@ class PageController extends Controller
 
     public function cgv(): void
     {
-        $titre = 'Conditions générales de Vente';
+        $titre = 'Conditions générales de vente';
 
         $this->afficher('cgv', [
             'titre' => $titre,
