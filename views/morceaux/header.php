@@ -43,4 +43,4 @@
             </div>
         </nav>
     </header>
-    <main>
+    <main class="conatiner py-4">
