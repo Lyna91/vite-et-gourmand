@@ -34,6 +34,7 @@ class MenuController extends Controller
         $id = (int) ($_GET['id'] ?? 0);
         $menu = null;
         $plats = [];
+        $images = [];
 
 
         try {
@@ -42,6 +43,8 @@ class MenuController extends Controller
             $menu = $menuManager->findById($id);
             $platManager = new PlatManager($pdo);
             $plats = $platManager->findByMenu($id);
+            $imageManager = new ImageManager($pdo);
+            $images = $imageManager->findByMenu($id);
         } catch (PDOException $e) {
             // base indisponible : $menu reste null, on affichera la page 404
         }
@@ -57,6 +60,7 @@ class MenuController extends Controller
             'titre' => $menu->getTitre(),
             'menu' => $menu,
             'plats' => $plats,
+            'images' => $images,
         ]);
     }
     // renvoie la liste des menus en JSON, pour le JavaScript (fetch)

@@ -16,6 +16,10 @@ require __DIR__ . '/../src/Horaire.php';
 
 require __DIR__ . '/../src/HoraireManager.php';
 
+require __DIR__ . '/../src/Image.php';
+
+require __DIR__ . '/../src/ImageManager.php';
+
 
 //controlleurs
 require __DIR__ . '/../src/Controller.php';
