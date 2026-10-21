@@ -2,14 +2,37 @@
 
 /** @var Menu $menu */
 /** @var Plat[] $plats */
+/** @var Image[] $images */
 require __DIR__ . '/morceaux/header.php';
 ?>
 
 <a href="/menus">Retour aux menus</a>
-
 <h1><?= htmlspecialchars($menu->getTitre()) ?></h1>
 
 <p><?= htmlspecialchars($menu->getDescription()) ?></p>
+<?php if (!empty($images)): ?>
+    <div id="galerie-menu" class="carousel slide mb-4" data-bs-ride="carousel">
+        <div class="carousel-inner rounded">
+            <?php foreach ($images as $index => $image): ?>
+                <div class="carousel-item <?= $index === 0 ? 'active' : '' ?>">
+                    <img src="/<?= htmlspecialchars($image->getChemin()) ?>"
+                         alt="<?= htmlspecialchars($image->getTexte()) ?>"
+                         class="d-block w-100"
+                         loading="lazy">
+                </div>
+            <?php endforeach; ?>
+        </div>
+
+        <button class="carousel-control-prev" type="button" data-bs-target="#galerie-menu" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Image précédente</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#galerie-menu" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Image suivante</span>
+        </button>
+    </div>
+<?php endif; ?>
 <p><?= number_format($menu->getPrixParPersonne(), 2, ',', ' ') ?> € / personne</p>
 <p><strong>Régime : </strong> <?= htmlspecialchars($menu->getRegime()) ?></p>
 <p><strong>Thème : </strong> <?= htmlspecialchars($menu->getTheme()) ?></p>
