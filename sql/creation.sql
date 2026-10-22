@@ -191,8 +191,8 @@ INSERT INTO menu (titre, description, conditions, stock, prix_par_personne, nbre
     ('Pour la vie', 'Un menu dédié aux amoureux du jour, composé avec amour', 'Commander six mois avant la date, à conserver au frais, prêt de matériel possible (voir CGV)', 450, 60.00, 50, 1, 1),
     ('Réveillon de la mer', 'Un Noël sous le signe de la mer et de la convivialité', 'Commander deux mois avant la date', 150, 35.00, 15, 2, 4),
     ('Réveillon magique', 'Un menu de Noël façon traditionnelle et familiale', 'Commander trois mois avant la date', 400, 25.00, 15, 2, 1),
-    ('Veg. Anniv', 'Un menu anniversaire pour les vegans', 'Commander 2 semaines avant la date', 200, 15.00, 10, 7, 3),
-    ('Bonne Continuation', 'Un menu pour souhaiter bonne route pour la deuxième vie', 'Commander trois semaines avant la date', 150, 30.00, 20, 8, 2);
+    ('Veg. Anniv', 'Un menu anniversaire pour les vegans', 'Commander 2 semaines avant la date', 200, 15.00, 10, 5, 3),
+    ('Bonne Continuation', 'Un menu pour souhaiter bonne route pour la deuxième vie', 'Commander trois semaines avant la date', 150, 30.00, 20, 6, 2);
 
 INSERT INTO allergene (nom) VALUES
     ('Oeufs'),

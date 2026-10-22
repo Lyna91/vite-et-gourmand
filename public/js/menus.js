@@ -12,7 +12,11 @@ function echapper(texte) {
 // fabrique une carte Bootstrap par menu, dans la zone #liste-menus
 function afficherMenus(menus) {
     const zone = document.getElementById('liste-menus');
-    zone.innerHTML = '';   // on vide la zone avant de redessiner
+    zone.innerHTML = '';
+    if (menus.length === 0) {
+    zone.innerHTML = '<p class="text-center py-5">Aucun menu ne correspond à vos critères pour le moment. Nos menus évoluent régulièrement, revenez bientôt !</p>';
+    return;
+}   // on vide la zone avant de redessiner
 
     for (const menu of menus) { //c’est le foreach du JavaScript
         const prix = menu.prix.toLocaleString('fr-FR', { minimumFractionDigits: 2 });
