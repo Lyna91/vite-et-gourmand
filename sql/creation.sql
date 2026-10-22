@@ -285,5 +285,3 @@ INSERT INTO image (chemin, texte_image, id_menu) VALUES
     ('images/menus/bonne-continuation-3.jpg', 'buffet pour un départ à la retraite, autre plan sur les produits', 5);
 
 
-
-    

@@ -8,9 +8,18 @@ require __DIR__ . '/../src/Menu.php';
 
 require __DIR__ . '/../src/MenuManager.php';
 
+require __DIR__ . '/../src/Plat.php';
+
+require __DIR__ . '/../src/PlatManager.php';
+
 require __DIR__ . '/../src/Horaire.php';
 
 require __DIR__ . '/../src/HoraireManager.php';
+
+require __DIR__ . '/../src/Image.php';
+
+require __DIR__ . '/../src/ImageManager.php';
+
 
 //controlleurs
 require __DIR__ . '/../src/Controller.php';
@@ -28,10 +37,18 @@ if ($chemin === '/') {
 } elseif ($chemin === '/menus') {
     $controller = new MenuController();
     $controller->liste();
-    
 } elseif ($chemin === '/menu') {
     $controller = new MenuController();
     $controller->detail();
+} elseif ($chemin === '/mentions-legales') {
+    $controller = new PageController();
+    $controller->mentionsLegales();
+} elseif ($chemin === '/cgv') {
+    $controller = new PageController();
+    $controller->cgv();
+} elseif ($chemin === '/api/menus') {
+    $controller = new MenuController();
+    $controller->apiListe();
 } else {
     $controller = new PageController();
     $controller->introuvable();
