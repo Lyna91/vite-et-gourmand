@@ -20,13 +20,14 @@ require __DIR__ . '/../src/Image.php';
 
 require __DIR__ . '/../src/ImageManager.php';
 
-
 //controlleurs
 require __DIR__ . '/../src/Controller.php';
 
 require __DIR__ . '/../src/MenuController.php';
 
 require __DIR__ . '/../src/PageController.php';
+
+require __DIR__ . '/../src/UtilisateurController.php';
 
 
 
@@ -49,6 +50,9 @@ if ($chemin === '/') {
 } elseif ($chemin === '/api/menus') {
     $controller = new MenuController();
     $controller->apiListe();
+} elseif ($chemin === '/inscription') {
+    $controller = new UtilisateurController();
+    $controller->inscription();
 } else {
     $controller = new PageController();
     $controller->introuvable();
