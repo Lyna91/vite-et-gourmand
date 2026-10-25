@@ -6,7 +6,7 @@ class UtilisateurController extends Controller
     {
 
         $erreurs = [];      // la liste des problèmes trouvés
-        $succes = false;    // passera à true si le compte est créé
+        $succes = isset($_GET['succes']); //Se lit : « c’est un succès si l’adresse contient ?succes=1 »
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $nom = trim($_POST['nom'] ?? '');
@@ -36,7 +36,7 @@ class UtilisateurController extends Controller
                 $erreurs[] = 'La ville est obligatoire.';
             }
             if (!preg_match('/^0[0-9]{9}$/', $telephone)) {
-                $erreurs[] = 'Le numéro de téléphone doit avoir 10 chiffres et commencer par 0**.** .';
+                $erreurs[] = 'Le numéro de téléphone doit avoir 10 chiffres et commencer par 0.';
             }
             if (!filter_var($mail, FILTER_VALIDATE_EMAIL)) {
                 $erreurs[] = "L'adresse e-mail n'est pas valide.";
@@ -47,6 +47,24 @@ class UtilisateurController extends Controller
             if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{10,}$/', $motDePasse)) {
                 $erreurs[] = 'Le mot de passe doit contenir au moins 10 caractères, dont une majuscule, une minuscule, un chiffre et un caractère spécial.';
             }
+            if (empty($erreurs)) {
+                try {
+                    // 1. le manager, qui parle à la base
+                    $utilisateurManager = new UtilisateurManager(getPdo());
+                    // mail déjà utilisé ? 
+                    if ($utilisateurManager->emailExiste($mail)) {
+                        $erreurs[] = 'Un compte est déjà existant avec cette adresse mail.';
+                    } else {
+                        //Sinon, on créée le compte
+                        $utilisateurManager->creer($nom, $prenom, $mail, $telephone, $adresse, $cp, $ville, $motDePasse);
+                        header('Location: /inscription?succes=1'); //dit au navigateur « va plutôt à cette adresse ». C’est une redirection ;
+                        exit; //arrête le PHP tout de suite : la redirection suffit, on n’affiche rien d’autre.
+                    }
+                } catch (PDOException $e) {
+                    error_log($e->getMessage());
+                    $erreurs[] = "L'inscription est momentanément indisponible, veuillez retenter plus tard.";
+                }
+            }
         }
 
         $this->afficher('inscription', [
@@ -56,3 +74,7 @@ class UtilisateurController extends Controller
         ]);
     }
 }
+
+
+//« S’il n’y a aucune erreur, je regarde dans la base si l’e-mail est déjà pris. Si oui, j’ajoute une erreur. 
+//Sinon, je crée le compte et je note que c’est réussi. Et si la base plante, j’affiche un message neutre. »

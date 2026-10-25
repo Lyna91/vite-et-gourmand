@@ -20,6 +20,9 @@ require __DIR__ . '/../src/Image.php';
 
 require __DIR__ . '/../src/ImageManager.php';
 
+require __DIR__ . '/../src/UtilisateurManager.php';
+
+
 //controlleurs
 require __DIR__ . '/../src/Controller.php';
 
