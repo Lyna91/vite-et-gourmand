@@ -1,5 +1,6 @@
 <?php
 
+session_start();
 //base de données
 require __DIR__ . '/../src/database.php'; // require insère le contenu d'un autre fichier, __DIR__ indique le chemin du dossier du fichier actuel
 
@@ -56,6 +57,12 @@ if ($chemin === '/') {
 } elseif ($chemin === '/inscription') {
     $controller = new UtilisateurController();
     $controller->inscription();
+} elseif ($chemin === '/connexion') {
+    $controller = new UtilisateurController();
+    $controller->connexion();
+} elseif ($chemin === '/deconnexion') {
+    $controller = new UtilisateurController();
+    $controller->deconnexion();
 } else {
     $controller = new PageController();
     $controller->introuvable();
