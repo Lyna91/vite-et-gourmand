@@ -11,6 +11,12 @@ RUN apt-get update && apt-get install -y libssl-dev pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
 
+# outils nécessaires à Composer pour décompresser les bibliothèques
+RUN apt-get update && apt-get install -y unzip && rm -rf /var/lib/apt/lists/*
+
+# Composer, copié depuis son image officielle
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
 #installe les outils dont il a besoin pour être compilé ;pecl install mongodb télécharge et compile l'extension (PECL est le « magasin » d'extensions PHP) ;
 # docker-php-ext-enable mongodb l'active ;
 # rm -rf /var/lib/apt/lists/* fait le ménage pour que l'image reste légère.
