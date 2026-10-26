@@ -60,6 +60,9 @@ if ($chemin === '/') {
 } elseif ($chemin === '/connexion') {
     $controller = new UtilisateurController();
     $controller->connexion();
+} elseif ($chemin === '/deconnexion') {
+    $controller = new UtilisateurController();
+    $controller->deconnexion();
 } else {
     $controller = new PageController();
     $controller->introuvable();

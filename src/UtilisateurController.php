@@ -119,6 +119,19 @@ class UtilisateurController extends Controller
             'erreurs' => $erreurs,
         ]);
     }
+
+    public function deconnexion(): void
+    {
+        $_SESSION = [];
+
+        session_destroy();
+
+        $this->afficher('accueil', [
+            'titre' => 'Accueil',
+        ]);
+        exit;
+
+    }
 }
 
 //« S’il n’y a aucune erreur, je regarde dans la base si l’e-mail est déjà pris. Si oui, j’ajoute une erreur. 
