@@ -1,6 +1,8 @@
 <?php
 
 session_start();
+
+require __DIR__ . '/../vendor/autoload.php';
 //base de données
 require __DIR__ . '/../src/database.php'; // require insère le contenu d'un autre fichier, __DIR__ indique le chemin du dossier du fichier actuel
 
@@ -33,6 +35,8 @@ require __DIR__ . '/../src/PageController.php';
 
 require __DIR__ . '/../src/UtilisateurController.php';
 
+require __DIR__ . '/../src/Mailer.php';
+
 
 
 $chemin = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -63,6 +67,9 @@ if ($chemin === '/') {
 } elseif ($chemin === '/deconnexion') {
     $controller = new UtilisateurController();
     $controller->deconnexion();
+} elseif ($chemin === '/contact') {
+    $controller = new PageController();
+    $controller->contact();
 } else {
     $controller = new PageController();
     $controller->introuvable();
