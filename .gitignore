@@ -1,2 +1,3 @@
-# Fichier des mots de passe : ne jamais l'envoyer sur GitHub
+# .env : Fichier des mots de passe : ne jamais l'envoyer sur GitHub / vendor/ : code des bibliotheques PHPmailer lourd à telecharger
 .env
+vendor/
