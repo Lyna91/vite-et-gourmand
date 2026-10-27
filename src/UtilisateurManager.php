@@ -49,4 +49,19 @@ class UtilisateurManager
         }
         return $ligne;
     }
+
+    // enregistre le jeton de réinitialisation, valable 1 heure
+    public function enregistrerJeton(int $idUtilisateur, string $jetonHache): void
+    {
+        $requete = $this->pdo->prepare("
+        UPDATE utilisateur
+        SET token_reinitialisation = :jeton,
+            token_expiration = DATE_ADD(NOW(), INTERVAL 1 HOUR)
+        WHERE id_utilisateur = :id
+        ");
+        $requete->execute([
+            'jeton' => $jetonHache,
+            'id' => $idUtilisateur,
+        ]);
+    }
 }

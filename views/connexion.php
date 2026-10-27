@@ -21,5 +21,6 @@
          <input type="password" id="motDePasse" name="motDePasse" class="form-control" required>
      </div>
      <button type="submit" class="btn btn-primary">Se connecter</button>
+     <p class="mt-3"><a href="/mot-de-passe-oublie">Mot de passe oublié ?</a></p>
  </form>
  <?php require __DIR__ . '/morceaux/footer.php'; ?>

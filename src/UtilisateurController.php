@@ -136,7 +136,47 @@ class UtilisateurController extends Controller
             'titre' => 'Accueil',
         ]);
         exit;
+    }
 
+    public function motDePasseOublie(): void
+    {
+
+        $erreurs = [];
+        $envoye = isset($_GET['envoye']);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $mail = trim($_POST['mail'] ?? '');
+
+            if (!filter_var($mail, FILTER_VALIDATE_EMAIL)) {
+                $erreurs[] = "L'adresse e-mail n'est pas valide.";
+            }
+
+            if (empty($erreurs)) {
+                try {
+                    $utilisateurManager = new UtilisateurManager(getPdo());
+                    $utilisateur = $utilisateurManager->trouverParMail($mail);
+
+                    if ($utilisateur !== null) {
+                        $jeton = bin2hex(random_bytes(32));
+                        $jetonHache = hash('sha256', $jeton);
+                        $utilisateurManager->enregistrerJeton($utilisateur['id_utilisateur'], $jetonHache);
+
+                        $lien = getenv('APP_URL') . '/reinitialisation?token=' . $jeton;
+                        $mailer = new Mailer();
+                        $mailer->envoyer($mail, 'Réinitialisation de votre mot de passe', "Bonjour,\n\nPour choisir un nouveau mot de passe, cliquez sur ce lien :\n$lien\n\nCe lien est valable 1 heure. Si vous n'avez rien demandé, ignorez ce message.\n\nVite & Gourmand");
+                    }
+                    header('Location: /mot-de-passe-oublie?envoye=1');
+                    exit;
+                } catch (PDOException $e) {
+                    error_log($e->getMessage());
+                    $erreurs[] = 'Le service est momentanément indisponible. Merci de réessayer plus tard.';
+                }
+            }
+        }
+        $this->afficher('mot-de-passe-oublie', [     // ← à remettre
+            'titre' => 'Mot de passe oublié',
+            'erreurs' => $erreurs,
+            'envoye' => $envoye,
+        ]);
     }
 }
 
