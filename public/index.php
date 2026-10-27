@@ -35,6 +35,8 @@ require __DIR__ . '/../src/PageController.php';
 
 require __DIR__ . '/../src/UtilisateurController.php';
 
+require __DIR__ . '/../src/CommandeController.php';
+
 require __DIR__ . '/../src/Mailer.php';
 
 
@@ -76,6 +78,9 @@ if ($chemin === '/') {
 } elseif ($chemin === '/reinitialisation') {
     $controller = new UtilisateurController();
     $controller->reinitialisation();
+} elseif ($chemin === '/commande') {
+    $controller = new CommandeController();
+    $controller->commande();
 } else {
     $controller = new PageController();
     $controller->introuvable();
