@@ -49,4 +49,53 @@ class UtilisateurManager
         }
         return $ligne;
     }
+
+    // enregistre le jeton de réinitialisation, valable 1 heure
+    public function enregistrerJeton(int $idUtilisateur, string $jetonHache): void
+    {
+        $requete = $this->pdo->prepare("
+        UPDATE utilisateur
+        SET token_reinitialisation = :jeton,
+            token_expiration = DATE_ADD(NOW(), INTERVAL 1 HOUR)
+        WHERE id_utilisateur = :id
+        ");
+        $requete->execute([
+            'jeton' => $jetonHache,
+            'id' => $idUtilisateur,
+        ]);
+    }
+
+    // renvoie le compte qui a ce jeton encore valide, ou null
+    public function trouverParJeton(string $jetonHache): ?array
+    {
+        $requete = $this->pdo->prepare("
+        SELECT id_utilisateur
+        FROM utilisateur
+        WHERE token_reinitialisation = :jeton
+          AND token_expiration > NOW()
+    ");
+        $requete->execute(['jeton' => $jetonHache]);
+        $ligne = $requete->fetch(PDO::FETCH_ASSOC);
+
+        if ($ligne === false) {
+            return null;
+        }
+        return $ligne;
+    }
+
+    // enregistre le nouveau mot de passe haché et efface le jeton (usage unique)
+    public function changerMotDePasse(int $idUtilisateur, string $motDePasse): void
+    {
+        $requete = $this->pdo->prepare("
+        UPDATE utilisateur
+        SET mot_de_passe = :mot_de_passe,
+            token_reinitialisation = NULL,
+            token_expiration = NULL
+        WHERE id_utilisateur = :id
+    ");
+        $requete->execute([
+            'mot_de_passe' => password_hash($motDePasse, PASSWORD_DEFAULT),
+            'id' => $idUtilisateur,
+        ]);
+    }
 }

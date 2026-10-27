@@ -70,6 +70,12 @@ if ($chemin === '/') {
 } elseif ($chemin === '/contact') {
     $controller = new PageController();
     $controller->contact();
+} elseif ($chemin === '/mot-de-passe-oublie') {
+    $controller = new UtilisateurController();
+    $controller->motDePasseOublie();
+} elseif ($chemin === '/reinitialisation') {
+    $controller = new UtilisateurController();
+    $controller->reinitialisation();
 } else {
     $controller = new PageController();
     $controller->introuvable();
