@@ -178,6 +178,42 @@ class UtilisateurController extends Controller
             'envoye' => $envoye,
         ]);
     }
+
+    public function reinitialisation(): void
+    {
+        $erreurs = [];
+        // le jeton arrive dans l'adresse (GET) ou dans le champ caché (POST)
+        $token = $_POST['token'] ?? $_GET['token'] ?? '';
+
+        $utilisateurManager = new UtilisateurManager(getPdo());
+        $utilisateur = $utilisateurManager->trouverParJeton(hash('sha256', $token));
+        $valide = ($utilisateur !== null);
+
+        if ($valide && $_SERVER['REQUEST_METHOD'] === 'POST') {
+            $motDePasse = $_POST['motDePasse'] ?? '';
+            $confirmation = $_POST['confirmation'] ?? '';
+
+            if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{10,}$/', $motDePasse)) {
+                $erreurs[] = 'Le mot de passe doit contenir au moins 10 caractères, dont une majuscule, une minuscule, un chiffre et un caractère spécial.';
+            }
+            if ($motDePasse !== $confirmation) {
+                $erreurs[] = 'Les 2 mots de passe sont différents.';
+            }
+
+            if (empty($erreurs)) {
+                $utilisateurManager->changerMotDePasse($utilisateur['id_utilisateur'], $motDePasse);
+                header('Location: /connexion');
+                exit;
+            }
+        }
+
+        $this->afficher('reinitialisation', [
+            'titre' => 'Nouveau mot de passe',
+            'erreurs' => $erreurs,
+            'valide' => $valide,
+            'token' => $token,
+        ]);
+    }
 }
 
 //« S’il n’y a aucune erreur, je regarde dans la base si l’e-mail est déjà pris. Si oui, j’ajoute une erreur. 
