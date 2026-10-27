@@ -57,6 +57,12 @@ class UtilisateurController extends Controller
                     } else {
                         //Sinon, on créée le compte
                         $utilisateurManager->creer($nom, $prenom, $mail, $telephone, $adresse, $cp, $ville, $motDePasse);
+                        $mailer = new Mailer();
+                        $mailer->envoyer(
+                            $mail,
+                            'Bienvenue chez Vite & Gourmand !',
+                            "Bonjour $prenom,\n\nVotre compte a bien été crée. Vous pouvez désormais vous connecter et passer des commandes de menu. \n\nA bientôt, \nJulie et José"
+                        );
                         header('Location: /inscription?succes=1'); //dit au navigateur « va plutôt à cette adresse ». C’est une redirection ;
                         exit; //arrête le PHP tout de suite : la redirection suffit, on n’affiche rien d’autre.
                     }
