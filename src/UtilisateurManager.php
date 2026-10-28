@@ -98,4 +98,20 @@ class UtilisateurManager
             'id' => $idUtilisateur,
         ]);
     }
+
+    public function trouverParId(int $idUtilisateur): ?array
+    {
+        $requete = $this->pdo->prepare("
+        SELECT id_utilisateur, nom, prenom, email, telephone, adresse, cp, ville
+        FROM utilisateur
+        WHERE id_utilisateur = :id_utilisateur
+        ");
+        $requete->execute(['id_utilisateur' => $idUtilisateur]);
+        $ligne = $requete->fetch(PDO::FETCH_ASSOC);
+
+        if ($ligne === false) {
+            return null;
+        }
+        return $ligne;
+    }
 }
