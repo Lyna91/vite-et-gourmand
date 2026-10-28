@@ -78,4 +78,5 @@ require __DIR__ . '/morceaux/header.php'; ?>
     </form>
 </div>
 
+<script src="/js/commande.js"></script>
 <?php require __DIR__ . '/morceaux/footer.php'; ?>
