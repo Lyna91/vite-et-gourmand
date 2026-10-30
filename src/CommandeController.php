@@ -9,7 +9,7 @@ class CommandeController extends Controller
             header('Location: /connexion');
             exit;
         }
-        $id = (int) ($_GET['menu'] ?? 0);
+        $id = (int) ($_POST['menu'] ?? $_GET['menu'] ?? 0);
         $menu = null;
         $utilisateur = null;
 
@@ -29,13 +29,36 @@ class CommandeController extends Controller
             ]);
             return;
         }
+
+        $erreurs = [];
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $adresse = trim($_POST['adresse'] ?? '');
+            if (empty($adresse)) {
+                $erreurs[] = "L'adresse est obligatoire.";
+            }
+            $ville = trim($_POST['ville'] ?? '');
+            if (empty($ville)) {
+                $erreurs[] = "La ville est obligatoire.";
+            }
+            $cp = trim($_POST['cp'] ?? '');
+            if (!preg_match('/^[0-9]{5}$/', $cp)) {
+                $erreurs[] = "Le code postal est incorrect";
+            }
+            $nombre = (int) ($_POST['nbre_personne'] ?? 0);
+            if ($nombre < $menu->getNbrePersonneMini()) {
+                $erreurs[] = "Ce menu est prévu pour au moins " . $menu->getNbrePersonneMini() . " personnes.";
+            }
+            $dateLivraison = trim($_POST['date_livraison'] ?? '');
+            if ($dateLivraison <= date('Y-m-d')) {
+                $erreurs[] = "La date doit être postérieure à aujourd'hui";
+            }
+        }
         $this->afficher('commande', [
             'titre' => 'Commander',
             'menu' => $menu,
-            'utilisateur' => $utilisateur
+            'utilisateur' => $utilisateur,
+            'erreurs' => $erreurs
         ]);
-
     }
-
-    
 }

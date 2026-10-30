@@ -2,6 +2,7 @@
 
 /** @var Menu $menu */
 /** @var array $utilisateur */
+/** @var array $erreurs */
 require __DIR__ . '/morceaux/header.php'; ?>
 
 <h1 class="text-center">Commande du menu <?= htmlspecialchars($menu->getTitre()) ?></h1>
@@ -14,6 +15,15 @@ require __DIR__ . '/morceaux/header.php'; ?>
 </div>
 <div>
     <form id="form-commande" method="post" action="/commande" data-prix="<?= $menu->getPrixParPersonne() ?>" data-mini="<?= $menu->getNbrePersonneMini() ?>">
+        <?php if (!empty($erreurs)): ?>
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    <?php foreach ($erreurs as $erreur): ?>
+                        <li><?= htmlspecialchars($erreur) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        <?php endif; ?>
         <h3 class="text-center">Remplissez vos informations</h3>
         <div class="mb-3">
             <input type="hidden" id="menu" name="menu" class="form-control" value="<?= htmlspecialchars($menu->getId()) ?>">
