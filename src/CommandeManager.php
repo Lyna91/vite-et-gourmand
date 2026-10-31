@@ -53,4 +53,20 @@ class CommandeManager
             throw $e;                       // et je signale l'erreur au contrôleur
         }
     }
+
+        public function trouverParUtilisateur(int $idUtilisateur): array
+    {
+        $requete = $this->pdo->prepare("
+            SELECT commande.id_commande, commande.numero_commande, commande.date_commande,
+                   commande.date_livraison, commande.heure_livraison, commande.nbre_personne,
+                   commande.prix_menu, commande.montant_reduction, commande.frais_livraison,
+                   menu.titre
+            FROM commande
+            JOIN menu ON commande.id_menu = menu.id_menu
+            WHERE commande.id_utilisateur = :id_utilisateur
+            ORDER BY commande.date_commande DESC, commande.id_commande DESC
+        ");
+        $requete->execute(['id_utilisateur' => $idUtilisateur]);
+        return $requete->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

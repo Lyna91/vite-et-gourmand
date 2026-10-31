@@ -35,23 +35,24 @@
                         <li class="nav-item">
                             <a class="nav-link" href="/contact">Contact</a>
                         </li>
-                        <li class="nav-item">
-                            <?php if (isset($_SESSION['id_utilisateur'])): ?>
-                        <li class="nav-item">
-                            <span class="navbar-text">Bonjour <?= htmlspecialchars($_SESSION['prenom']) ?></span>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/deconnexion">Déconnexion</a>
-                        </li>
-                    <?php else: ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/connexion">Connexion</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/inscription">Créer un compte</a>
-                        </li>
-                    <?php endif; ?>
-                    </li>
+                        <?php if (isset($_SESSION['id_utilisateur'])): ?>
+                            <li class="nav-item">
+                                <span class="navbar-text">Bonjour <?= htmlspecialchars($_SESSION['prenom']) ?></span>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/mes-commandes">Mes commandes</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/deconnexion">Déconnexion</a>
+                            </li>
+                        <?php else: ?>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/connexion">Connexion</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/inscription">Créer un compte</a>
+                            </li>
+                        <?php endif; ?>
                     </ul>
                 </div>
             </div>

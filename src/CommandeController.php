@@ -136,6 +136,21 @@ class CommandeController extends Controller
         $this->afficher('commande-confirmee', [
             'titre' => 'Commande confirmée',
         ]);
+    }
 
+    public function mesCommandes(): void
+    {
+        if (!isset($_SESSION['id_utilisateur'])) {
+            header('Location: /connexion');
+            exit;
+        }
+
+        $commandeManager = new CommandeManager(getPdo());
+        $commandes = $commandeManager->trouverParUtilisateur($_SESSION['id_utilisateur']);
+
+        $this->afficher('mes-commandes', [
+            'titre' => 'Mes commandes',
+            'commande' => $commandes
+        ]);
     }
 }
