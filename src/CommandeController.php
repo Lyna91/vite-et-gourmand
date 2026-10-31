@@ -70,9 +70,9 @@ class CommandeController extends Controller
             if (strtolower($ville) === 'bordeaux' && !in_array($cp, self::CODES_POSTAUX_BORDEAUX)) {
                 $erreurs[] = "Le code postal ne correspond à la ville de Bordeaux";
             }
-            /*if ($menu->getStock() < $nombre) {
+            if ($menu->getStock() < $nombre) {
                 $erreurs[] = "Il ne reste que " . $menu->getStock() . " menus disponibles.";
-            }*/
+            }
             if (empty($erreurs)) {
                 $totalMenus =  round($menu->getPrixParPersonne() * $nombre, 2);           //total menu égal au prix par personne * le nombre
                 $remise = 0;                                                    // pour la remise
@@ -103,7 +103,16 @@ class CommandeController extends Controller
                 try {
                     $commandeManager = new CommandeManager(getPdo());
                     $idCommande = $commandeManager->creer($commande);
-                    var_dump($idCommande);
+                    $message = "Bonjour " . $utilisateur['prenom'] . ",\n\n"
+                        . "Votre commande " . $numero . " a bien été prise en compte.\n"
+                        . "Menu : " . $menu->getTitre() . "\n"
+                        . "Livraison le " . $dateLivraison . " à " . $heureLivraison . "\n"
+                        . "Total : " . $total . " €\n\n"
+                        . "À bientôt,\nJulie et José";
+                    $mailer = new Mailer();
+                    $mailer->envoyer($utilisateur['email'], "Confirmation de votre commande " . $numero, $message);
+                    header('Location: /commande-confirmee');
+                    exit;
                 } catch (Exception $e) {
                     error_log($e->getMessage());
                     $erreurs[] = "Votre commande n'a pas pu être enregistrée. Veuillez réessayer.";
@@ -116,5 +125,17 @@ class CommandeController extends Controller
             'utilisateur' => $utilisateur,
             'erreurs' => $erreurs
         ]);
+    }
+
+    public function confirmation(): void
+    {
+        if (!isset($_SESSION['id_utilisateur'])) {
+            header('Location: /connexion');
+            exit;
+        }
+        $this->afficher('commande-confirmee', [
+            'titre' => 'Commande confirmée',
+        ]);
+
     }
 }

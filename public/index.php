@@ -85,6 +85,9 @@ if ($chemin === '/') {
 } elseif ($chemin === '/commande') {
     $controller = new CommandeController();
     $controller->commande();
+} elseif ($chemin === '/commande-confirmee') {
+    $controller = new CommandeController();
+    $controller->confirmation();
 } else {
     $controller = new PageController();
     $controller->introuvable();

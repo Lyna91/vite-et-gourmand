@@ -14,7 +14,7 @@ require __DIR__ . '/morceaux/header.php'; ?>
     <p><strong>Conditions : </strong><?= htmlspecialchars($menu->getConditions()) ?></p>
 </div>
 <div>
-    <form id="form-commande" method="post" action="/commande" novalidate id="form-commande" data-prix="<?= $menu->getPrixParPersonne() ?>" data-mini="<?= $menu->getNbrePersonneMini() ?>">
+    <form id="form-commande" method="post" action="/commande" data-prix="<?= $menu->getPrixParPersonne() ?>" data-mini="<?= $menu->getNbrePersonneMini() ?>">
         <?php if (!empty($erreurs)): ?>
             <div class="alert alert-danger">
                 <ul class="mb-0">

@@ -20,7 +20,8 @@
 </ul>
 <h2>4. Livraison</h2>
 <ul>
-    <li>En dehors de Bordeaux : 5 € + 0,59 € par kilomètre.</li>
+    <li>À Bordeaux : livraison gratuite.</li>
+    <li>En dehors de Bordeaux : 5 € + 0,59 € par kilomètre, selon la distance indiquée par le client.</li>
     <li>Le client indique l'adresse, la date, l'heure et le lieu de la prestation.</li>
 </ul>
 <h2>5. Paiement</h2>
