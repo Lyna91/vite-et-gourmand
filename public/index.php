@@ -1,6 +1,7 @@
 <?php
 
 session_start();
+date_default_timezone_set('Europe/Paris');
 
 require __DIR__ . '/../vendor/autoload.php';
 //base de données
@@ -25,6 +26,9 @@ require __DIR__ . '/../src/ImageManager.php';
 
 require __DIR__ . '/../src/UtilisateurManager.php';
 
+require __DIR__ . '/../src/CommandeManager.php';
+
+
 
 //controlleurs
 require __DIR__ . '/../src/Controller.php';
@@ -34,6 +38,8 @@ require __DIR__ . '/../src/MenuController.php';
 require __DIR__ . '/../src/PageController.php';
 
 require __DIR__ . '/../src/UtilisateurController.php';
+
+require __DIR__ . '/../src/CommandeController.php';
 
 require __DIR__ . '/../src/Mailer.php';
 
@@ -76,6 +82,12 @@ if ($chemin === '/') {
 } elseif ($chemin === '/reinitialisation') {
     $controller = new UtilisateurController();
     $controller->reinitialisation();
+} elseif ($chemin === '/commande') {
+    $controller = new CommandeController();
+    $controller->commande();
+} elseif ($chemin === '/commande-confirmee') {
+    $controller = new CommandeController();
+    $controller->confirmation();
 } else {
     $controller = new PageController();
     $controller->introuvable();
