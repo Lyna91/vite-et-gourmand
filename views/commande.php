@@ -14,7 +14,7 @@ require __DIR__ . '/morceaux/header.php'; ?>
     <p><strong>Conditions : </strong><?= htmlspecialchars($menu->getConditions()) ?></p>
 </div>
 <div>
-    <form id="form-commande" method="post" action="/commande" data-prix="<?= $menu->getPrixParPersonne() ?>" data-mini="<?= $menu->getNbrePersonneMini() ?>">
+    <form id="form-commande" method="post" action="/commande" novalidate id="form-commande" data-prix="<?= $menu->getPrixParPersonne() ?>" data-mini="<?= $menu->getNbrePersonneMini() ?>">
         <?php if (!empty($erreurs)): ?>
             <div class="alert alert-danger">
                 <ul class="mb-0">
@@ -49,33 +49,33 @@ require __DIR__ . '/morceaux/header.php'; ?>
         </div>
         <div class="mb-3">
             <label for="adresse" class="form-label">Adresse</label>
-            <input type="text" id="adresse" name="adresse" class="form-control" value="<?= htmlspecialchars($utilisateur['adresse']) ?>" required>
+            <input type="text" id="adresse" name="adresse" class="form-control" value="<?= htmlspecialchars($_POST['adresse'] ?? $utilisateur['adresse']) ?>" required>
         </div>
         <div class="mb-3">
             <label for="cp" class="form-label">Code Postal</label>
-            <input type="text" id="cp" name="cp" class="form-control" value="<?= htmlspecialchars($utilisateur['cp']) ?>" required>
+            <input type="text" id="cp" name="cp" class="form-control" value="<?= htmlspecialchars($_POST['cp'] ?? $utilisateur['cp']) ?>" required>
         </div>
         <div class="mb-3">
             <label for="ville" class="form-label">Ville</label>
-            <input type="text" id="ville" name="ville" class="form-control" value="<?= htmlspecialchars($utilisateur['ville']) ?>" required>
+            <input type="text" id="ville" name="ville" class="form-control" value="<?= htmlspecialchars($_POST['ville'] ?? $utilisateur['ville']) ?>" required>
         </div>
         <div class="mb-3">
             <label for="distance" class="form-label">Distance depuis Bordeaux (km), à laisser vide si vous êtes à Bordeaux</label>
-            <input type="number" step="0.1" min="0" id="distance" name="distance" class="form-control">
+            <input type="number" step="0.1" min="0" id="distance" name="distance" class="form-control" value="<?= htmlspecialchars($_POST['distance'] ?? '') ?>">
         </div>
         <div class="mb-3">
             <label for="date_livraison" class="form-label">Date de livraison</label>
-            <input type="date" id="date_livraison" name="date_livraison" class="form-control" required>
+            <input type="date" id="date_livraison" name="date_livraison" class="form-control" value="<?= htmlspecialchars($_POST['date_livraison'] ?? '') ?>" required>
         </div>
         <div class="mb-3">
             <label for="heure_livraison" class="form-label">Heure de livraison</label>
-            <input type="time" id="heure_livraison" name="heure_livraison" class="form-control" required>
+            <input type="time" id="heure_livraison" name="heure_livraison" class="form-control" value="<?= htmlspecialchars($_POST['heure_livraison'] ?? '') ?>" required>
         </div>
         <div class="mb-3">
             <label for="nbre_personne" class="form-label">Nombre de personnes</label>
-            <input type="number" min="<?= $menu->getNbrePersonneMini() ?>" id="nbre_personne" name="nbre_personne" class="form-control" value="<?= $menu->getNbrePersonneMini() ?>" required>
+            <input type="number" min="<?= $menu->getNbrePersonneMini() ?>" id="nbre_personne" name="nbre_personne" class="form-control" value="<?= htmlspecialchars($_POST['nbre_personne'] ?? $menu->getNbrePersonneMini()) ?>"" required>
         </div>
-        <div class="mb-3">
+        <div class=" mb-3">
             <h3 class="text-center">Détails du prix</h3>
         </div>
         <div class="mb-3">

@@ -2,6 +2,8 @@
 
 class CommandeController extends Controller
 {
+    private const CODES_POSTAUX_BORDEAUX = ['33000', '33100', '33200', '33300', '33800'];
+
     public function commande(): void
     {
         // 1. pas connecté → direction la connexion
@@ -20,7 +22,7 @@ class CommandeController extends Controller
             $utilisateurManager = new UtilisateurManager($pdo);
             $utilisateur = $utilisateurManager->trouverParId($_SESSION['id_utilisateur']);
         } catch (PDOException $e) {
-            // base indisponible : $menu reste null, affichage de la page 404
+            // base indisponible : $menu reste null, affichage de la page 404 'menu introuvable'
         }
         if ($menu === null) {
             http_response_code(404);
@@ -52,6 +54,20 @@ class CommandeController extends Controller
             $dateLivraison = trim($_POST['date_livraison'] ?? '');
             if ($dateLivraison <= date('Y-m-d')) {
                 $erreurs[] = "La date doit être postérieure à aujourd'hui";
+            }
+            $heureLivraison = trim($_POST['heure_livraison'] ?? '');
+            if (empty($heureLivraison)) {
+                $erreurs[] = "Veuillez indiquez une heure de livraison";
+            }
+            $distance = (float) ($_POST['distance'] ?? 0);
+            if (strtolower($ville) !== 'bordeaux' && $distance <= 0) {
+                $erreurs[] = "Vous êtes en dehors de Bordeaux : veuillez indiquer la distance en kilomètres pour calculer les frais de livraison.";
+            }
+            if (strtolower($ville) === 'bordeaux' && !in_array($cp, self::CODES_POSTAUX_BORDEAUX)) {
+                $erreurs[] = "Le code postal ne correspond à la ville de Bordeaux";
+            }
+            if ($menu->getStock() <= 0) {
+                $erreurs[] = "Ce menu n'est plus disponible.";
             }
         }
         $this->afficher('commande', [
