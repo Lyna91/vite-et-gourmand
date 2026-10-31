@@ -3,6 +3,10 @@
 class CommandeController extends Controller
 {
     private const CODES_POSTAUX_BORDEAUX = ['33000', '33100', '33200', '33300', '33800'];
+    private const TAUX_REMISE = 0.10;
+    private const SEUIL_REMISE = 5;
+    private const FRAIS_LIVRAISON = 5;
+    private const PRIX_KM = 0.59;
 
     public function commande(): void
     {
@@ -66,8 +70,44 @@ class CommandeController extends Controller
             if (strtolower($ville) === 'bordeaux' && !in_array($cp, self::CODES_POSTAUX_BORDEAUX)) {
                 $erreurs[] = "Le code postal ne correspond à la ville de Bordeaux";
             }
-            if ($menu->getStock() <= 0) {
-                $erreurs[] = "Ce menu n'est plus disponible.";
+            /*if ($menu->getStock() < $nombre) {
+                $erreurs[] = "Il ne reste que " . $menu->getStock() . " menus disponibles.";
+            }*/
+            if (empty($erreurs)) {
+                $totalMenus =  round($menu->getPrixParPersonne() * $nombre, 2);           //total menu égal au prix par personne * le nombre
+                $remise = 0;                                                    // pour la remise
+                if ($nombre >= $menu->getNbrePersonneMini() + self::SEUIL_REMISE) { //si le nombre est sup ou = au nbre de pers mini + nombre pour la remise (ici 5)
+                    $remise = round($totalMenus * self::TAUX_REMISE, 2);                  // la remise est = totalMenu * taux de remise (ici 10%)
+                }
+                $livraison = 0;                                                 // pour la livraison
+                if (strtolower($ville) !== 'bordeaux') {                        // si la ville n'est pas bordeaux
+                    $livraison = round(self::FRAIS_LIVRAISON + self::PRIX_KM * $distance, 2);
+                }
+                $total = round($totalMenus - $remise + $livraison, 2);
+                $numero = 'CMD-' . date('Ymd') . '-' . strtoupper(bin2hex(random_bytes(3)));
+                $commande = [
+                    'numero_commande' => $numero,
+                    'nbre_personne' => $nombre,
+                    'prix_menu' => $totalMenus,
+                    'date_commande' => date('Y-m-d'),
+                    'date_livraison' => $dateLivraison,
+                    'heure_livraison' => $heureLivraison,
+                    'adresse_livraison' => $adresse,
+                    'cp_livraison' => $cp,
+                    'ville_livraison' => $ville,
+                    'frais_livraison' => $livraison,
+                    'montant_reduction' => $remise,
+                    'id_utilisateur' => $_SESSION['id_utilisateur'],
+                    'id_menu' => $menu->getId(),
+                ];
+                try {
+                    $commandeManager = new CommandeManager(getPdo());
+                    $idCommande = $commandeManager->creer($commande);
+                    var_dump($idCommande);
+                } catch (Exception $e) {
+                    error_log($e->getMessage());
+                    $erreurs[] = "Votre commande n'a pas pu être enregistrée. Veuillez réessayer.";
+                }
             }
         }
         $this->afficher('commande', [

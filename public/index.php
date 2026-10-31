@@ -1,6 +1,7 @@
 <?php
 
 session_start();
+date_default_timezone_set('Europe/Paris');
 
 require __DIR__ . '/../vendor/autoload.php';
 //base de données
@@ -24,6 +25,9 @@ require __DIR__ . '/../src/Image.php';
 require __DIR__ . '/../src/ImageManager.php';
 
 require __DIR__ . '/../src/UtilisateurManager.php';
+
+require __DIR__ . '/../src/CommandeManager.php';
+
 
 
 //controlleurs
