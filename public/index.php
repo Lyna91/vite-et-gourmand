@@ -91,6 +91,9 @@ if ($chemin === '/') {
 } elseif ($chemin === '/mes-commandes') {
     $controller = new CommandeController();
     $controller->mesCommandes();
+} elseif ($chemin === '/commande/annuler') {
+    $controller = new CommandeController();
+    $controller->annuler();
 } else {
     $controller = new PageController();
     $controller->introuvable();

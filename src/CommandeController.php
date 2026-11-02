@@ -147,10 +147,38 @@ class CommandeController extends Controller
 
         $commandeManager = new CommandeManager(getPdo());
         $commandes = $commandeManager->trouverParUtilisateur($_SESSION['id_utilisateur']);
+        $annulee = isset($_GET['annulee']);
+        $erreur = isset($_GET['erreur']);
 
         $this->afficher('mes-commandes', [
             'titre' => 'Mes commandes',
-            'commande' => $commandes
+            'commandes' => $commandes,
+            'annulee' => $annulee,
+            'erreur' => $erreur,
         ]);
+    }
+
+    public function annuler(): void
+    {
+        if (!isset($_SESSION['id_utilisateur'])) {
+            header('Location: /connexion');
+            exit;
+        }
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: /mes-commandes');
+            exit;
+        }
+
+        $idCommande = (int) ($_POST['id_commande'] ?? 0);
+
+        $commandeManager = new CommandeManager(getPdo());
+        $annulee = $commandeManager->annuler($idCommande, $_SESSION['id_utilisateur']);
+
+        if ($annulee) {
+            header('Location: /mes-commandes?annulee=1');
+        } else {
+            header('Location: /mes-commandes?erreur=1');
+        }
+        exit;
     }
 }
