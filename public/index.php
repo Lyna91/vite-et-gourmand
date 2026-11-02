@@ -88,6 +88,18 @@ if ($chemin === '/') {
 } elseif ($chemin === '/commande-confirmee') {
     $controller = new CommandeController();
     $controller->confirmation();
+} elseif ($chemin === '/mes-commandes') {
+    $controller = new CommandeController();
+    $controller->mesCommandes();
+} elseif ($chemin === '/commande/annuler') {
+    $controller = new CommandeController();
+    $controller->annuler();
+} elseif ($chemin === '/commande/modifier') {
+    $controller = new CommandeController();
+    $controller->modifier();
+} elseif ($chemin === '/commande/suivi') {
+    $controller = new CommandeController();
+    $controller->suivi();
 } else {
     $controller = new PageController();
     $controller->introuvable();
