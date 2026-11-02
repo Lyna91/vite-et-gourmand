@@ -148,12 +148,14 @@ class CommandeController extends Controller
         $commandeManager = new CommandeManager(getPdo());
         $commandes = $commandeManager->trouverParUtilisateur($_SESSION['id_utilisateur']);
         $annulee = isset($_GET['annulee']);
+        $modifiee = isset($_GET['modifiee']);
         $erreur = isset($_GET['erreur']);
 
         $this->afficher('mes-commandes', [
             'titre' => 'Mes commandes',
             'commandes' => $commandes,
             'annulee' => $annulee,
+            'modifiee' => $modifiee,
             'erreur' => $erreur,
         ]);
     }
@@ -180,5 +182,121 @@ class CommandeController extends Controller
             header('Location: /mes-commandes?erreur=1');
         }
         exit;
+    }
+
+    public function modifier(): void
+    {
+        // 1. si pas connecté → retour à la page de connexion
+        if (!isset($_SESSION['id_utilisateur'])) {
+            header('Location: /connexion');
+            exit;
+        }
+
+        // 2. l'id de la commande (dans l'adresse, puis dans le champ caché)
+        $idCommande = (int) ($_POST['id_commande'] ?? $_GET['id'] ?? 0);
+
+        // 3. la commande (seulement si c'est la sienne)
+        $pdo = getPdo();
+        $commandeManager = new CommandeManager($pdo);
+        $commande = $commandeManager->trouverPourModification($idCommande, $_SESSION['id_utilisateur']);
+
+        // 4. introuvable ou plus modifiable
+        if ($commande === null || $commande['statut'] !== 'en attente') {
+            header('Location: /mes-commandes?erreur=1');
+            exit;
+        }
+
+        // 5. le menu de la commande
+        $menuManager = new MenuManager($pdo);
+        $menu = $menuManager->findById($commande['id_menu']);
+
+        $distance = '';
+        if ($commande['frais_livraison'] > 0) {
+            $distance = round(($commande['frais_livraison'] - self::FRAIS_LIVRAISON) / self::PRIX_KM, 1);
+        }
+
+        $erreurs = [];
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $adresse = trim($_POST['adresse'] ?? '');
+            if (empty($adresse)) {
+                $erreurs[] = "L'adresse est obligatoire.";
+            }
+            $ville = trim($_POST['ville'] ?? '');
+            if (empty($ville)) {
+                $erreurs[] = "La ville est obligatoire.";
+            }
+            $cp = trim($_POST['cp'] ?? '');
+            if (!preg_match('/^[0-9]{5}$/', $cp)) {
+                $erreurs[] = "Le code postal est incorrect";
+            }
+            $nombre = (int) ($_POST['nbre_personne'] ?? 0);
+            if ($nombre < $menu->getNbrePersonneMini()) {
+                $erreurs[] = "Ce menu est prévu pour au moins " . $menu->getNbrePersonneMini() . " personnes.";
+            }
+            $dateLivraison = trim($_POST['date_livraison'] ?? '');
+            if ($dateLivraison <= date('Y-m-d')) {
+                $erreurs[] = "La date doit être postérieure à aujourd'hui";
+            }
+            $heureLivraison = trim($_POST['heure_livraison'] ?? '');
+            if (empty($heureLivraison)) {
+                $erreurs[] = "Veuillez indiquer une heure de livraison";
+            }
+            $distance = (float) ($_POST['distance'] ?? 0);
+            if (strtolower($ville) !== 'bordeaux' && $distance <= 0) {
+                $erreurs[] = "Vous êtes en dehors de Bordeaux : veuillez indiquer la distance en kilomètres pour calculer les frais de livraison.";
+            }
+            if (strtolower($ville) === 'bordeaux' && !in_array($cp, self::CODES_POSTAUX_BORDEAUX)) {
+                $erreurs[] = "Le code postal ne correspond pas à la ville de Bordeaux";
+            }
+
+            // le stock : ses parts actuelles sont déjà retirées, on les compte comme disponibles pour lui
+            $stockDisponible = $menu->getStock() + $commande['nbre_personne'];
+            if ($stockDisponible < $nombre) {
+                $erreurs[] = "Il ne reste que " . $stockDisponible . " menus disponibles.";
+            }
+
+            if (empty($erreurs)) {
+                $totalMenus =  round($menu->getPrixParPersonne() * $nombre, 2);           //total menu égal au prix par personne * le nombre
+                $remise = 0;                                                    // pour la remise
+                if ($nombre >= $menu->getNbrePersonneMini() + self::SEUIL_REMISE) { //si le nombre est sup ou = au nbre de pers mini + nombre pour la remise (ici 5)
+                    $remise = round($totalMenus * self::TAUX_REMISE, 2);                  // la remise est = totalMenu * taux de remise (ici 10%)
+                }
+                $livraison = 0;                                                 // pour la livraison
+                if (strtolower($ville) !== 'bordeaux') {                        // si la ville n'est pas bordeaux
+                    $livraison = round(self::FRAIS_LIVRAISON + self::PRIX_KM * $distance, 2);
+                }
+                $total = round($totalMenus - $remise + $livraison, 2);
+
+                // 2. le tableau des données (9 clés, les mêmes noms que les cases vides de l'UPDATE)
+                $donnees = [
+                    'nbre_personne' => $nombre,
+                    'prix_menu' => $totalMenus,
+                    'date_livraison' => $dateLivraison,
+                    'heure_livraison' => $heureLivraison,
+                    'adresse_livraison' => $adresse,
+                    'cp_livraison' => $cp,
+                    'ville_livraison' => $ville,
+                    'frais_livraison' => $livraison,
+                    'montant_reduction' => $remise
+                ];
+
+                // 3. l'enregistrement
+                $modifiee = $commandeManager->modifier($idCommande, $_SESSION['id_utilisateur'], $donnees, (int) $commande['nbre_personne'], (int) $commande['id_menu']);
+                if ($modifiee) {
+                    header('Location: /mes-commandes?modifiee=1');
+                    exit;
+                }
+                $erreurs[] = "Votre commande n'a pas pu être modifiée. Veuillez réessayer.";
+            }
+        }
+        // l'affichage
+        $this->afficher('modifier-commande', [
+            'titre' => 'Modifier ma commande',
+            'commande' => $commande,
+            'menu' => $menu,
+            'erreurs' => $erreurs,
+            'distance' => $distance,
+        ]);
     }
 }

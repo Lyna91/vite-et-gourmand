@@ -2,6 +2,7 @@
 
 /** @var array $commandes */
 /** @var bool $annulee */
+/** @var bool $modifiee */
 /** @var bool $erreur */
 require __DIR__ . '/morceaux/header.php'; ?>
 <h1>Mes commandes</h1>
@@ -10,9 +11,14 @@ require __DIR__ . '/morceaux/header.php'; ?>
         <p>Votre commande a bien été annulée</p>
     </div>
 <?php endif; ?>
+<?php if ($modifiee): ?>
+    <div class="alert alert-success">
+        <p>Votre commande a bien été modifiée</p>
+    </div>
+<?php endif; ?>
 <?php if ($erreur): ?>
     <div class="alert alert-danger">
-        <p>Cette commande ne peut plus être annulée</p>
+        <p>Cette commande ne peut plus être modifiée ni annulée.</p>
     </div>
 <?php endif; ?>
 <?php if (empty($commandes)): ?>
@@ -43,6 +49,7 @@ require __DIR__ . '/morceaux/header.php'; ?>
                     <td><?= number_format($commande['prix_menu'] - $commande['montant_reduction'] + $commande['frais_livraison'], 2, ',', ' ') ?> €</td>
                     <td><?= htmlspecialchars($commande['statut']) ?></td>
                     <td>
+                        <a href="/commande/modifier?id=<?= $commande['id_commande'] ?>" class="btn btn-sm btn-outline-primary">Modifier</a>
                         <?php if ($commande['statut'] === 'en attente'): ?>
                             <form method="post" action="/commande/annuler">
                                 <input type="hidden" name="id_commande" value="<?= $commande['id_commande'] ?>">

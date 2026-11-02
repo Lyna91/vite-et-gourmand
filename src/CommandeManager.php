@@ -129,4 +129,76 @@ class CommandeManager
             return false;
         }
     }
+
+        public function modifier(int $idCommande, int $idUtilisateur, array $donnees, int $ancienNombre, int $idMenu): bool
+    {
+        $this->pdo->beginTransaction();
+        try {
+            // 1. mettre à jour la commande (seulement si c'est la sienne)
+            $requete = $this->pdo->prepare("
+                UPDATE commande
+                SET nbre_personne = :nbre_personne, prix_menu = :prix_menu,
+                    date_livraison = :date_livraison, heure_livraison = :heure_livraison,
+                    adresse_livraison = :adresse_livraison, cp_livraison = :cp_livraison,
+                    ville_livraison = :ville_livraison, frais_livraison = :frais_livraison,
+                    montant_reduction = :montant_reduction
+                WHERE id_commande = :id_commande AND id_utilisateur = :id_utilisateur
+            ");
+            $donnees['id_commande'] = $idCommande;
+            $donnees['id_utilisateur'] = $idUtilisateur;
+            $requete->execute($donnees);
+
+            // 2. ajuster le stock de la différence (seulement si le nombre a changé)
+            $difference = $donnees['nbre_personne'] - $ancienNombre;
+            if ($difference !== 0) {
+                $requete = $this->pdo->prepare("
+                    UPDATE menu SET stock = stock - :difference
+                    WHERE id_menu = :id_menu AND stock >= :difference_min
+                ");
+                $requete->execute([
+                    'difference' => $difference,
+                    'difference_min' => $difference,
+                    'id_menu' => $idMenu,
+                ]);
+                if ($requete->rowCount() === 0) {
+                    throw new Exception('Stock insuffisant pour modifier la commande.');
+                }
+            }
+
+            $this->pdo->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->pdo->rollBack();
+            error_log($e->getMessage());
+            return false;
+        }
+    }
+
+    public function trouverPourModification(int $idCommande, int $idUtilisateur): ?array
+    {
+        $requete = $this->pdo->prepare("
+            SELECT commande.id_commande, commande.numero_commande, commande.nbre_personne,
+            commande.date_livraison, commande.heure_livraison, commande.adresse_livraison,
+            commande.cp_livraison, commande.ville_livraison, commande.frais_livraison,
+            commande.id_menu,
+                (SELECT suivi_commande.statut
+                 FROM suivi_commande
+                 WHERE suivi_commande.id_commande = commande.id_commande
+                 ORDER BY suivi_commande.id_suivi_commande DESC
+                 LIMIT 1) AS statut
+            FROM commande
+            WHERE commande.id_commande = :id_commande
+              AND commande.id_utilisateur = :id_utilisateur
+        ");
+        $requete->execute([
+            'id_commande' => $idCommande,
+            'id_utilisateur' => $idUtilisateur,
+        ]);
+
+        $commande = $requete->fetch(PDO::FETCH_ASSOC);
+        if ($commande === false) {
+            return null;
+        }
+        return $commande;
+    }
 }
