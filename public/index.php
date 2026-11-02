@@ -97,6 +97,9 @@ if ($chemin === '/') {
 } elseif ($chemin === '/commande/modifier') {
     $controller = new CommandeController();
     $controller->modifier();
+} elseif ($chemin === '/commande/suivi') {
+    $controller = new CommandeController();
+    $controller->suivi();
 } else {
     $controller = new PageController();
     $controller->introuvable();

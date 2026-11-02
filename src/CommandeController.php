@@ -299,4 +299,37 @@ class CommandeController extends Controller
             'distance' => $distance,
         ]);
     }
+
+    public function suivi(): void
+    {
+        // 1. si pas connecté → retour à la page de connexion
+        if (!isset($_SESSION['id_utilisateur'])) {
+            header('Location: /connexion');
+            exit;
+        }
+
+        // 2. l'id de la commande (dans l'adresse, puis dans le champ caché)
+        $idCommande = (int) ($_POST['id_commande'] ?? $_GET['id'] ?? 0);
+
+        // 3. la commande (seulement si c'est la sienne)
+        $pdo = getPdo();
+        $commandeManager = new CommandeManager($pdo);
+        $commande = $commandeManager->trouverPourModification($idCommande, $_SESSION['id_utilisateur']);
+
+        // 4. introuvable ou plus modifiable
+        if ($commande === null || $commande['statut'] === 'en attente' || $commande['statut'] === 'annulée') {
+            header('Location: /mes-commandes?erreur=1');
+            exit;
+        }
+
+        // 5. l'historique des statuts
+        $statuts = $commandeManager->trouverSuivi($idCommande);
+
+        // 6. l'affichage
+        $this->afficher('suivi-commande', [
+            'titre' => 'Suivi de ma commande',
+            'commande' => $commande,
+            'statuts' => $statuts,
+        ]);
+    }
 }

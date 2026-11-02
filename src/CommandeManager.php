@@ -130,7 +130,7 @@ class CommandeManager
         }
     }
 
-        public function modifier(int $idCommande, int $idUtilisateur, array $donnees, int $ancienNombre, int $idMenu): bool
+    public function modifier(int $idCommande, int $idUtilisateur, array $donnees, int $ancienNombre, int $idMenu): bool
     {
         $this->pdo->beginTransaction();
         try {
@@ -200,5 +200,21 @@ class CommandeManager
             return null;
         }
         return $commande;
+    }
+
+    public function trouverSuivi(int $idCommande): array
+    {
+        $requete = $this->pdo->prepare("
+            SELECT statut, date_statut, heure_statut 
+            FROM suivi_commande
+            WHERE id_commande = :id_commande
+            ORDER BY id_suivi_commande ASC
+            ");
+
+        $requete->execute([
+            'id_commande' => $idCommande,
+        ]);
+
+        return $requete->fetchAll(PDO::FETCH_ASSOC);
     }
 }

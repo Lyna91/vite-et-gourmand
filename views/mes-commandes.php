@@ -49,8 +49,11 @@ require __DIR__ . '/morceaux/header.php'; ?>
                     <td><?= number_format($commande['prix_menu'] - $commande['montant_reduction'] + $commande['frais_livraison'], 2, ',', ' ') ?> €</td>
                     <td><?= htmlspecialchars($commande['statut']) ?></td>
                     <td>
-                        <a href="/commande/modifier?id=<?= $commande['id_commande'] ?>" class="btn btn-sm btn-outline-primary">Modifier</a>
+                        <?php if ($commande['statut'] !== 'en attente' && $commande['statut'] !== 'annulée'):?>
+                        <a href="/commande/suivi?id=<?= $commande['id_commande'] ?>" class="btn btn-sm btn-outline-secondary">Suivi</a>
+                        <?php endif; ?>
                         <?php if ($commande['statut'] === 'en attente'): ?>
+                        <a href="/commande/modifier?id=<?= $commande['id_commande'] ?>" class="btn btn-sm btn-outline-primary">Modifier</a>
                             <form method="post" action="/commande/annuler">
                                 <input type="hidden" name="id_commande" value="<?= $commande['id_commande'] ?>">
                                 <button type="submit" class="btn btn-sm btn-outline-danger">Annuler</button>
