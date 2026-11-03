@@ -106,7 +106,10 @@ if ($chemin === '/') {
 } elseif ($chemin === '/commande/avis') {
     $controller = new CommandeController();
     $controller->avis();
-} else {
+} elseif ($chemin === '/mes-infos') {
+    $controller = new UtilisateurController();
+    $controller->mesInfos();
+}else {
     $controller = new PageController();
     $controller->introuvable();
 }

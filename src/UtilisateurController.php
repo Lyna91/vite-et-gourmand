@@ -214,7 +214,81 @@ class UtilisateurController extends Controller
             'token' => $token,
         ]);
     }
-}
 
-//« S’il n’y a aucune erreur, je regarde dans la base si l’e-mail est déjà pris. Si oui, j’ajoute une erreur. 
-//Sinon, je crée le compte et je note que c’est réussi. Et si la base plante, j’affiche un message neutre. »
+    public function mesInfos(): void
+    {
+        if (!isset($_SESSION['id_utilisateur'])) {
+            header('Location: /connexion');
+            exit;
+        }
+
+        $succes = isset($_GET['succes']);
+
+        $utilisateurManager = new UtilisateurManager(getPdo());
+        $utilisateur = $utilisateurManager->trouverParId($_SESSION['id_utilisateur']);
+
+        $erreurs = [];
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            //les 7 champs (copie de l'inscription) sauf mdp et confirmation mdp
+            $nom = trim($_POST['nom'] ?? '');
+            $prenom = trim($_POST['prenom'] ?? '');
+            $mail = trim($_POST['mail'] ?? '');
+            $telephone = trim($_POST['telephone'] ?? '');
+            $adresse = trim($_POST['adresse'] ?? '');
+            $cp = trim($_POST['cp'] ?? '');
+            $ville = trim($_POST['ville'] ?? '');
+
+
+            if ($nom === '') {
+                $erreurs[] = 'Le nom est obligatoire.';
+            }
+            if ($prenom === '') {
+                $erreurs[] = 'Le prénom est obligatoire.';
+            }
+            if ($adresse === '') {
+                $erreurs[] = 'Une adresse est obligatoire.';
+            }
+            if (!preg_match('/^[0-9]{5}$/', $cp)) {
+                $erreurs[] = 'Le code postal est invalide, il doit comporter 5 chiffres.';
+            }
+            if ($ville === '') {
+                $erreurs[] = 'La ville est obligatoire.';
+            }
+            if (!preg_match('/^0[0-9]{9}$/', $telephone)) {
+                $erreurs[] = 'Le numéro de téléphone doit avoir 10 chiffres et commencer par 0.';
+            }
+            if (!filter_var($mail, FILTER_VALIDATE_EMAIL)) {
+                $erreurs[] = "L'adresse e-mail n'est pas valide.";
+            }
+            if (empty($erreurs) && $utilisateurManager->emailPrisParUnAutre($mail, $_SESSION['id_utilisateur'])) {
+                $erreurs[] = "Cette adresse e-mail est déjà utilisée.";
+            }
+
+            if (empty($erreurs)) {
+                $utilisateurManager->modifierInfos($_SESSION['id_utilisateur'], [
+                    'nom' => $nom,
+                    'prenom' => $prenom,
+                    'adresse' => $adresse,
+                    'cp' => $cp,
+                    'ville' => $ville,
+                    'telephone' => $telephone,
+                    'email' => $mail,
+                ]);
+
+                $_SESSION['prenom'] = $prenom;
+
+                header('Location: /mes-infos?succes=1');
+                exit;
+            }
+        }
+
+        $this->afficher('mes-infos', [
+            'succes' => $succes,
+            'titre' => 'Mes informations',
+            'utilisateur' => $utilisateur,
+            'erreurs' => $erreurs,
+
+        ]);
+    }
+}
