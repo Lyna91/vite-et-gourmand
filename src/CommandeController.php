@@ -149,6 +149,8 @@ class CommandeController extends Controller
         $commandes = $commandeManager->trouverParUtilisateur($_SESSION['id_utilisateur']);
         $annulee = isset($_GET['annulee']);
         $modifiee = isset($_GET['modifiee']);
+        $avis = isset($_GET['avis']);
+        $avisImpossible = isset($_GET['avis_impossible']);
         $erreur = isset($_GET['erreur']);
 
         $this->afficher('mes-commandes', [
@@ -156,6 +158,8 @@ class CommandeController extends Controller
             'commandes' => $commandes,
             'annulee' => $annulee,
             'modifiee' => $modifiee,
+            'avis' => $avis,
+            'avis_impossible' => $avisImpossible,
             'erreur' => $erreur,
         ]);
     }
@@ -330,6 +334,57 @@ class CommandeController extends Controller
             'titre' => 'Suivi de ma commande',
             'commande' => $commande,
             'statuts' => $statuts,
+        ]);
+    }
+
+    public function avis(): void
+    {
+        // 1. pas connecté
+        if (!isset($_SESSION['id_utilisateur'])) {
+            header('Location: /connexion');
+            exit;
+        }
+
+        // 2. l'id de la commande (dans l'adresse, puis dans le champ caché)
+        $idCommande = (int) ($_POST['id_commande'] ?? $_GET['id'] ?? 0);
+
+        // 3. la commande (seulement si c'est la sienne) + le manager des avis
+        $pdo = getPdo();
+        $commandeManager = new CommandeManager($pdo);
+        $commande = $commandeManager->trouverPourModification($idCommande, $_SESSION['id_utilisateur']);
+        $avisManager = new AvisManager($pdo);
+
+        // 4. introuvable, pas « terminée », ou avis déjà donné → refus
+        if ($commande === null || $commande['statut'] !== 'terminée' || $avisManager->existePourCommande($idCommande)) {
+            header('Location: /mes-commandes?avis_impossible=1');
+            exit;
+        }
+
+        $erreurs = [];
+
+        // 5. le formulaire est envoyé
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $note = (int) ($_POST['note'] ?? 0);
+            if ($note < 1 || $note > 5) {
+                $erreurs[] = "La note doit être comprise entre 1 et 5.";
+            }
+            $commentaire = trim($_POST['commentaire'] ?? '');
+            if (empty($commentaire)) {
+                $erreurs[] = "Le commentaire est obligatoire.";
+            }
+
+            if (empty($erreurs)) {
+                $avisManager->creer($idCommande, $note, $commentaire);
+                header('Location: /mes-commandes?avis=1');
+                exit;
+            }
+        }
+
+        // 6. l'affichage
+        $this->afficher('avis', [
+            'titre' => 'Donner mon avis',
+            'commande' => $commande,
+            'erreurs' => $erreurs,
         ]);
     }
 }

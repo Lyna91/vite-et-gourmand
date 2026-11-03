@@ -28,6 +28,9 @@ require __DIR__ . '/../src/UtilisateurManager.php';
 
 require __DIR__ . '/../src/CommandeManager.php';
 
+require __DIR__ . '/../src/AvisManager.php';
+
+
 
 
 //controlleurs
@@ -100,6 +103,9 @@ if ($chemin === '/') {
 } elseif ($chemin === '/commande/suivi') {
     $controller = new CommandeController();
     $controller->suivi();
+} elseif ($chemin === '/commande/avis') {
+    $controller = new CommandeController();
+    $controller->avis();
 } else {
     $controller = new PageController();
     $controller->introuvable();

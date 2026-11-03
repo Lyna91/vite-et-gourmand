@@ -4,6 +4,8 @@
 /** @var bool $annulee */
 /** @var bool $modifiee */
 /** @var bool $erreur */
+/** @var bool $avis */
+/** @var bool $avisImpossible */
 require __DIR__ . '/morceaux/header.php'; ?>
 <h1>Mes commandes</h1>
 <?php if ($annulee): ?>
@@ -15,6 +17,12 @@ require __DIR__ . '/morceaux/header.php'; ?>
     <div class="alert alert-success">
         <p>Votre commande a bien été modifiée</p>
     </div>
+<?php endif; ?>
+<?php if ($avis): ?>
+    <div class="alert alert-success">Merci pour votre avis ! Il sera publié après validation.</div>
+<?php endif; ?>
+<?php if ($avisImpossible): ?>
+    <div class="alert alert-danger">Vous ne pouvez pas donner d’avis sur cette commande.</div>
 <?php endif; ?>
 <?php if ($erreur): ?>
     <div class="alert alert-danger">
@@ -49,11 +57,14 @@ require __DIR__ . '/morceaux/header.php'; ?>
                     <td><?= number_format($commande['prix_menu'] - $commande['montant_reduction'] + $commande['frais_livraison'], 2, ',', ' ') ?> €</td>
                     <td><?= htmlspecialchars($commande['statut']) ?></td>
                     <td>
-                        <?php if ($commande['statut'] !== 'en attente' && $commande['statut'] !== 'annulée'):?>
-                        <a href="/commande/suivi?id=<?= $commande['id_commande'] ?>" class="btn btn-sm btn-outline-secondary">Suivi</a>
+                        <?php if ($commande['statut'] !== 'en attente' && $commande['statut'] !== 'annulée'): ?>
+                            <a href="/commande/suivi?id=<?= $commande['id_commande'] ?>" class="btn btn-sm btn-outline-secondary">Suivi</a>
+                        <?php endif; ?>
+                        <?php if ($commande['statut'] === 'terminée' && $commande['nb_avis'] == 0): ?>
+                            <a href="/commande/avis?id=<?= $commande['id_commande'] ?>" class="btn btn-sm btn-outline-secondary">Donner mon avis</a>
                         <?php endif; ?>
                         <?php if ($commande['statut'] === 'en attente'): ?>
-                        <a href="/commande/modifier?id=<?= $commande['id_commande'] ?>" class="btn btn-sm btn-outline-primary">Modifier</a>
+                            <a href="/commande/modifier?id=<?= $commande['id_commande'] ?>" class="btn btn-sm btn-outline-primary">Modifier</a>
                             <form method="post" action="/commande/annuler">
                                 <input type="hidden" name="id_commande" value="<?= $commande['id_commande'] ?>">
                                 <button type="submit" class="btn btn-sm btn-outline-danger">Annuler</button>
