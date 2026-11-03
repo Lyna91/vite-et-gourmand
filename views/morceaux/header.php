@@ -43,6 +43,9 @@
                                 <ul class="dropdown-menu dropdown-menu-end">
                                     <li><a class="dropdown-item" href="/mes-infos">Mes infos</a></li>
                                     <li><a class="dropdown-item" href="/mes-commandes">Mes commandes</a></li>
+                                    <?php if (in_array($_SESSION['id_role'], [1, 2])): ?>
+                                        <li><a class="dropdown-item" href="/employe">Espace employé</a></li>
+                                    <?php endif; ?>
                                     <li>
                                         <hr class="dropdown-divider">
                                     </li>
