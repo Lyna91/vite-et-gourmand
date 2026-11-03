@@ -159,7 +159,7 @@ class CommandeController extends Controller
             'annulee' => $annulee,
             'modifiee' => $modifiee,
             'avis' => $avis,
-            'avis_impossible' => $avisImpossible,
+            'avisImpossible' => $avisImpossible,
             'erreur' => $erreur,
         ]);
     }
