@@ -65,7 +65,10 @@ class CommandeManager
             FROM suivi_commande
             WHERE suivi_commande.id_commande = commande.id_commande
             ORDER BY suivi_commande.id_suivi_commande DESC
-            LIMIT 1) AS statut
+            LIMIT 1) AS statut,
+            (SELECT COUNT(*)
+            FROM avis
+            WHERE avis.id_commande = commande.id_commande) AS nb_avis
             FROM commande
             JOIN menu ON commande.id_menu = menu.id_menu
             WHERE commande.id_utilisateur = :id_utilisateur
