@@ -114,4 +114,23 @@ class UtilisateurManager
         }
         return $ligne;
     }
+
+    public function emailPrisParUnAutre(string $email, int $idUtilisateur): bool
+    {
+        $requete = $this->pdo->prepare("SELECT COUNT(*) FROM utilisateur WHERE email = :email AND id_utilisateur != :id_utilisateur");
+        $requete->execute(['email' => $email, 'id_utilisateur' => $idUtilisateur]);
+        return $requete->fetchColumn() > 0;
+    }
+
+    public function modifierInfos(int $idUtilisateur, array $donnees): void
+    {
+        $requete = $this->pdo->prepare("    
+        UPDATE utilisateur
+        SET nom = :nom, prenom = :prenom, email = :email, telephone = :telephone,
+        adresse = :adresse, cp = :cp, ville = :ville
+        WHERE id_utilisateur = :id_utilisateur");
+
+        $donnees['id_utilisateur'] = $idUtilisateur;
+        $requete->execute($donnees);
+    }
 }

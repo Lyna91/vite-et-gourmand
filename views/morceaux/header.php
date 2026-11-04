@@ -36,14 +36,21 @@
                             <a class="nav-link" href="/contact">Contact</a>
                         </li>
                         <?php if (isset($_SESSION['id_utilisateur'])): ?>
-                            <li class="nav-item">
-                                <span class="navbar-text">Bonjour <?= htmlspecialchars($_SESSION['prenom']) ?></span>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/mes-commandes">Mes commandes</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/deconnexion">Déconnexion</a>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Bonjour <?= htmlspecialchars($_SESSION['prenom']) ?>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" href="/mes-infos">Mes infos</a></li>
+                                    <li><a class="dropdown-item" href="/mes-commandes">Mes commandes</a></li>
+                                    <?php if (in_array($_SESSION['id_role'], [1, 2])): ?>
+                                        <li><a class="dropdown-item" href="/employe">Espace employé</a></li>
+                                    <?php endif; ?>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li><a class="dropdown-item" href="/deconnexion">Déconnexion</a></li>
+                                </ul>
                             </li>
                         <?php else: ?>
                             <li class="nav-item">

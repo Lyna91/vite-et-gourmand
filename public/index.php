@@ -44,6 +44,8 @@ require __DIR__ . '/../src/UtilisateurController.php';
 
 require __DIR__ . '/../src/CommandeController.php';
 
+require __DIR__ . '/../src/EmployeController.php';
+
 require __DIR__ . '/../src/Mailer.php';
 
 
@@ -106,6 +108,12 @@ if ($chemin === '/') {
 } elseif ($chemin === '/commande/avis') {
     $controller = new CommandeController();
     $controller->avis();
+} elseif ($chemin === '/mes-infos') {
+    $controller = new UtilisateurController();
+    $controller->mesInfos();
+} elseif ($chemin === '/employe') {
+    $controller = new EmployeController();
+    $controller->accueil();
 } else {
     $controller = new PageController();
     $controller->introuvable();
