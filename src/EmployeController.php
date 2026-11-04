@@ -6,8 +6,14 @@ class EmployeController extends Controller
     {
         $this->exigerRole([1, 2]);      // admin et employé seulement
 
+        $commandeManager = new CommandeManager(getPdo());
+        $commandes = $commandeManager->trouverToutes();
+
         $this->afficher('employe/accueil', [
             'titre' => 'Espace employé',
+            'commandes' => $commandes,
         ]);
     }
+
+
 }

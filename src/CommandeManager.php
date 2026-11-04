@@ -78,6 +78,29 @@ class CommandeManager
         return $requete->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function trouverToutes(): array
+    {
+        $requete = $this->pdo->prepare("
+            SELECT commande.id_commande, commande.numero_commande, commande.date_commande,
+                   commande.date_livraison, commande.heure_livraison, commande.nbre_personne,
+                   commande.prix_menu, commande.montant_reduction, commande.frais_livraison,
+                   menu.titre,
+                   utilisateur.nom, utilisateur.prenom,
+                   utilisateur.email, utilisateur.telephone,
+                   (SELECT suivi_commande.statut
+                    FROM suivi_commande
+                    WHERE suivi_commande.id_commande = commande.id_commande
+                    ORDER BY suivi_commande.id_suivi_commande DESC
+                    LIMIT 1) AS statut
+            FROM commande
+            JOIN menu ON commande.id_menu = menu.id_menu
+            JOIN utilisateur ON commande.id_utilisateur = utilisateur.id_utilisateur  
+            ORDER BY commande.date_livraison ASC
+        ");
+        $requete->execute();
+        return $requete->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function annuler(int $idCommande, int $idUtilisateur): bool
     {
         // A. la commande existe, c'est la sienne, et elle est encore « en attente » ?
