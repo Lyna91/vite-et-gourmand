@@ -263,4 +263,17 @@ class CommandeManager
 
         return $requete->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function ajouterStatut(int $idCommande, string $statut): void
+    {
+        $requete = $this->pdo->prepare("
+        INSERT INTO suivi_commande (statut, date_statut, heure_statut, id_commande)
+        VALUES (:statut, :date_statut, :heure_statut, :id_commande)");
+        $requete->execute([
+            'statut' => $statut,
+            'id_commande' => $idCommande,
+            'date_statut' => date('Y-m-d'),
+            'heure_statut' => date('H:i:s'),
+        ]);
+    }
 }
