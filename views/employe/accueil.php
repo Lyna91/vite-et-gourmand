@@ -4,7 +4,26 @@
 require __DIR__ . '/../morceaux/header.php'; ?>
 
 <h1>Espace employé</h1>
-
+<div class="row mb-3">
+    <div class="col-md-6">
+        <label for="filtre-statut" class="form-label">Statut</label>
+        <select id="filtre-statut" class="form-select">
+            <option value="">Tous les statuts</option>
+            <option value="en attente">En attente</option>
+            <option value="accepté">Accepté</option>
+            <option value="en préparation">En préparation</option>
+            <option value="en cours de livraison">En cours de livraison</option>
+            <option value="livré">Livré</option>
+            <option value="en attente du retour de matériel">En attente du retour de matériel</option>
+            <option value="terminée">Terminée</option>
+            <option value="annulée">Annulée</option>
+        </select>
+    </div>
+    <div class="col-md-6">
+        <label for="filtre-client" class="form-label">Client (nom, prénom ou e-mail)</label>
+        <input type="text" id="filtre-client" class="form-control">
+    </div>
+</div>
 <table class="table">
     <thead>
         <tr>
@@ -18,7 +37,7 @@ require __DIR__ . '/../morceaux/header.php'; ?>
             <th scope="col">Statut</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody id="liste-commandes">
         <?php foreach ($commandes as $commande): ?>
             <tr>
                 <td><?= htmlspecialchars($commande['numero_commande']) ?></td>
@@ -38,4 +57,6 @@ require __DIR__ . '/../morceaux/header.php'; ?>
         <?php endforeach; ?>
     </tbody>
 </table>
+
+<script src="/js/employe-commandes.js"></script>
 <?php require __DIR__ . '/../morceaux/footer.php'; ?>

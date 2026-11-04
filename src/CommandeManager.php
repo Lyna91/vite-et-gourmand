@@ -78,9 +78,9 @@ class CommandeManager
         return $requete->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function trouverToutes(): array
+    public function trouverToutes(string $statut = '', string $client = ''): array
     {
-        $requete = $this->pdo->prepare("
+        $sql = "
             SELECT commande.id_commande, commande.numero_commande, commande.date_commande,
                    commande.date_livraison, commande.heure_livraison, commande.nbre_personne,
                    commande.prix_menu, commande.montant_reduction, commande.frais_livraison,
@@ -94,10 +94,30 @@ class CommandeManager
                     LIMIT 1) AS statut
             FROM commande
             JOIN menu ON commande.id_menu = menu.id_menu
-            JOIN utilisateur ON commande.id_utilisateur = utilisateur.id_utilisateur  
-            ORDER BY commande.date_livraison ASC
-        ");
-        $requete->execute();
+            JOIN utilisateur ON commande.id_utilisateur = utilisateur.id_utilisateur
+            WHERE 1 = 1
+        ";
+        $params = [];
+
+        // filtre client : le nom, le prénom OU l'e-mail contient le texte tapé
+        if ($client !== '') {
+            $sql .= " AND (utilisateur.nom LIKE :client_nom
+                       OR utilisateur.prenom LIKE :client_prenom
+                       OR utilisateur.email LIKE :client_email)";
+            $params['client_nom'] = '%' . $client . '%';
+            $params['client_prenom'] = '%' . $client . '%';
+            $params['client_email'] = '%' . $client . '%';
+        }
+        // filtre statut : sur la colonne calculée « statut » → HAVING
+        if ($statut !== '') {
+            $sql .= " HAVING statut = :statut";
+            $params['statut'] = $statut;
+        }
+
+        $sql .= " ORDER BY commande.date_livraison ASC";
+
+        $requete = $this->pdo->prepare($sql);
+        $requete->execute($params);
         return $requete->fetchAll(PDO::FETCH_ASSOC);
     }
 
