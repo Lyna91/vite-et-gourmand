@@ -1,7 +1,18 @@
 <?php
 
+
 class EmployeController extends Controller
 {
+
+    private const STATUTS_AUTORISES = [
+        'accepté',
+        'en préparation',
+        'en cours de livraison',
+        'livré',
+        'en attente du retour de matériel',
+        'terminée',
+    ];
+
     public function accueil(): void
     {
         $this->exigerRole([1, 2]);      // admin et employé seulement
@@ -9,9 +20,15 @@ class EmployeController extends Controller
         $commandeManager = new CommandeManager(getPdo());
         $commandes = $commandeManager->trouverToutes();
 
+        $statutModifie = isset($_GET['statut_modifie']);
+        $erreur = isset($_GET['erreur']);
+
+
         $this->afficher('employe/accueil', [
             'titre' => 'Espace employé',
             'commandes' => $commandes,
+            'statutModifie' => $statutModifie,
+            'erreur' => $erreur,
         ]);
     }
 
@@ -31,5 +48,31 @@ class EmployeController extends Controller
         // 4. la réponse en JSON
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode($commandes, JSON_UNESCAPED_UNICODE);
+    }
+
+
+
+    public function changerStatut(): void
+    {
+
+        $this->exigerRole([1, 2]);
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: /employe');
+            exit;
+        }
+
+        $idCommande = (int) ($_POST['id_commande'] ?? 0);
+        $statut = trim($_POST['statut'] ?? '');
+
+        if (!in_array($statut, self::STATUTS_AUTORISES)) {
+            header('Location: /employe?erreur=1');
+            exit;
+        }
+
+        $commandeManager = new CommandeManager(getPdo());
+        $commandeManager->ajouterStatut($idCommande, $statut);
+
+        header('Location: /employe?statut_modifie=1');
     }
 }
