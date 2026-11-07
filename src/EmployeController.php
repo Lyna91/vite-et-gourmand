@@ -158,4 +158,18 @@ class EmployeController extends Controller
             'erreurs' => $erreurs,
         ]);
     }
+
+    public function avisEnAttente(): void
+    {
+        $this->exigerRole([1, 2]);      // admin et employé seulement
+
+        $avisManager = new AvisManager(getPdo());
+        $avis = $avisManager->trouverEnAttente();
+
+
+        $this->afficher('employe/avis', [
+            'titre' => 'Avis des clients',
+            'avis' => $avis,
+        ]);
+    }
 }
