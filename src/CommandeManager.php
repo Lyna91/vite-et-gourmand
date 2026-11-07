@@ -276,4 +276,68 @@ class CommandeManager
             'heure_statut' => date('H:i:s'),
         ]);
     }
+
+    public function annulerParEmploye(int $idCommande, string $modeContact, string $motif): bool
+    {
+        $requete = $this->pdo->prepare("
+            SELECT commande.id_menu, commande.nbre_personne,
+                (SELECT suivi_commande.statut
+                 FROM suivi_commande
+                 WHERE suivi_commande.id_commande = commande.id_commande
+                 ORDER BY suivi_commande.id_suivi_commande DESC
+                 LIMIT 1) AS statut
+            FROM commande
+            WHERE commande.id_commande = :id_commande
+        ");
+        $requete->execute([
+            'id_commande' => $idCommande,
+        ]);
+        $commande = $requete->fetch(PDO::FETCH_ASSOC);
+
+        if ($commande === false || $commande['statut'] === 'annulée' || $commande['statut'] === 'terminée') {
+            return false;
+        }
+
+        $this->pdo->beginTransaction();
+        try {
+            $requete = $this->pdo->prepare("
+            UPDATE commande SET mode_contact = :mode_contact, motif_annulation = :motif
+            WHERE id_commande = :id_commande");
+
+            $requete->execute([
+                'mode_contact' => $modeContact,
+                'motif' => $motif,
+                'id_commande' => $idCommande,
+            ]);
+
+
+            $requete = $this->pdo->prepare("
+                INSERT INTO suivi_commande (statut, date_statut, heure_statut, id_commande)
+                VALUES (:statut, :date_statut, :heure_statut, :id_commande)
+            ");
+
+            $requete->execute([
+                'statut' => 'annulée',
+                'date_statut' => date('Y-m-d'),
+                'heure_statut' => date('H:i:s'),
+                'id_commande' => $idCommande,
+            ]);
+
+            $requete = $this->pdo->prepare("
+            UPDATE menu SET stock = stock + :quantite
+            WHERE id_menu = :id_menu
+        ");
+            $requete->execute([
+                'quantite' => $commande['nbre_personne'],
+                'id_menu' => $commande['id_menu'],
+            ]);
+
+            $this->pdo->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->pdo->rollBack();
+            error_log($e->getMessage());
+            return false;
+        }
+    }
 }

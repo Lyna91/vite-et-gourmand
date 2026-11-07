@@ -120,7 +120,10 @@ if ($chemin === '/') {
 } elseif ($chemin === '/employe/statut') {
     $controller = new EmployeController();
     $controller->changerStatut();
-} else {
+} elseif ($chemin === '/employe/annuler') {
+    $controller = new EmployeController();
+    $controller->annulerCommande();
+}else {
     $controller = new PageController();
     $controller->introuvable();
 }

@@ -2,12 +2,16 @@
 
 /** @var array $commandes */
 /** @var bool $statutModifie */
+/** @var bool $annulee */
 /** @var bool $erreur */
 require __DIR__ . '/../morceaux/header.php'; ?>
 
 <h1>Espace employé</h1>
 <?php if ($statutModifie): ?>
     <div class="alert alert-success">Le statut de la commande a bien été mis à jour.</div>
+<?php endif; ?>
+<?php if ($annulee): ?>
+    <div class="alert alert-success">La commande a bien été annulée.</div>
 <?php endif; ?>
 <?php if ($erreur): ?>
     <div class="alert alert-danger">Ce statut n'est pas autorisé.</div>
@@ -71,6 +75,7 @@ require __DIR__ . '/../morceaux/header.php'; ?>
                             </select>
                             <button type="submit" class="btn btn-sm btn-primary">OK</button>
                         </form>
+                        <a href="/employe/annuler?id=<?= $commande['id_commande'] ?>" class="btn btn-sm btn-outline-danger mt-1">Annuler</a>
                     <?php endif; ?>
                 </td>
                 <td>
