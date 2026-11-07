@@ -78,6 +78,49 @@ class CommandeManager
         return $requete->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function trouverToutes(string $statut = '', string $client = ''): array
+    {
+        $sql = "
+            SELECT commande.id_commande, commande.numero_commande, commande.date_commande,
+                   commande.date_livraison, commande.heure_livraison, commande.nbre_personne,
+                   commande.prix_menu, commande.montant_reduction, commande.frais_livraison,
+                   menu.titre,
+                   utilisateur.nom, utilisateur.prenom,
+                   utilisateur.email, utilisateur.telephone,
+                   (SELECT suivi_commande.statut
+                    FROM suivi_commande
+                    WHERE suivi_commande.id_commande = commande.id_commande
+                    ORDER BY suivi_commande.id_suivi_commande DESC
+                    LIMIT 1) AS statut
+            FROM commande
+            JOIN menu ON commande.id_menu = menu.id_menu
+            JOIN utilisateur ON commande.id_utilisateur = utilisateur.id_utilisateur
+            WHERE 1 = 1
+        ";
+        $params = [];
+
+        // filtre client : le nom, le prénom OU l'e-mail contient le texte tapé
+        if ($client !== '') {
+            $sql .= " AND (utilisateur.nom LIKE :client_nom
+                       OR utilisateur.prenom LIKE :client_prenom
+                       OR utilisateur.email LIKE :client_email)";
+            $params['client_nom'] = '%' . $client . '%';
+            $params['client_prenom'] = '%' . $client . '%';
+            $params['client_email'] = '%' . $client . '%';
+        }
+        // filtre statut : sur la colonne calculée « statut » → HAVING
+        if ($statut !== '') {
+            $sql .= " HAVING statut = :statut";
+            $params['statut'] = $statut;
+        }
+
+        $sql .= " ORDER BY commande.date_livraison ASC";
+
+        $requete = $this->pdo->prepare($sql);
+        $requete->execute($params);
+        return $requete->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function annuler(int $idCommande, int $idUtilisateur): bool
     {
         // A. la commande existe, c'est la sienne, et elle est encore « en attente » ?
@@ -219,5 +262,101 @@ class CommandeManager
         ]);
 
         return $requete->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function ajouterStatut(int $idCommande, string $statut): void
+    {
+        $requete = $this->pdo->prepare("
+        INSERT INTO suivi_commande (statut, date_statut, heure_statut, id_commande)
+        VALUES (:statut, :date_statut, :heure_statut, :id_commande)");
+        $requete->execute([
+            'statut' => $statut,
+            'id_commande' => $idCommande,
+            'date_statut' => date('Y-m-d'),
+            'heure_statut' => date('H:i:s'),
+        ]);
+    }
+
+    public function annulerParEmploye(int $idCommande, string $modeContact, string $motif): bool
+    {
+        $requete = $this->pdo->prepare("
+            SELECT commande.id_menu, commande.nbre_personne,
+                (SELECT suivi_commande.statut
+                 FROM suivi_commande
+                 WHERE suivi_commande.id_commande = commande.id_commande
+                 ORDER BY suivi_commande.id_suivi_commande DESC
+                 LIMIT 1) AS statut
+            FROM commande
+            WHERE commande.id_commande = :id_commande
+        ");
+        $requete->execute([
+            'id_commande' => $idCommande,
+        ]);
+        $commande = $requete->fetch(PDO::FETCH_ASSOC);
+
+        if ($commande === false || $commande['statut'] === 'annulée' || $commande['statut'] === 'terminée') {
+            return false;
+        }
+
+        $this->pdo->beginTransaction();
+        try {
+            $requete = $this->pdo->prepare("
+            UPDATE commande SET mode_contact = :mode_contact, motif_annulation = :motif
+            WHERE id_commande = :id_commande");
+
+            $requete->execute([
+                'mode_contact' => $modeContact,
+                'motif' => $motif,
+                'id_commande' => $idCommande,
+            ]);
+
+
+            $requete = $this->pdo->prepare("
+                INSERT INTO suivi_commande (statut, date_statut, heure_statut, id_commande)
+                VALUES (:statut, :date_statut, :heure_statut, :id_commande)
+            ");
+
+            $requete->execute([
+                'statut' => 'annulée',
+                'date_statut' => date('Y-m-d'),
+                'heure_statut' => date('H:i:s'),
+                'id_commande' => $idCommande,
+            ]);
+
+            $requete = $this->pdo->prepare("
+            UPDATE menu SET stock = stock + :quantite
+            WHERE id_menu = :id_menu
+        ");
+            $requete->execute([
+                'quantite' => $commande['nbre_personne'],
+                'id_menu' => $commande['id_menu'],
+            ]);
+
+            $this->pdo->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->pdo->rollBack();
+            error_log($e->getMessage());
+            return false;
+        }
+    }
+
+    public function trouverClient(int $idCommande): ?array
+    {
+        $requete = $this->pdo->prepare("
+            SELECT commande.numero_commande, utilisateur.prenom, utilisateur.email
+            FROM commande
+            JOIN utilisateur ON commande.id_utilisateur = utilisateur.id_utilisateur
+            WHERE commande.id_commande = :id_commande
+        ");
+        $requete->execute([
+            'id_commande' => $idCommande,
+        ]);
+
+        $commande = $requete->fetch(PDO::FETCH_ASSOC);
+        if ($commande === false) {
+            return null;
+        }
+        return $commande;
     }
 }

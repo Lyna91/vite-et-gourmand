@@ -114,7 +114,16 @@ if ($chemin === '/') {
 } elseif ($chemin === '/employe') {
     $controller = new EmployeController();
     $controller->accueil();
-} else {
+} elseif ($chemin === '/api/commandes') {
+    $controller = new EmployeController();
+    $controller->apiCommandes();
+} elseif ($chemin === '/employe/statut') {
+    $controller = new EmployeController();
+    $controller->changerStatut();
+} elseif ($chemin === '/employe/annuler') {
+    $controller = new EmployeController();
+    $controller->annulerCommande();
+}else {
     $controller = new PageController();
     $controller->introuvable();
 }

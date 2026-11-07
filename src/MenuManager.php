@@ -113,4 +113,47 @@ class MenuManager
         }
         return new Menu($ligne['id_menu'], $ligne['titre'], $ligne['description'], $ligne['prix_par_personne'], $ligne['conditions'], $ligne['stock'], $ligne['nbre_personne_mini'], $ligne['regime'], $ligne['theme']);
     }
+
+    public function trouverToutes(string $statut = '', string $client = ''): array
+    {
+        $sql = "
+            SELECT commande.id_commande, commande.numero_commande, commande.date_commande,
+                   commande.date_livraison, commande.heure_livraison, commande.nbre_personne,
+                   commande.prix_menu, commande.montant_reduction, commande.frais_livraison,
+                   menu.titre,
+                   utilisateur.nom, utilisateur.prenom,
+                   utilisateur.email, utilisateur.telephone,
+                   (SELECT suivi_commande.statut
+                    FROM suivi_commande
+                    WHERE suivi_commande.id_commande = commande.id_commande
+                    ORDER BY suivi_commande.id_suivi_commande DESC
+                    LIMIT 1) AS statut
+            FROM commande
+            JOIN menu ON commande.id_menu = menu.id_menu
+            JOIN utilisateur ON commande.id_utilisateur = utilisateur.id_utilisateur
+            WHERE 1 = 1
+        ";
+        $params = [];
+
+        // filtre client : le nom, le prénom OU l'e-mail contient le texte tapé
+        if ($client !== '') {
+            $sql .= " AND (utilisateur.nom LIKE :client_nom
+                       OR utilisateur.prenom LIKE :client_prenom
+                       OR utilisateur.email LIKE :client_email)";
+            $params['client_nom'] = '%' . $client . '%';
+            $params['client_prenom'] = '%' . $client . '%';
+            $params['client_email'] = '%' . $client . '%';
+        }
+        // filtre statut : sur la colonne calculée « statut » → HAVING
+        if ($statut !== '') {
+            $sql .= " HAVING statut = :statut";
+            $params['statut'] = $statut;
+        }
+
+        $sql .= " ORDER BY commande.date_livraison ASC";
+
+        $requete = $this->pdo->prepare($sql);
+        $requete->execute($params);
+        return $requete->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

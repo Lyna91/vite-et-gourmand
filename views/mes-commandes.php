@@ -62,6 +62,8 @@ require __DIR__ . '/morceaux/header.php'; ?>
                         <?php endif; ?>
                         <?php if ($commande['statut'] === 'terminée' && $commande['nb_avis'] == 0): ?>
                             <a href="/commande/avis?id=<?= $commande['id_commande'] ?>" class="btn btn-sm btn-outline-secondary">Donner mon avis</a>
+                        <?php elseif ($commande['statut'] === 'terminée' && $commande['nb_avis'] > 0): ?>
+                            <span class="badge text-bg-success">Avis déjà donné ✓</span>
                         <?php endif; ?>
                         <?php if ($commande['statut'] === 'en attente'): ?>
                             <a href="/commande/modifier?id=<?= $commande['id_commande'] ?>" class="btn btn-sm btn-outline-primary">Modifier</a>
