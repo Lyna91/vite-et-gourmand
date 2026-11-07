@@ -31,4 +31,21 @@ class AvisManager
             'id_commande' => $idCommande,
         ]);
     }
+
+    public function trouverEnAttente(): array
+    {
+        $requete = $this->pdo->prepare("
+        SELECT avis.id_avis, avis.note, avis.description_avis, avis.date_avis,
+        commande.numero_commande, utilisateur.prenom
+        FROM avis
+        JOIN commande ON avis.id_commande = commande.id_commande
+        JOIN utilisateur ON commande.id_utilisateur = utilisateur.id_utilisateur
+        WHERE avis.statut = :statut
+        ORDER BY avis.date_avis ASC");
+
+        $requete->execute([
+            'statut' => 'en attente',
+        ]);
+        return $requete->fetchAll();
+    }
 }
