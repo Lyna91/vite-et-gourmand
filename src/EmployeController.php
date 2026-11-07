@@ -129,6 +129,22 @@ class EmployeController extends Controller
                 $commandeManager = new CommandeManager(getPdo());
                 $annulee = $commandeManager->annulerParEmploye($idCommande, $modeContact, $motif);
                 if ($annulee) {
+                    $client = $commandeManager->trouverClient($idCommande);
+
+                    if ($client !== null) {
+                        if ($modeContact === 'GSM') {
+                            $intro = "Suite à notre appel téléphonique";
+                        } else {
+                            $intro = "Suite à l'envoi de notre mail";
+                        }
+                        $message = "Bonjour " . $client['prenom'] . ",\n\n"
+                            . $intro . ", nous vous confirmons l'annulation de votre commande " . $client['numero_commande'] . ".\n"
+                            . "Pour rappel, le motif est le suivant : " . $motif . "\n\n"
+                            . "À bientôt,\nJulie et José";
+                        $mailer = new Mailer();
+                        $mailer->envoyer($client['email'], "Annulation de votre commande " . $client['numero_commande'], $message);
+                    }
+
                     header('Location: /employe?annulee=1');
                     exit;
                 }
