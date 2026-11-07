@@ -340,4 +340,23 @@ class CommandeManager
             return false;
         }
     }
+
+    public function trouverClient(int $idCommande): ?array
+    {
+        $requete = $this->pdo->prepare("
+            SELECT commande.numero_commande, utilisateur.prenom, utilisateur.email
+            FROM commande
+            JOIN utilisateur ON commande.id_utilisateur = utilisateur.id_utilisateur
+            WHERE commande.id_commande = :id_commande
+        ");
+        $requete->execute([
+            'id_commande' => $idCommande,
+        ]);
+
+        $commande = $requete->fetch(PDO::FETCH_ASSOC);
+        if ($commande === false) {
+            return null;
+        }
+        return $commande;
+    }
 }
