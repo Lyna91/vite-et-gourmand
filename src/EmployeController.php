@@ -13,6 +13,8 @@ class EmployeController extends Controller
         'terminée',
     ];
 
+    private const STATUTS_AVIS = ['validé', 'refusé'];
+
     private const MODES_CONTACT = ['GSM', 'mail'];
 
     public function accueil(): void
@@ -91,10 +93,10 @@ class EmployeController extends Controller
                     . "Vous pouvez dès à présent vous connecter pour donner votre avis sur votre commande :\n"
                     . $lien . "\n\n"
                     . "À bientôt,\nJulie et José";
-                $mailer->envoyer($client['email'], "votre commande" . $client['numero_commande'] . "est terminée", $message);
+                $mailer->envoyer($client['email'], "Votre commande " . $client['numero_commande'] . " est terminée", $message);
             } elseif ($statut === 'en attente du retour de matériel') {
                 $message = "Bonjour " . $client['prenom'] . ",\n\n"
-                    . "Nous attendons le retour du matériel prêter pour la commande" . $client["numero_commande"] . ".\n"
+                    . "Nous attendons le retour du matériel prêté pour la commande" . $client["numero_commande"] . ".\n"
                     . "Sans restitution sous 10 jours ouvrés, un montant de 600 € vous sera facturé, conformément à nos conditions générales de vente.\n"
                     . "Pour rendre le matériel, merci de prendre contact avec nous :\n"
                     . $lienContact . "\n\n"
@@ -157,5 +159,50 @@ class EmployeController extends Controller
             'idCommande' => $idCommande,
             'erreurs' => $erreurs,
         ]);
+    }
+
+    public function avisEnAttente(): void
+    {
+        $this->exigerRole([1, 2]);      // admin et employé seulement
+
+        $avisManager = new AvisManager(getPdo());
+        $avis = $avisManager->trouverEnAttente();
+
+        $traite = isset($_GET['traite']);
+        $erreur = isset($_GET['erreur']);
+
+        $this->afficher('employe/avis', [
+            'titre' => 'Avis des clients',
+            'avis' => $avis,
+            'traite' => $traite,
+            'erreur' => $erreur,
+        ]);
+    }
+
+    public function traiterAvis(): void
+    {
+        $this->exigerRole([1, 2]);
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: /employe/avis');
+            exit;
+        }
+
+        $idAvis = (int) ($_POST['id_avis'] ?? 0);
+        $statut = trim($_POST['statut'] ?? '');
+
+        if (!in_array($statut, self::STATUTS_AVIS)) {
+            header('Location: /employe/avis?erreur=1');
+            exit;
+        }
+
+        $avisManager = new AvisManager(getPdo());
+
+        if ($avisManager->changerStatut($idAvis, $statut)) {
+            header('Location: /employe/avis?traite=1');
+        } else {
+            header('Location: /employe/avis?erreur=1');
+        }
+        exit;
     }
 }

@@ -9,8 +9,12 @@ class PageController extends Controller
         // 1. préparer les données
         $titre = 'Accueil';
 
+        $avisManager = new AvisManager(getPdo());
+        $avisValides = $avisManager->trouverValides();
+
         $this->afficher('accueil', [
             'titre' => $titre,
+            'avisValides' => $avisValides,
         ]);
     }
 

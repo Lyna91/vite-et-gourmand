@@ -123,7 +123,13 @@ if ($chemin === '/') {
 } elseif ($chemin === '/employe/annuler') {
     $controller = new EmployeController();
     $controller->annulerCommande();
-}else {
+} elseif ($chemin === '/employe/avis') {
+    $controller = new EmployeController();
+    $controller->avisEnAttente();
+} elseif ($chemin === '/employe/avis/traiter') {
+    $controller = new EmployeController();
+    $controller->traiterAvis();
+} else {
     $controller = new PageController();
     $controller->introuvable();
 }

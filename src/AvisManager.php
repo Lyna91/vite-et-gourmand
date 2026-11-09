@@ -31,4 +31,54 @@ class AvisManager
             'id_commande' => $idCommande,
         ]);
     }
+
+    public function trouverEnAttente(): array
+    {
+        $requete = $this->pdo->prepare("
+        SELECT avis.id_avis, avis.note, avis.description_avis, avis.date_avis,
+        commande.numero_commande, utilisateur.prenom
+        FROM avis
+        JOIN commande ON avis.id_commande = commande.id_commande
+        JOIN utilisateur ON commande.id_utilisateur = utilisateur.id_utilisateur
+        WHERE avis.statut = :statut
+        ORDER BY avis.date_avis ASC");
+
+        $requete->execute([
+            'statut' => 'en attente',
+        ]);
+        return $requete->fetchAll();
+    }
+
+    public function changerStatut(int $idAvis, string $statut): bool
+    {
+        $requete = $this->pdo->prepare("
+        UPDATE avis
+        SET statut = :statut
+        WHERE id_avis = :id_avis
+        AND statut = 'en attente'");
+
+        $requete->execute([
+            'statut' => $statut,
+            'id_avis' => $idAvis,
+        ]);
+
+        return $requete->rowCount() > 0;
+    }
+
+    public function trouverValides(): array 
+    {
+        $requete = $this->pdo->prepare("
+        SELECT avis.note, avis.description_avis, avis.date_avis, utilisateur.prenom
+        FROM avis
+        JOIN commande ON avis.id_commande = commande.id_commande
+        JOIN utilisateur ON commande.id_utilisateur = utilisateur.id_utilisateur
+        WHERE avis.statut = :statut
+        ORDER BY avis.date_avis DESC
+        LIMIT 6");
+
+        $requete->execute([
+            'statut' => 'validé',
+        ]);
+        return $requete->fetchAll();
+    }
 }
