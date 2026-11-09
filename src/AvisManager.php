@@ -48,4 +48,20 @@ class AvisManager
         ]);
         return $requete->fetchAll();
     }
+
+    public function changerStatut(int $idAvis, string $statut): bool
+    {
+        $requete = $this->pdo->prepare("
+        UPDATE avis
+        SET statut = :statut
+        WHERE id_avis = :id_avis
+        AND statut = 'en attente'");
+
+        $requete->execute([
+            'statut' => $statut,
+            'id_avis' => $idAvis,
+        ]);
+
+        return $requete->rowCount() > 0;
+    }
 }
