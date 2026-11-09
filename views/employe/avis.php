@@ -27,4 +27,5 @@
         </tbody>
     </table>
 <?php endif ?>
+<a href="../employe">Retour aux commandes</a>
 <?php require __DIR__ . '/../morceaux/footer.php'; ?>
