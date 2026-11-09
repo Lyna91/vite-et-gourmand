@@ -132,6 +132,9 @@ if ($chemin === '/') {
 } elseif ($chemin === '/employe/menus') {
     $controller = new EmployeController();
     $controller->menus();
+} elseif ($chemin === '/employe/menus/creer') {
+    $controller = new EmployeController();
+    $controller->creerMenu();
 } else {
     $controller = new PageController();
     $controller->introuvable();

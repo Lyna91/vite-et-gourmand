@@ -113,4 +113,19 @@ class MenuManager
         }
         return new Menu($ligne['id_menu'], $ligne['titre'], $ligne['description'], $ligne['prix_par_personne'], $ligne['conditions'], $ligne['stock'], $ligne['nbre_personne_mini'], $ligne['regime'], $ligne['theme']);
     }
+
+    public function creer(array $donnees): int
+    {
+        $requete = $this->pdo->prepare(
+            "INSERT INTO menu (titre, description, conditions, stock,
+                  prix_par_personne, nbre_personne_mini, id_regime, id_theme)
+            VALUES (:titre, :description, :conditions, :stock, :prix_par_personne,
+            :nbre_personne_mini, :id_regime, :id_theme)
+        "
+        );
+
+        $requete->execute($donnees);
+
+        return (int) $this->pdo->lastInsertId();
+    }
 }

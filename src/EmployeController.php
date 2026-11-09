@@ -218,4 +218,17 @@ class EmployeController extends Controller
             'menus' => $menus,
         ]);
     }
+
+    public function creerMenu(): void
+{
+    $this->exigerRole([1, 2]);
+
+    $menuManager = new MenuManager(getPdo());
+
+    $this->afficher('employe/creer-menu', [
+        'titre' => 'Créer un menu',
+        'themes' => $menuManager->findThemes(),
+        'regimes' => $menuManager->findRegimes(),
+    ]);
+}
 }
