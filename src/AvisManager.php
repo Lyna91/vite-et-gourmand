@@ -64,4 +64,21 @@ class AvisManager
 
         return $requete->rowCount() > 0;
     }
+
+    public function trouverValides(): array 
+    {
+        $requete = $this->pdo->prepare("
+        SELECT avis.note, avis.description_avis, avis.date_avis, utilisateur.prenom
+        FROM avis
+        JOIN commande ON avis.id_commande = commande.id_commande
+        JOIN utilisateur ON commande.id_utilisateur = utilisateur.id_utilisateur
+        WHERE avis.statut = :statut
+        ORDER BY avis.date_avis DESC
+        LIMIT 6");
+
+        $requete->execute([
+            'statut' => 'validé',
+        ]);
+        return $requete->fetchAll();
+    }
 }
