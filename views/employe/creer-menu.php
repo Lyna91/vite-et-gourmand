@@ -1,21 +1,28 @@
-<?php require __DIR__ . '/../morceaux/header.php'; ?>
+<?php
 
-<form method="post"  action="/employe/annuler">
-    <input type="hidden" name="id_commande" value="<?= htmlspecialchars($idCommande) ?>">
-    <div class="mb-3">
-        <label for="mode_contact" class="form-label">Mode de contact</label>
-        <select id="mode_contact" name="mode_contact" class="form-select" required>
-            <option value="">Choisissez</option>
-            <option value="GSM">Par téléphone</option>
-            <option value="mail">Par mail</option>
+/** @var string[] $themes */
+/** @var string[] $regimes */
+require __DIR__ . '/../morceaux/header.php'; ?>
+
+<form method="post" action="/employe/menus/creer">
+    <div class="col-12 col-md-4">
+        <label for="theme" class="form-label">Thème</label>
+        <select id="theme" name="id_theme" class="form-select">
+            <option value="">Tous les thèmes</option>
+            <?php foreach ($themes as $theme): ?>
+                <option value="<?= htmlspecialchars($theme) ?>"><?= htmlspecialchars($theme) ?></option>
+            <?php endforeach; ?>
         </select>
     </div>
-    <div class="mb-3">
-        <label for="motif" class="form-label">Motif de l'annulation</label>
-        <textarea id="motif" name="motif" class="form-control" rows="4" required><?= htmlspecialchars($_POST['motif'] ?? '') ?></textarea>
-        <button type="submit" class="btn btn-danger">Confirmer l'annulation</button>
+    <div class="col-12 col-md-4">
+        <label for="regime" class="form-label">Régime</label>
+        <select id="regime" name="id_regime" class="form-select">
+            <option value="">Tous les régimes</option>
+            <?php foreach ($regimes as $regime): ?>
+                <option value="<?= htmlspecialchars($regime) ?>"><?= htmlspecialchars($regime) ?></option>
+            <?php endforeach; ?>
+        </select>
     </div>
-
 </form>
 
 
