@@ -205,4 +205,17 @@ class EmployeController extends Controller
         }
         exit;
     }
+
+    public function menus(): void
+    {
+        $this->exigerRole([1, 2]);
+
+        $menuManager = new MenuManager(getPdo());
+        $menus = $menuManager->findAll();
+
+        $this->afficher('employe/menus', [
+            'titre' => 'Gérer les menus',
+            'menus' => $menus,
+        ]);
+    }
 }
