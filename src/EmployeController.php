@@ -217,6 +217,7 @@ class EmployeController extends Controller
             'titre' => 'Gérer les menus',
             'menus' => $menus,
             'cree' => isset($_GET['cree']),
+            'modifie' => isset($_GET['modifie']),
 
         ]);
     }
