@@ -2,8 +2,13 @@
 
 /** @var array $themes */
 /** @var array $regimes */
+/** @var string $erreur */
+
 require __DIR__ . '/../morceaux/header.php'; ?>
 <h1>Créer un menu</h1>
+<?php if ($erreur): ?>
+    <div class="alert alert-danger"><?= htmlspecialchars($erreur) ?></div>
+<?php endif ?>
 <form method="post" action="/employe/menus/creer">
     <div class="mb-3">
         <label for="titre" class="form-label">Titre</label>
@@ -15,11 +20,11 @@ require __DIR__ . '/../morceaux/header.php'; ?>
     </div>
     <div class="mb-3">
         <label for="conditions" class="form-label">Conditions</label>
-        <textarea type="text" id="conditions" name="conditions" class="form-control" required></textarea>
+        <textarea id="conditions" name="conditions" class="form-control" required></textarea>
     </div>
     <div class="mb-3">
         <label for="stock" class="form-label">Stock</label>
-        <input type="number" id="stock" name="stock" class="form-control" min="0" required>
+        <input type="number" id="stock" name="stock" class="form-control" min="1" required>
     </div>
     <div class="mb-3">
         <label for="prix_par_personne" class="form-label">Prix par personne</label>
@@ -40,8 +45,8 @@ require __DIR__ . '/../morceaux/header.php'; ?>
     </div>
     <div class="mb-3">
         <label for="regime" class="form-label">Régime</label>
-        <select id="regime" name="id_regime" class="form-select" require>
-            <option value="">Choisir un Régime</option>
+        <select id="regime" name="id_regime" class="form-select" required>
+            <option value="">Choisir un régime</option>
             <?php foreach ($regimes as $regime): ?>
                 <option value="<?= $regime['id_regime'] ?>"><?= htmlspecialchars($regime['libelle']) ?></option>
             <?php endforeach; ?>
