@@ -399,4 +399,17 @@ class EmployeController extends Controller
         }
         exit;
     }
+
+    public function plats(): void
+    {
+        $this->exigerRole([1, 2]);
+
+        $platManager = new PlatManager(getPdo());
+        $plats = $platManager->trouverTous();
+
+        $this->afficher('employe/plats', [
+            'titre' => 'Gérer les plats',
+            'plats' => $plats,
+        ]);
+    }
 }

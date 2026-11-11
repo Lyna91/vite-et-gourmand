@@ -44,4 +44,10 @@ class PlatManager
 
         return $requete->fetchAll(PDO::FETCH_COLUMN);
     }
+
+    public function trouverTous(): array
+    {
+        $requete = $this->pdo->query("SELECT id_plat, nom, type FROM plat ORDER BY FIELD(type, 'Entrée', 'Plat', 'Dessert'), nom");
+        return $requete->fetchAll();
+    }
 }

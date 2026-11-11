@@ -9,6 +9,7 @@ require __DIR__ . '/../morceaux/header.php'; ?>
 <h1>Espace employé</h1>
 <a href="../employe/avis">Avis à valider</a>
 <a href="../employe/menus">Gérer les menus</a>
+<a href="../employe/plats">Gérer les plats</a>
 <?php if ($statutModifie): ?>
     <div class="alert alert-success">Le statut de la commande a bien été mis à jour.</div>
 <?php endif; ?>
