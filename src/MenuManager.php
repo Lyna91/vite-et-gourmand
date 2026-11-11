@@ -140,4 +140,18 @@ class MenuManager
         $requete = $this->pdo->query("SELECT id_regime, libelle FROM regime ORDER BY libelle");
         return $requete->fetchAll();
     }
+
+    public function modifier(int $idMenu, array $donnees): bool
+    {
+        $requete = $this->pdo->prepare("
+        UPDATE menu SET titre = :titre, description = :description, conditions = :conditions, stock = :stock, prix_par_personne =:prix_par_personne, 
+        nbre_personne_mini =:nbre_personne_mini, id_regime =:id_regime, id_theme =:id_theme
+        WHERE id_menu = :id_menu
+        ");
+
+        $donnees['id_menu'] = $idMenu;
+        $requete->execute($donnees);
+
+        return $requete->rowCount() > 0;
+    }
 }
