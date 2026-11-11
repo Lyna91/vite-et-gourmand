@@ -128,4 +128,16 @@ class MenuManager
 
         return (int) $this->pdo->lastInsertId();
     }
+
+    public function trouverThemesPourFormulaire(): array
+    {
+        $requete = $this->pdo->query("SELECT id_theme, libelle FROM theme ORDER BY libelle");
+        return $requete->fetchAll();
+    }
+
+    public function trouverRegimesPourFormulaire(): array
+    {
+        $requete = $this->pdo->query("SELECT id_regime, libelle FROM regime ORDER BY libelle");
+        return $requete->fetchAll();
+    }
 }

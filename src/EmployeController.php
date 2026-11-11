@@ -220,15 +220,15 @@ class EmployeController extends Controller
     }
 
     public function creerMenu(): void
-{
-    $this->exigerRole([1, 2]);
+    {
+        $this->exigerRole([1, 2]);
 
-    $menuManager = new MenuManager(getPdo());
+        $menuManager = new MenuManager(getPdo());
 
-    $this->afficher('employe/creer-menu', [
-        'titre' => 'Créer un menu',
-        'themes' => $menuManager->findThemes(),
-        'regimes' => $menuManager->findRegimes(),
-    ]);
-}
+        $this->afficher('employe/creer-menu', [
+            'titre' => 'Créer un menu',
+            'themes' => $menuManager->trouverThemesPourFormulaire(),
+            'regimes' => $menuManager->trouverRegimesPourFormulaire(),
+        ]);
+    }
 }
