@@ -17,7 +17,7 @@ require __DIR__ . '/../morceaux/header.php'; ?>
         </ul>
     </div>
 <?php endif; ?>
-<form method="post" novalidate action="/employe/annuler">
+<form method="post" action="/employe/annuler">
     <input type="hidden" name="id_commande" value="<?= htmlspecialchars($idCommande) ?>">
     <div class="mb-3">
         <label for="mode_contact" class="form-label">Mode de contact</label>

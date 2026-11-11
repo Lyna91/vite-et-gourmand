@@ -205,4 +205,198 @@ class EmployeController extends Controller
         }
         exit;
     }
+
+    public function menus(): void
+    {
+        $this->exigerRole([1, 2]);
+
+        $menuManager = new MenuManager(getPdo());
+        $menus = $menuManager->findAll();
+
+        $this->afficher('employe/menus', [
+            'titre' => 'Gérer les menus',
+            'menus' => $menus,
+            'cree' => isset($_GET['cree']),
+            'modifie' => isset($_GET['modifie']),
+            'supprime' => isset($_GET['supprime']),
+            'dejaCommande' => isset($_GET['deja_commande']),
+            'erreur' => isset($_GET['erreur']),
+
+        ]);
+    }
+
+    public function creerMenu(): void
+    {
+        $this->exigerRole([1, 2]);
+
+        $menuManager = new MenuManager(getPdo());
+        $themes = $menuManager->trouverThemesPourFormulaire();
+        $regimes = $menuManager->trouverRegimesPourFormulaire();
+        $erreur = '';
+
+
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // 1. Récupérer les champs
+            $titre = trim($_POST['titre'] ?? '');
+            $description = trim($_POST['description'] ?? '');
+            $conditions = trim($_POST['conditions'] ?? '');
+            $stock = (int) ($_POST['stock'] ?? 0);
+            $prix = (float) ($_POST['prix_par_personne'] ?? 0);
+            $nbreMini = (int) ($_POST['nbre_personne_mini'] ?? 0);
+            $idTheme = (int) ($_POST['id_theme'] ?? 0);
+            $idRegime = (int) ($_POST['id_regime'] ?? 0);
+
+            if (empty($titre)) {
+                $erreur = "Le titre est obligatoire";
+            }
+            if (empty($description)) {
+                $erreur = "La description est obligatoire";
+            }
+            if (empty($conditions)) {
+                $erreur = "Ajouter une condition";
+            }
+            if ($stock < 1) {
+                $erreur = "Le stock doit être au moins de 1";
+            }
+            if ($nbreMini < 1) {
+                $erreur = "1 personne minimum";
+            }
+            if ($prix <= 0) {
+                $erreur = "Afficher un prix supérieur à 0";
+            }
+            if (!in_array($idTheme, array_column($themes, 'id_theme'))) {
+                $erreur = "Le thème choisi n'existe pas";
+            }
+            if (!in_array($idRegime, array_column($regimes, 'id_regime'))) {
+                $erreur = "Le régime choisi n'existe pas";
+            }
+            if (empty($erreur)) {
+                $donnees = [
+                    'titre' => $titre,
+                    'description' => $description,
+                    'conditions' => $conditions,
+                    'stock' => $stock,
+                    'prix_par_personne' => $prix,
+                    'nbre_personne_mini' => $nbreMini,
+                    'id_theme' => $idTheme,
+                    'id_regime' => $idRegime,
+                ];
+                $menuManager->creer($donnees);
+                header('Location: /employe/menus?cree=1');
+                exit;
+            }
+        }
+
+        $this->afficher('employe/creer-menu', [
+            'titre' => 'Créer un menu',
+            'themes' => $themes,
+            'regimes' => $regimes,
+            'erreur' => $erreur,
+        ]);
+    }
+
+    public function modifierMenu(): void
+    {
+        $this->exigerRole([1, 2]);
+
+        $menuManager = new MenuManager(getPdo());
+        $themes = $menuManager->trouverThemesPourFormulaire();
+        $regimes = $menuManager->trouverRegimesPourFormulaire();
+        $erreur = '';
+
+        $idMenu = (int) ($_GET['id'] ?? 0);
+        $menu = $menuManager->findById($idMenu);
+
+        if ($menu === null) {
+            header('Location: /employe/menus?erreur=1');
+            exit;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // 1. Récupérer les champs
+            $titre = trim($_POST['titre'] ?? '');
+            $description = trim($_POST['description'] ?? '');
+            $conditions = trim($_POST['conditions'] ?? '');
+            $stock = (int) ($_POST['stock'] ?? 0);
+            $prix = (float) ($_POST['prix_par_personne'] ?? 0);
+            $nbreMini = (int) ($_POST['nbre_personne_mini'] ?? 0);
+            $idTheme = (int) ($_POST['id_theme'] ?? 0);
+            $idRegime = (int) ($_POST['id_regime'] ?? 0);
+
+            if (empty($titre)) {
+                $erreur = "Le titre est obligatoire";
+            }
+            if (empty($description)) {
+                $erreur = "La description est obligatoire";
+            }
+            if (empty($conditions)) {
+                $erreur = "Ajouter une condition";
+            }
+            if ($stock < 1) {
+                $erreur = "Le stock doit être au moins de 1";
+            }
+            if ($nbreMini < 1) {
+                $erreur = "1 personne minimum";
+            }
+            if ($prix <= 0) {
+                $erreur = "Afficher un prix supérieur à 0";
+            }
+            if (!in_array($idTheme, array_column($themes, 'id_theme'))) {
+                $erreur = "Le thème choisi n'existe pas";
+            }
+            if (!in_array($idRegime, array_column($regimes, 'id_regime'))) {
+                $erreur = "Le régime choisi n'existe pas";
+            }
+            if (empty($erreur)) {
+                $donnees = [
+                    'titre' => $titre,
+                    'description' => $description,
+                    'conditions' => $conditions,
+                    'stock' => $stock,
+                    'prix_par_personne' => $prix,
+                    'nbre_personne_mini' => $nbreMini,
+                    'id_theme' => $idTheme,
+                    'id_regime' => $idRegime,
+                ];
+                $menuManager->modifier($idMenu, $donnees);
+                header('Location: /employe/menus?modifie=1');
+                exit;
+            }
+        }
+
+        $this->afficher('employe/modifier-menu', [
+            'titre' => 'Modifier un menu',
+            'menu' => $menu,
+            'themes' => $themes,
+            'regimes' => $regimes,
+            'erreur' => $erreur,
+        ]);
+    }
+
+    public function supprimerMenu(): void
+    {
+        $this->exigerRole([1, 2]);
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: /employe/menus');
+            exit;
+        }
+
+        $idMenu = (int) ($_POST['id_menu'] ?? 0);
+
+        $menuManager = new MenuManager(getPdo());
+
+        if ($menuManager->dejaCommande($idMenu)) {
+            header('Location: /employe/menus?deja_commande=1');
+            exit;
+        }
+
+        if ($menuManager->supprimer($idMenu)) {
+            header('Location: /employe/menus?supprime=1');
+        } else {
+            header('Location: /employe/menus?erreur=1');
+        }
+        exit;
+    }
 }

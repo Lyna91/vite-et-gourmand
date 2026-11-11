@@ -114,46 +114,87 @@ class MenuManager
         return new Menu($ligne['id_menu'], $ligne['titre'], $ligne['description'], $ligne['prix_par_personne'], $ligne['conditions'], $ligne['stock'], $ligne['nbre_personne_mini'], $ligne['regime'], $ligne['theme']);
     }
 
-    public function trouverToutes(string $statut = '', string $client = ''): array
+    public function creer(array $donnees): int
     {
-        $sql = "
-            SELECT commande.id_commande, commande.numero_commande, commande.date_commande,
-                   commande.date_livraison, commande.heure_livraison, commande.nbre_personne,
-                   commande.prix_menu, commande.montant_reduction, commande.frais_livraison,
-                   menu.titre,
-                   utilisateur.nom, utilisateur.prenom,
-                   utilisateur.email, utilisateur.telephone,
-                   (SELECT suivi_commande.statut
-                    FROM suivi_commande
-                    WHERE suivi_commande.id_commande = commande.id_commande
-                    ORDER BY suivi_commande.id_suivi_commande DESC
-                    LIMIT 1) AS statut
-            FROM commande
-            JOIN menu ON commande.id_menu = menu.id_menu
-            JOIN utilisateur ON commande.id_utilisateur = utilisateur.id_utilisateur
-            WHERE 1 = 1
-        ";
-        $params = [];
+        $requete = $this->pdo->prepare(
+            "INSERT INTO menu (titre, description, conditions, stock,
+                  prix_par_personne, nbre_personne_mini, id_regime, id_theme)
+            VALUES (:titre, :description, :conditions, :stock, :prix_par_personne,
+            :nbre_personne_mini, :id_regime, :id_theme)
+        "
+        );
 
-        // filtre client : le nom, le prénom OU l'e-mail contient le texte tapé
-        if ($client !== '') {
-            $sql .= " AND (utilisateur.nom LIKE :client_nom
-                       OR utilisateur.prenom LIKE :client_prenom
-                       OR utilisateur.email LIKE :client_email)";
-            $params['client_nom'] = '%' . $client . '%';
-            $params['client_prenom'] = '%' . $client . '%';
-            $params['client_email'] = '%' . $client . '%';
+        $requete->execute($donnees);
+
+        return (int) $this->pdo->lastInsertId();
+    }
+
+    public function trouverThemesPourFormulaire(): array
+    {
+        $requete = $this->pdo->query("SELECT id_theme, libelle FROM theme ORDER BY libelle");
+        return $requete->fetchAll();
+    }
+
+    public function trouverRegimesPourFormulaire(): array
+    {
+        $requete = $this->pdo->query("SELECT id_regime, libelle FROM regime ORDER BY libelle");
+        return $requete->fetchAll();
+    }
+
+    public function modifier(int $idMenu, array $donnees): bool
+    {
+        $requete = $this->pdo->prepare("
+        UPDATE menu SET titre = :titre, description = :description, conditions = :conditions, stock = :stock, prix_par_personne =:prix_par_personne, 
+        nbre_personne_mini =:nbre_personne_mini, id_regime =:id_regime, id_theme =:id_theme
+        WHERE id_menu = :id_menu
+        ");
+
+        $donnees['id_menu'] = $idMenu;
+        $requete->execute($donnees);
+
+        return $requete->rowCount() > 0;
+    }
+
+    public function dejaCommande(int $idMenu): bool
+    {
+        $requete = $this->pdo->prepare("SELECT COUNT(*) FROM commande WHERE id_menu = :id_menu");
+        $requete->execute(['id_menu' => $idMenu]);
+        return $requete->fetchColumn() > 0;
+    }
+
+    public function supprimer(int $idMenu): bool
+    {
+        try {
+            $this->pdo->beginTransaction();
+            $requete = $this->pdo->prepare("
+            DELETE FROM menu_plat WHERE id_menu = :id_menu ;");
+
+            $requete->execute([
+                'id_menu' => $idMenu,
+            ]);
+
+            $requete = $this->pdo->prepare("
+            DELETE FROM image WHERE id_menu = :id_menu ;");
+
+            $requete->execute([
+                'id_menu' => $idMenu,
+            ]);
+
+            $requete = $this->pdo->prepare("
+            DELETE FROM menu WHERE id_menu = :id_menu ;");
+
+            $requete->execute([
+                'id_menu' => $idMenu,
+            ]);
+
+            if ($requete->rowCount() === 0) {
+                throw new Exception('Menu introuvable');
+            }
+            $this->pdo->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->pdo->rollBack();
+            return false;
         }
-        // filtre statut : sur la colonne calculée « statut » → HAVING
-        if ($statut !== '') {
-            $sql .= " HAVING statut = :statut";
-            $params['statut'] = $statut;
-        }
-
-        $sql .= " ORDER BY commande.date_livraison ASC";
-
-        $requete = $this->pdo->prepare($sql);
-        $requete->execute($params);
-        return $requete->fetchAll(PDO::FETCH_ASSOC);
     }
 }
