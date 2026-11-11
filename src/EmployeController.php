@@ -218,6 +218,9 @@ class EmployeController extends Controller
             'menus' => $menus,
             'cree' => isset($_GET['cree']),
             'modifie' => isset($_GET['modifie']),
+            'supprime' => isset($_GET['supprime']),
+            'dejaCommande' => isset($_GET['deja_commande']),
+            'erreur' => isset($_GET['erreur']),
 
         ]);
     }
@@ -369,5 +372,31 @@ class EmployeController extends Controller
             'regimes' => $regimes,
             'erreur' => $erreur,
         ]);
+    }
+
+    public function supprimerMenu(): void
+    {
+        $this->exigerRole([1, 2]);
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: /employe/menus');
+            exit;
+        }
+
+        $idMenu = (int) ($_POST['id_menu'] ?? 0);
+
+        $menuManager = new MenuManager(getPdo());
+
+        if ($menuManager->dejaCommande($idMenu)) {
+            header('Location: /employe/menus?deja_commande=1');
+            exit;
+        }
+
+        if ($menuManager->supprimer($idMenu)) {
+            header('Location: /employe/menus?supprime=1');
+        } else {
+            header('Location: /employe/menus?erreur=1');
+        }
+        exit;
     }
 }

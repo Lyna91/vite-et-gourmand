@@ -154,4 +154,47 @@ class MenuManager
 
         return $requete->rowCount() > 0;
     }
+
+    public function dejaCommande(int $idMenu): bool
+    {
+        $requete = $this->pdo->prepare("SELECT COUNT(*) FROM commande WHERE id_menu = :id_menu");
+        $requete->execute(['id_menu' => $idMenu]);
+        return $requete->fetchColumn() > 0;
+    }
+
+    public function supprimer(int $idMenu): bool
+    {
+        try {
+            $this->pdo->beginTransaction();
+            $requete = $this->pdo->prepare("
+            DELETE FROM menu_plat WHERE id_menu = :id_menu ;");
+
+            $requete->execute([
+                'id_menu' => $idMenu,
+            ]);
+
+            $requete = $this->pdo->prepare("
+            DELETE FROM image WHERE id_menu = :id_menu ;");
+
+            $requete->execute([
+                'id_menu' => $idMenu,
+            ]);
+
+            $requete = $this->pdo->prepare("
+            DELETE FROM menu WHERE id_menu = :id_menu ;");
+
+            $requete->execute([
+                'id_menu' => $idMenu,
+            ]);
+
+            if ($requete->rowCount() === 0) {
+                throw new Exception('Menu introuvable');
+            }
+            $this->pdo->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->pdo->rollBack();
+            return false;
+        }
+    }
 }

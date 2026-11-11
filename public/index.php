@@ -138,6 +138,9 @@ if ($chemin === '/') {
 } elseif ($chemin === '/employe/menus/modifier') {
     $controller = new EmployeController();
     $controller->modifierMenu();
+} elseif ($chemin === '/employe/menus/supprimer') {
+    $controller = new EmployeController();
+    $controller->supprimerMenu();
 } else {
     $controller = new PageController();
     $controller->introuvable();
