@@ -17,6 +17,8 @@ class EmployeController extends Controller
 
     private const MODES_CONTACT = ['GSM', 'mail'];
 
+    private const TYPES_PLAT = ['Entrée', 'Plat', 'Dessert'];
+
     public function accueil(): void
     {
         $this->exigerRole([1, 2]);      // admin et employé seulement
@@ -410,6 +412,38 @@ class EmployeController extends Controller
         $this->afficher('employe/plats', [
             'titre' => 'Gérer les plats',
             'plats' => $plats,
+            'cree' => isset($_GET['cree']),
+        ]);
+    }
+
+    public function creerPlat(): void
+    {
+        $this->exigerRole([1, 2]);
+
+        $platManager = new PlatManager(getPdo());
+        $erreur = '';
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $nom = trim($_POST['nom'] ?? '');
+            $type = trim($_POST['type'] ?? '');
+
+            if (empty($nom)) {
+                $erreur = "Le nom est obligatoire";
+            }
+            if (!in_array($type, self::TYPES_PLAT)) {
+                $erreur = "Le type choisi n'existe pas";
+            }
+            if (empty($erreur)) {
+                $platManager->creer($nom, $type);
+                header('Location: /employe/plats?cree=1');
+                exit;
+            }
+        }
+
+        $this->afficher('employe/creer-plat', [
+            'titre'=> 'Créer un plat',
+            'erreur' => $erreur,
+            'types' => self::TYPES_PLAT,
         ]);
     }
 }

@@ -50,4 +50,17 @@ class PlatManager
         $requete = $this->pdo->query("SELECT id_plat, nom, type FROM plat ORDER BY FIELD(type, 'Entrée', 'Plat', 'Dessert'), nom");
         return $requete->fetchAll();
     }
+
+    public function creer(string $nom, string $type): int
+     {
+        $requete = $this->pdo->prepare("INSERT INTO plat (nom, type) VALUES (:nom, :type)");
+
+        $requete->execute([
+            'nom' => $nom,
+            'type' => $type,
+        ]);
+
+        return (int) $this->pdo->lastInsertId();
+
+     }
 }

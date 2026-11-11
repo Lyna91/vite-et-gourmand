@@ -1,8 +1,15 @@
 <?php
 
 /** @var array $plats */
+/** @var bool $cree */
 require __DIR__ . '/../morceaux/header.php'; ?>
 <h1>Gérer les plats</h1>
+<a href="/employe/plats/creer" class="btn btn-primary mb-3">Créer un plat</a>
+<?php if ($cree): ?>
+    <div class="alert alert-success">
+        <p>Plat créé ✓</p>
+    </div>
+<?php endif ?>
 <?php if (empty($plats)): ?>
     <p>Aucun plat</p>
 <?php else: ?>
