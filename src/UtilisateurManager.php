@@ -133,4 +133,10 @@ class UtilisateurManager
         $donnees['id_utilisateur'] = $idUtilisateur;
         $requete->execute($donnees);
     }
+
+    public function trouverEmployes(): array 
+    {
+        $requete = $this->pdo->query("SELECT id_utilisateur, prenom, nom, email, actif FROM utilisateur WHERE id_role = 2 ORDER BY nom");
+        return $requete->fetchAll();
+    }
 }

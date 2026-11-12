@@ -48,6 +48,9 @@ require __DIR__ . '/../src/EmployeController.php';
 
 require __DIR__ . '/../src/Mailer.php';
 
+require __DIR__ . '/../src/AdminController.php';
+
+
 
 
 $chemin = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -159,6 +162,9 @@ if ($chemin === '/') {
 } elseif ($chemin === '/employe/horaires/modifier') {
     $controller = new EmployeController();
     $controller->modifierHoraires();
+} elseif ($chemin === '/admin/employes') {
+    $controller = new AdminController();
+    $controller->employes();
 } else {
     $controller = new PageController();
     $controller->introuvable();

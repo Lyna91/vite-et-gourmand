@@ -46,6 +46,9 @@
                                     <?php if (in_array($_SESSION['id_role'], [1, 2])): ?>
                                         <li><a class="dropdown-item" href="/employe">Espace employé</a></li>
                                     <?php endif; ?>
+                                    <?php if (in_array($_SESSION['id_role'], [1])): ?>
+                                        <li><a class="dropdown-item" href="/admin/employes">Espace admin</a></li>
+                                    <?php endif; ?>
                                     <li>
                                         <hr class="dropdown-divider">
                                     </li>
