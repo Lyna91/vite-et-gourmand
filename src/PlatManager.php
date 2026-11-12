@@ -93,5 +93,41 @@ class PlatManager
         return $requete->rowCount() > 0;
      }
 
+     public function dejaDansMenu(int $idPlat): bool
+    {
+        $requete = $this->pdo->prepare("SELECT COUNT(*) FROM menu_plat WHERE id_plat = :id_plat");
+        $requete->execute(['id_plat' => $idPlat]);
+        return $requete->fetchColumn() > 0;
+    }
+
+    public function supprimer(int $idPlat): bool
+    {
+        try {
+            $this->pdo->beginTransaction();
+            $requete = $this->pdo->prepare("
+            DELETE FROM allergene_plat WHERE id_plat = :id_plat ;");
+
+            $requete->execute([
+                'id_plat' => $idPlat,
+            ]);
+
+            $requete = $this->pdo->prepare("
+            DELETE FROM plat WHERE id_plat = :id_plat ;");
+
+            $requete->execute([
+                'id_plat' => $idPlat,
+            ]);
+
+            if ($requete->rowCount() === 0) {
+                throw new Exception('Plat introuvable');
+            }
+            $this->pdo->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->pdo->rollBack();
+            return false;
+        }
+    }
+
 
 }

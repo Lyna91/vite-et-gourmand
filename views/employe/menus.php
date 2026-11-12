@@ -8,6 +8,7 @@
 /** @var Menu[] $menus */
 require __DIR__ . '/../morceaux/header.php'; ?>
 <h1>Gérer les menus</h1>
+<a href="/employe" class="btn btn-outline-secondary mb-3">← Retour à l'espace employé</a>
 <?php if ($cree): ?>
     <div class="alert alert-success">
         <p>Menu créé ✓</p>

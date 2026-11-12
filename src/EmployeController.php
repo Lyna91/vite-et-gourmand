@@ -414,6 +414,7 @@ class EmployeController extends Controller
             'plats' => $plats,
             'cree' => isset($_GET['cree']),
             'modifie' => isset($_GET['modifie']),
+            'supprime' => isset($_GET['supprime']),
         ]);
     }
 
@@ -486,5 +487,31 @@ class EmployeController extends Controller
             'types' => self::TYPES_PLAT,
             'erreur' => $erreur,
         ]);
+    }
+
+    public function supprimerPlat(): void
+    {
+        $this->exigerRole([1, 2]);
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: /employe/plats');
+            exit;
+        }
+
+        $idPlat = (int) ($_POST['id_plat'] ?? 0);
+
+        $platManager = new PlatManager(getPdo());
+
+        if ($platManager->dejaDansMenu($idPlat)) {
+            header('Location: /employe/plats?deja_dans_menu=1');
+            exit;
+        }
+
+        if ($platManager->supprimer($idPlat)) {
+            header('Location: /employe/plats?supprime=1');
+        } else {
+            header('Location: /employe/plats?erreur=1');
+        }
+        exit;
     }
 }

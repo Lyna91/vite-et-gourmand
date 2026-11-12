@@ -25,6 +25,7 @@ require __DIR__ . '/../morceaux/header.php'; ?>
 
 
     <button type="submit" class="btn btn-primary">Créer le plat</button>
+    <a href="/employe/plats" class="btn btn-outline-secondary">Annuler</a>
 </form>
 
 
