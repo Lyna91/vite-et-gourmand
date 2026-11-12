@@ -153,6 +153,12 @@ if ($chemin === '/') {
 } elseif ($chemin === '/employe/plats/supprimer') {
     $controller = new EmployeController();
     $controller->supprimerPlat();
+} elseif ($chemin === '/employe/horaires') {
+    $controller = new EmployeController();
+    $controller->horaires();
+} elseif ($chemin === '/employe/horaires/modifier') {
+    $controller = new EmployeController();
+    $controller->modifierHoraires();
 } else {
     $controller = new PageController();
     $controller->introuvable();

@@ -514,4 +514,55 @@ class EmployeController extends Controller
         }
         exit;
     }
+
+    public function horaires(): void
+    {
+        $this->exigerRole([1, 2]);
+
+        $horaireManager = new HoraireManager(getPdo());
+        $horaires = $horaireManager->findAll();
+
+        $this->afficher('employe/horaires', [
+            'titre' => 'Gérer les horaires',
+            'horaires' => $horaires,
+            'modifie' => isset($_GET['modifie']),
+            'erreur' => isset($_GET['erreur']),
+
+        ]);
+    }
+
+    public function modifierHoraires(): void
+    {
+        $this->exigerRole([1, 2]);
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: /employe/horaires');
+            exit;
+        }
+
+        $idHoraire = (int) ($_POST['id_horaire'] ?? 0);
+        $ouverture = trim($_POST['ouverture'] ?? '');
+        $fermeture = trim($_POST['fermeture'] ?? '');
+
+        $horaireManager = new HoraireManager(getPdo());
+
+        if ($ouverture === '' && $fermeture === '') {
+            $ouverture = null;
+            $fermeture = null;
+        }
+
+        if ($ouverture === '' || $fermeture === '') {
+            header('Location: /employe/horaires?erreur=1');
+            exit;
+        }
+
+        if ($ouverture !== null && $fermeture <= $ouverture) {
+            header('Location: /employe/horaires?erreur=1');
+            exit;
+        }
+
+        $horaireManager->modifier($idHoraire, $ouverture, $fermeture);
+        header('Location: /employe/horaires?modifie=1');
+        exit;
+    }
 }
