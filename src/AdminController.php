@@ -12,7 +12,9 @@ class AdminController extends Controller
         $this->afficher('admin/employes', [
             'titre' => 'Gérer les employés',
             'employes' => $employes,
-            'cree' => isset($_GET['cree'])
+            'cree' => isset($_GET['cree']),
+            'modifie' => isset($_GET['modifie']),
+            'erreur' => isset($_GET['erreur']),
         ]);
     }
 
@@ -73,5 +75,30 @@ class AdminController extends Controller
             'titre' => 'Créer un employé',
             'erreurs' => $erreurs,
         ]);
+    }
+
+    public function changerActifEmploye(): void
+    {
+        $this->exigerRole([1]);
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: /admin/employes');
+            exit;
+        }
+
+        $idUtilisateur = (int) ($_POST['id_utilisateur'] ?? 0);
+        $actif = (int) ($_POST['actif'] ?? -1);
+
+        if (!in_array($actif, [0, 1], true)) {
+            header('Location: /admin/employes?erreur=1');
+            exit;
+        }
+        $utilisateurManager = new UtilisateurManager(getPdo());
+        if ($utilisateurManager->changerActif($idUtilisateur, $actif)) {
+            header('Location: /admin/employes?modifie=1');
+        } else {
+            header('Location: /admin/employes?erreur=1');
+        }
+        exit;
     }
 }

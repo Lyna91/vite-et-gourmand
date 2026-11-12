@@ -153,4 +153,15 @@ class UtilisateurManager
             'mot_de_passe' => password_hash($motDePasse, PASSWORD_DEFAULT),
         ]);
     }
+
+    public function changerActif(int $idUtilisateur, int $actif): bool
+    {
+        $requete = $this->pdo->prepare("
+        UPDATE utilisateur SET actif = :actif WHERE id_utilisateur = :id_utilisateur AND id_role = 2"); 
+        $requete->execute([
+            'id_utilisateur' => $idUtilisateur,
+            'actif' => $actif,
+        ]);
+        return $requete->rowCount() > 0;
+    }
 }

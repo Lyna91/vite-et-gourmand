@@ -168,7 +168,10 @@ if ($chemin === '/') {
 } elseif ($chemin === '/admin/employes/creer') {
     $controller = new AdminController();
     $controller->creerEmploye();
-} else {
+} elseif ($chemin === '/admin/employes/actif') {
+    $controller = new AdminController();
+    $controller->changerActifEmploye();
+}else {
     $controller = new PageController();
     $controller->introuvable();
 }
