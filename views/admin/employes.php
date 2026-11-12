@@ -1,10 +1,17 @@
 <?php
 
+/** @var array $succes */
+/** @var array $cree */
 /** @var array $employes */
 require __DIR__ . '/../morceaux/header.php'; ?>
 <h1>Gérer les employés</h1>
 <a href="/employe" class="btn btn-outline-secondary mb-3">← Retour à l'espace employé</a>
 <a href="/admin/employes/creer" class="btn btn-primary mb-3">Créer un compte employé</a>
+<?php if ($cree): ?>
+    <div class="alert alert-success">
+        <p>Compte employé créé ✓</p>
+    </div>
+<?php endif ?>
 <?php if (empty($employes)): ?>
     <p>Aucun employé</p>
 <?php else: ?>
