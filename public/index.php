@@ -147,6 +147,9 @@ if ($chemin === '/') {
 } elseif ($chemin === '/employe/plats/creer') {
     $controller = new EmployeController();
     $controller->creerPlat();
+} elseif ($chemin === '/employe/plats/modifier') {
+    $controller = new EmployeController();
+    $controller->modifierPlat();
 } else {
     $controller = new PageController();
     $controller->introuvable();

@@ -413,6 +413,7 @@ class EmployeController extends Controller
             'titre' => 'Gérer les plats',
             'plats' => $plats,
             'cree' => isset($_GET['cree']),
+            'modifie' => isset($_GET['modifie']),
         ]);
     }
 
@@ -441,9 +442,49 @@ class EmployeController extends Controller
         }
 
         $this->afficher('employe/creer-plat', [
-            'titre'=> 'Créer un plat',
+            'titre' => 'Créer un plat',
             'erreur' => $erreur,
             'types' => self::TYPES_PLAT,
+        ]);
+    }
+
+    public function modifierPlat(): void
+    {
+        $this->exigerRole([1, 2]);
+
+        $platManager = new PlatManager(getPdo());
+        $erreur = '';
+
+        $idPlat = (int) ($_GET['id'] ?? 0);
+        $plat = $platManager->trouverParId($idPlat);
+
+        if ($plat === null) {
+            header('Location: /employe/plats?erreur=1');
+            exit;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $nom = trim($_POST['nom'] ?? '');
+            $type = trim($_POST['type'] ?? '');
+
+            if (empty($nom)) {
+                $erreur = "Le nom est obligatoire";
+            }
+            if (!in_array($type, self::TYPES_PLAT)) {
+                $erreur = "Le type choisi n'existe pas";
+            }
+            if (empty($erreur)) {
+                $platManager->modifier($idPlat, $nom, $type);
+                header('Location: /employe/plats?modifie=1');
+                exit;
+            }
+        }
+
+        $this->afficher('employe/modifier-plat', [
+            'titre' => 'Modifier un plat',
+            'plat' => $plat,
+            'types' => self::TYPES_PLAT,
+            'erreur' => $erreur,
         ]);
     }
 }

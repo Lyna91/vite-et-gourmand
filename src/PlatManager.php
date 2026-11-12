@@ -63,4 +63,35 @@ class PlatManager
         return (int) $this->pdo->lastInsertId();
 
      }
+
+     public function trouverParId(int $idPlat): ?array
+     {
+        $requete = $this->pdo->prepare ("
+        SELECT id_plat, nom, type FROM plat WHERE id_plat = :id_plat
+        ");
+
+        $requete->execute([
+            'id_plat' =>$idPlat,
+        ]);
+
+        $plat = $requete->fetch();
+        return $plat ?: null;
+     }
+
+     public function modifier(int $idPlat, string $nom, string $type): bool
+     {
+        $requete = $this->pdo->prepare ("
+        UPDATE plat SET nom = :nom, type = :type WHERE id_plat = :id_plat
+        ");
+
+        $requete->execute([
+            'id_plat' =>$idPlat,
+            'nom' => $nom,
+            'type' => $type,
+        ]);
+
+        return $requete->rowCount() > 0;
+     }
+
+
 }
