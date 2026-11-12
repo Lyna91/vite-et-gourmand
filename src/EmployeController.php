@@ -514,4 +514,20 @@ class EmployeController extends Controller
         }
         exit;
     }
+
+    public function horaires(): void
+    {
+        $this->exigerRole([1, 2]);
+
+        $horaireManager = new HoraireManager(getPdo());
+        $horaires = $horaireManager->findAll();
+
+        $this->afficher('employe/horaires', [
+            'titre' => 'Gérer les horaires',
+            'horaires' => $horaires,
+            'modifie' => isset($_GET['modifie']),
+            'erreur' => isset($_GET['erreur']),
+
+        ]);
+    }
 }
