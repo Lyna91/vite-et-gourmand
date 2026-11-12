@@ -141,6 +141,18 @@ if ($chemin === '/') {
 } elseif ($chemin === '/employe/menus/supprimer') {
     $controller = new EmployeController();
     $controller->supprimerMenu();
+} elseif ($chemin === '/employe/plats') {
+    $controller = new EmployeController();
+    $controller->plats();
+} elseif ($chemin === '/employe/plats/creer') {
+    $controller = new EmployeController();
+    $controller->creerPlat();
+} elseif ($chemin === '/employe/plats/modifier') {
+    $controller = new EmployeController();
+    $controller->modifierPlat();
+} elseif ($chemin === '/employe/plats/supprimer') {
+    $controller = new EmployeController();
+    $controller->supprimerPlat();
 } else {
     $controller = new PageController();
     $controller->introuvable();

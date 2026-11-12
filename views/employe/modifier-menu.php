@@ -56,6 +56,7 @@ require __DIR__ . '/../morceaux/header.php'; ?>
         </select>
     </div>
     <button type="submit" class="btn btn-primary">Modifier le menu</button>
+    <a href="/employe/menus" class="btn btn-outline-secondary">Annuler</a>
 </form>
 
 

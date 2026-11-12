@@ -44,4 +44,90 @@ class PlatManager
 
         return $requete->fetchAll(PDO::FETCH_COLUMN);
     }
+
+    public function trouverTous(): array
+    {
+        $requete = $this->pdo->query("SELECT id_plat, nom, type FROM plat ORDER BY FIELD(type, 'Entrée', 'Plat', 'Dessert'), nom");
+        return $requete->fetchAll();
+    }
+
+    public function creer(string $nom, string $type): int
+     {
+        $requete = $this->pdo->prepare("INSERT INTO plat (nom, type) VALUES (:nom, :type)");
+
+        $requete->execute([
+            'nom' => $nom,
+            'type' => $type,
+        ]);
+
+        return (int) $this->pdo->lastInsertId();
+
+     }
+
+     public function trouverParId(int $idPlat): ?array
+     {
+        $requete = $this->pdo->prepare ("
+        SELECT id_plat, nom, type FROM plat WHERE id_plat = :id_plat
+        ");
+
+        $requete->execute([
+            'id_plat' =>$idPlat,
+        ]);
+
+        $plat = $requete->fetch();
+        return $plat ?: null;
+     }
+
+     public function modifier(int $idPlat, string $nom, string $type): bool
+     {
+        $requete = $this->pdo->prepare ("
+        UPDATE plat SET nom = :nom, type = :type WHERE id_plat = :id_plat
+        ");
+
+        $requete->execute([
+            'id_plat' =>$idPlat,
+            'nom' => $nom,
+            'type' => $type,
+        ]);
+
+        return $requete->rowCount() > 0;
+     }
+
+     public function dejaDansMenu(int $idPlat): bool
+    {
+        $requete = $this->pdo->prepare("SELECT COUNT(*) FROM menu_plat WHERE id_plat = :id_plat");
+        $requete->execute(['id_plat' => $idPlat]);
+        return $requete->fetchColumn() > 0;
+    }
+
+    public function supprimer(int $idPlat): bool
+    {
+        try {
+            $this->pdo->beginTransaction();
+            $requete = $this->pdo->prepare("
+            DELETE FROM allergene_plat WHERE id_plat = :id_plat ;");
+
+            $requete->execute([
+                'id_plat' => $idPlat,
+            ]);
+
+            $requete = $this->pdo->prepare("
+            DELETE FROM plat WHERE id_plat = :id_plat ;");
+
+            $requete->execute([
+                'id_plat' => $idPlat,
+            ]);
+
+            if ($requete->rowCount() === 0) {
+                throw new Exception('Plat introuvable');
+            }
+            $this->pdo->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->pdo->rollBack();
+            return false;
+        }
+    }
+
+
 }
