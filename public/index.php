@@ -30,6 +30,8 @@ require __DIR__ . '/../src/CommandeManager.php';
 
 require __DIR__ . '/../src/AvisManager.php';
 
+require __DIR__ . '/../src/StatistiqueManager.php';
+
 
 
 
