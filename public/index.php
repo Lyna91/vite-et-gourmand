@@ -53,7 +53,15 @@ require __DIR__ . '/../src/Mailer.php';
 require __DIR__ . '/../src/AdminController.php';
 
 
+// Protection CSRF : tout envoi de formulaire doit contenir le jeton de la session
+if ($_SERVER['REQUEST_METHOD'] === 'POST') { ///verifie les envoies de formulaires en POST (pas les GET).
+    $jetonRecu = $_POST['csrf'] ?? ''; // jeton envoyé dans le champ caché ou dans un texte vide s'il est absent.
 
+    if (empty($_SESSION['csrf']) || !hash_equals($_SESSION['csrf'], $jetonRecu)) { //si la session n'a pas de jeton (type session expirée) => refus || comparaison des 2 jetons
+        (new PageController())->requeteRefusee(); //renvoi à la page requete-refusee.php
+        exit; // on stoppe tout après, aucune action, aucune execution
+    }
+}
 
 $chemin = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 if ($chemin === '/') {
