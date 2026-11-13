@@ -173,6 +173,9 @@ if ($chemin === '/') {
 } elseif ($chemin === '/admin/employes/actif') {
     $controller = new AdminController();
     $controller->changerActifEmploye();
+} elseif ($chemin === '/admin/statistiques') {
+    $controller = new AdminController();
+    $controller->statistiques(); 
 } elseif ($chemin === '/admin/statistiques/synchroniser') {
     $controller = new AdminController();
     $controller->synchroniserStatistiques();
