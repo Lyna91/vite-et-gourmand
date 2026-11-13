@@ -1,0 +1,390 @@
+<?php
+
+class CommandeController extends Controller
+{
+    private const CODES_POSTAUX_BORDEAUX = ['33000', '33100', '33200', '33300', '33800'];
+    private const TAUX_REMISE = 0.10;
+    private const SEUIL_REMISE = 5;
+    private const FRAIS_LIVRAISON = 5;
+    private const PRIX_KM = 0.59;
+
+    public function commande(): void
+    {
+        // 1. pas connecté → direction la connexion
+        if (!isset($_SESSION['id_utilisateur'])) {
+            header('Location: /connexion');
+            exit;
+        }
+        $id = (int) ($_POST['menu'] ?? $_GET['menu'] ?? 0);
+        $menu = null;
+        $utilisateur = null;
+
+        try {
+            $pdo = getPdo();
+            $menuManager = new MenuManager($pdo);
+            $menu = $menuManager->findById($id);
+            $utilisateurManager = new UtilisateurManager($pdo);
+            $utilisateur = $utilisateurManager->trouverParId($_SESSION['id_utilisateur']);
+        } catch (PDOException $e) {
+            // base indisponible : $menu reste null, affichage de la page 404 'menu introuvable'
+        }
+        if ($menu === null) {
+            http_response_code(404);
+            $this->afficher('introuvable', [
+                'titre' => 'Menu introuvable',
+            ]);
+            return;
+        }
+
+        $erreurs = [];
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $adresse = trim($_POST['adresse'] ?? '');
+            if (empty($adresse)) {
+                $erreurs[] = "L'adresse est obligatoire.";
+            }
+            $ville = trim($_POST['ville'] ?? '');
+            if (empty($ville)) {
+                $erreurs[] = "La ville est obligatoire.";
+            }
+            $cp = trim($_POST['cp'] ?? '');
+            if (!preg_match('/^[0-9]{5}$/', $cp)) {
+                $erreurs[] = "Le code postal est incorrect";
+            }
+            $nombre = (int) ($_POST['nbre_personne'] ?? 0);
+            if ($nombre < $menu->getNbrePersonneMini()) {
+                $erreurs[] = "Ce menu est prévu pour au moins " . $menu->getNbrePersonneMini() . " personnes.";
+            }
+            $dateLivraison = trim($_POST['date_livraison'] ?? '');
+            if ($dateLivraison <= date('Y-m-d')) {
+                $erreurs[] = "La date doit être postérieure à aujourd'hui";
+            }
+            $heureLivraison = trim($_POST['heure_livraison'] ?? '');
+            if (empty($heureLivraison)) {
+                $erreurs[] = "Veuillez indiquez une heure de livraison";
+            }
+            $distance = (float) ($_POST['distance'] ?? 0);
+            if (strtolower($ville) !== 'bordeaux' && $distance <= 0) {
+                $erreurs[] = "Vous êtes en dehors de Bordeaux : veuillez indiquer la distance en kilomètres pour calculer les frais de livraison.";
+            }
+            if (strtolower($ville) === 'bordeaux' && !in_array($cp, self::CODES_POSTAUX_BORDEAUX)) {
+                $erreurs[] = "Le code postal ne correspond à la ville de Bordeaux";
+            }
+            if ($menu->getStock() < $nombre) {
+                $erreurs[] = "Il ne reste que " . $menu->getStock() . " menus disponibles.";
+            }
+            if (empty($erreurs)) {
+                $totalMenus =  round($menu->getPrixParPersonne() * $nombre, 2);           //total menu égal au prix par personne * le nombre
+                $remise = 0;                                                    // pour la remise
+                if ($nombre >= $menu->getNbrePersonneMini() + self::SEUIL_REMISE) { //si le nombre est sup ou = au nbre de pers mini + nombre pour la remise (ici 5)
+                    $remise = round($totalMenus * self::TAUX_REMISE, 2);                  // la remise est = totalMenu * taux de remise (ici 10%)
+                }
+                $livraison = 0;                                                 // pour la livraison
+                if (strtolower($ville) !== 'bordeaux') {                        // si la ville n'est pas bordeaux
+                    $livraison = round(self::FRAIS_LIVRAISON + self::PRIX_KM * $distance, 2);
+                }
+                $total = round($totalMenus - $remise + $livraison, 2);
+                $numero = 'CMD-' . date('Ymd') . '-' . strtoupper(bin2hex(random_bytes(3)));
+                $commande = [
+                    'numero_commande' => $numero,
+                    'nbre_personne' => $nombre,
+                    'prix_menu' => $totalMenus,
+                    'date_commande' => date('Y-m-d'),
+                    'date_livraison' => $dateLivraison,
+                    'heure_livraison' => $heureLivraison,
+                    'adresse_livraison' => $adresse,
+                    'cp_livraison' => $cp,
+                    'ville_livraison' => $ville,
+                    'frais_livraison' => $livraison,
+                    'montant_reduction' => $remise,
+                    'id_utilisateur' => $_SESSION['id_utilisateur'],
+                    'id_menu' => $menu->getId(),
+                ];
+                try {
+                    $commandeManager = new CommandeManager(getPdo());
+                    $idCommande = $commandeManager->creer($commande);
+                    $message = "Bonjour " . $utilisateur['prenom'] . ",\n\n"
+                        . "Votre commande " . $numero . " a bien été prise en compte.\n"
+                        . "Menu : " . $menu->getTitre() . "\n"
+                        . "Livraison le " . $dateLivraison . " à " . $heureLivraison . "\n"
+                        . "Total : " . $total . " €\n\n"
+                        . "À bientôt,\nJulie et José";
+                    $mailer = new Mailer();
+                    $mailer->envoyer($utilisateur['email'], "Confirmation de votre commande " . $numero, $message);
+                    header('Location: /commande-confirmee');
+                    exit;
+                } catch (Exception $e) {
+                    error_log($e->getMessage());
+                    $erreurs[] = "Votre commande n'a pas pu être enregistrée. Veuillez réessayer.";
+                }
+            }
+        }
+        $this->afficher('commande', [
+            'titre' => 'Commander',
+            'menu' => $menu,
+            'utilisateur' => $utilisateur,
+            'erreurs' => $erreurs
+        ]);
+    }
+
+    public function confirmation(): void
+    {
+        if (!isset($_SESSION['id_utilisateur'])) {
+            header('Location: /connexion');
+            exit;
+        }
+        $this->afficher('commande-confirmee', [
+            'titre' => 'Commande confirmée',
+        ]);
+    }
+
+    public function mesCommandes(): void
+    {
+        if (!isset($_SESSION['id_utilisateur'])) {
+            header('Location: /connexion');
+            exit;
+        }
+
+        $commandeManager = new CommandeManager(getPdo());
+        $commandes = $commandeManager->trouverParUtilisateur($_SESSION['id_utilisateur']);
+        $annulee = isset($_GET['annulee']);
+        $modifiee = isset($_GET['modifiee']);
+        $avis = isset($_GET['avis']);
+        $avisImpossible = isset($_GET['avis_impossible']);
+        $erreur = isset($_GET['erreur']);
+
+        $this->afficher('mes-commandes', [
+            'titre' => 'Mes commandes',
+            'commandes' => $commandes,
+            'annulee' => $annulee,
+            'modifiee' => $modifiee,
+            'avis' => $avis,
+            'avisImpossible' => $avisImpossible,
+            'erreur' => $erreur,
+        ]);
+    }
+
+    public function annuler(): void
+    {
+        if (!isset($_SESSION['id_utilisateur'])) {
+            header('Location: /connexion');
+            exit;
+        }
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: /mes-commandes');
+            exit;
+        }
+
+        $idCommande = (int) ($_POST['id_commande'] ?? 0);
+
+        $commandeManager = new CommandeManager(getPdo());
+        $annulee = $commandeManager->annuler($idCommande, $_SESSION['id_utilisateur']);
+
+        if ($annulee) {
+            header('Location: /mes-commandes?annulee=1');
+        } else {
+            header('Location: /mes-commandes?erreur=1');
+        }
+        exit;
+    }
+
+    public function modifier(): void
+    {
+        // 1. si pas connecté → retour à la page de connexion
+        if (!isset($_SESSION['id_utilisateur'])) {
+            header('Location: /connexion');
+            exit;
+        }
+
+        // 2. l'id de la commande (dans l'adresse, puis dans le champ caché)
+        $idCommande = (int) ($_POST['id_commande'] ?? $_GET['id'] ?? 0);
+
+        // 3. la commande (seulement si c'est la sienne)
+        $pdo = getPdo();
+        $commandeManager = new CommandeManager($pdo);
+        $commande = $commandeManager->trouverPourModification($idCommande, $_SESSION['id_utilisateur']);
+
+        // 4. introuvable ou plus modifiable
+        if ($commande === null || $commande['statut'] !== 'en attente') {
+            header('Location: /mes-commandes?erreur=1');
+            exit;
+        }
+
+        // 5. le menu de la commande
+        $menuManager = new MenuManager($pdo);
+        $menu = $menuManager->findById($commande['id_menu']);
+
+        $distance = '';
+        if ($commande['frais_livraison'] > 0) {
+            $distance = round(($commande['frais_livraison'] - self::FRAIS_LIVRAISON) / self::PRIX_KM, 1);
+        }
+
+        $erreurs = [];
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $adresse = trim($_POST['adresse'] ?? '');
+            if (empty($adresse)) {
+                $erreurs[] = "L'adresse est obligatoire.";
+            }
+            $ville = trim($_POST['ville'] ?? '');
+            if (empty($ville)) {
+                $erreurs[] = "La ville est obligatoire.";
+            }
+            $cp = trim($_POST['cp'] ?? '');
+            if (!preg_match('/^[0-9]{5}$/', $cp)) {
+                $erreurs[] = "Le code postal est incorrect";
+            }
+            $nombre = (int) ($_POST['nbre_personne'] ?? 0);
+            if ($nombre < $menu->getNbrePersonneMini()) {
+                $erreurs[] = "Ce menu est prévu pour au moins " . $menu->getNbrePersonneMini() . " personnes.";
+            }
+            $dateLivraison = trim($_POST['date_livraison'] ?? '');
+            if ($dateLivraison <= date('Y-m-d')) {
+                $erreurs[] = "La date doit être postérieure à aujourd'hui";
+            }
+            $heureLivraison = trim($_POST['heure_livraison'] ?? '');
+            if (empty($heureLivraison)) {
+                $erreurs[] = "Veuillez indiquer une heure de livraison";
+            }
+            $distance = (float) ($_POST['distance'] ?? 0);
+            if (strtolower($ville) !== 'bordeaux' && $distance <= 0) {
+                $erreurs[] = "Vous êtes en dehors de Bordeaux : veuillez indiquer la distance en kilomètres pour calculer les frais de livraison.";
+            }
+            if (strtolower($ville) === 'bordeaux' && !in_array($cp, self::CODES_POSTAUX_BORDEAUX)) {
+                $erreurs[] = "Le code postal ne correspond pas à la ville de Bordeaux";
+            }
+
+            // le stock : ses parts actuelles sont déjà retirées, on les compte comme disponibles pour lui
+            $stockDisponible = $menu->getStock() + $commande['nbre_personne'];
+            if ($stockDisponible < $nombre) {
+                $erreurs[] = "Il ne reste que " . $stockDisponible . " menus disponibles.";
+            }
+
+            if (empty($erreurs)) {
+                $totalMenus =  round($menu->getPrixParPersonne() * $nombre, 2);           //total menu égal au prix par personne * le nombre
+                $remise = 0;                                                    // pour la remise
+                if ($nombre >= $menu->getNbrePersonneMini() + self::SEUIL_REMISE) { //si le nombre est sup ou = au nbre de pers mini + nombre pour la remise (ici 5)
+                    $remise = round($totalMenus * self::TAUX_REMISE, 2);                  // la remise est = totalMenu * taux de remise (ici 10%)
+                }
+                $livraison = 0;                                                 // pour la livraison
+                if (strtolower($ville) !== 'bordeaux') {                        // si la ville n'est pas bordeaux
+                    $livraison = round(self::FRAIS_LIVRAISON + self::PRIX_KM * $distance, 2);
+                }
+                $total = round($totalMenus - $remise + $livraison, 2);
+
+                // 2. le tableau des données (9 clés, les mêmes noms que les cases vides de l'UPDATE)
+                $donnees = [
+                    'nbre_personne' => $nombre,
+                    'prix_menu' => $totalMenus,
+                    'date_livraison' => $dateLivraison,
+                    'heure_livraison' => $heureLivraison,
+                    'adresse_livraison' => $adresse,
+                    'cp_livraison' => $cp,
+                    'ville_livraison' => $ville,
+                    'frais_livraison' => $livraison,
+                    'montant_reduction' => $remise
+                ];
+
+                // 3. l'enregistrement
+                $modifiee = $commandeManager->modifier($idCommande, $_SESSION['id_utilisateur'], $donnees, (int) $commande['nbre_personne'], (int) $commande['id_menu']);
+                if ($modifiee) {
+                    header('Location: /mes-commandes?modifiee=1');
+                    exit;
+                }
+                $erreurs[] = "Votre commande n'a pas pu être modifiée. Veuillez réessayer.";
+            }
+        }
+        // l'affichage
+        $this->afficher('modifier-commande', [
+            'titre' => 'Modifier ma commande',
+            'commande' => $commande,
+            'menu' => $menu,
+            'erreurs' => $erreurs,
+            'distance' => $distance,
+        ]);
+    }
+
+    public function suivi(): void
+    {
+        // 1. si pas connecté → retour à la page de connexion
+        if (!isset($_SESSION['id_utilisateur'])) {
+            header('Location: /connexion');
+            exit;
+        }
+
+        // 2. l'id de la commande (dans l'adresse, puis dans le champ caché)
+        $idCommande = (int) ($_POST['id_commande'] ?? $_GET['id'] ?? 0);
+
+        // 3. la commande (seulement si c'est la sienne)
+        $pdo = getPdo();
+        $commandeManager = new CommandeManager($pdo);
+        $commande = $commandeManager->trouverPourModification($idCommande, $_SESSION['id_utilisateur']);
+
+        // 4. introuvable ou plus modifiable
+        if ($commande === null || $commande['statut'] === 'en attente' || $commande['statut'] === 'annulée') {
+            header('Location: /mes-commandes?erreur=1');
+            exit;
+        }
+
+        // 5. l'historique des statuts
+        $statuts = $commandeManager->trouverSuivi($idCommande);
+
+        // 6. l'affichage
+        $this->afficher('suivi-commande', [
+            'titre' => 'Suivi de ma commande',
+            'commande' => $commande,
+            'statuts' => $statuts,
+        ]);
+    }
+
+    public function avis(): void
+    {
+        // 1. pas connecté
+        if (!isset($_SESSION['id_utilisateur'])) {
+            header('Location: /connexion');
+            exit;
+        }
+
+        // 2. l'id de la commande (dans l'adresse, puis dans le champ caché)
+        $idCommande = (int) ($_POST['id_commande'] ?? $_GET['id'] ?? 0);
+
+        // 3. la commande (seulement si c'est la sienne) + le manager des avis
+        $pdo = getPdo();
+        $commandeManager = new CommandeManager($pdo);
+        $commande = $commandeManager->trouverPourModification($idCommande, $_SESSION['id_utilisateur']);
+        $avisManager = new AvisManager($pdo);
+
+        // 4. introuvable, pas « terminée », ou avis déjà donné → refus
+        if ($commande === null || $commande['statut'] !== 'terminée' || $avisManager->existePourCommande($idCommande)) {
+            header('Location: /mes-commandes?avis_impossible=1');
+            exit;
+        }
+
+        $erreurs = [];
+
+        // 5. le formulaire est envoyé
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $note = (int) ($_POST['note'] ?? 0);
+            if ($note < 1 || $note > 5) {
+                $erreurs[] = "La note doit être comprise entre 1 et 5.";
+            }
+            $commentaire = trim($_POST['commentaire'] ?? '');
+            if (empty($commentaire)) {
+                $erreurs[] = "Le commentaire est obligatoire.";
+            }
+
+            if (empty($erreurs)) {
+                $avisManager->creer($idCommande, $note, $commentaire);
+                header('Location: /mes-commandes?avis=1');
+                exit;
+            }
+        }
+
+        // 6. l'affichage
+        $this->afficher('avis', [
+            'titre' => 'Donner mon avis',
+            'commande' => $commande,
+            'erreurs' => $erreurs,
+        ]);
+    }
+}

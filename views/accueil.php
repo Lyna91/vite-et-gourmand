@@ -36,9 +36,22 @@
         </div>
     </div>
 </section>
-
-
-<!-- 4. bloc des avis clients validés : à venir -->
-
-
+<!-- 4. Les avis validés des clients-->
+<section>
+    <?php if (!empty($avisValides)): ?>
+        <h2>Les derniers avis de nos clients</h2>
+        <div class="row g-3">
+            <?php foreach ($avisValides as $unAvis): ?>
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <h5 class="card-title"><?= htmlspecialchars($unAvis['prenom']) ?></h5>
+                        <h5 class="card-title"><?= str_repeat('★', (int) $unAvis['note']) ?></h5>
+                        <h6 class="card-subtitle mb-2 text-body-secondary"><?= htmlspecialchars($unAvis['date_avis']) ?></h6>
+                        <p class="card-text"><?= htmlspecialchars($unAvis['description_avis']) ?></p>
+                    </div>
+                </div>
+            <?php endforeach ?>
+        </div>
+    <?php endif ?>
+</section>
 <?php require __DIR__ . '/morceaux/footer.php'; ?>

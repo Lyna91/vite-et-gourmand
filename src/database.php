@@ -13,3 +13,16 @@ function getPdo(): PDO
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
     ]);
 }
+
+function getMongo(): MongoDB\Database
+{
+    $host = 'mongo';                                  // le nom du service MongoDB dans docker-compose
+    $user = getenv('MONGO_ROOT_USER');                // lit la valeur dans le .env
+    $password = getenv('MONGO_ROOT_PASSWORD');
+    $db = getenv('MONGO_DATABASE');                   // vite_gourmand_stats
+
+    $uri = 'mongodb://' . rawurlencode($user) . ':' . rawurlencode($password) . "@$host:27017";
+
+    $client = new MongoDB\Client($uri);
+    return $client->selectDatabase($db);
+}

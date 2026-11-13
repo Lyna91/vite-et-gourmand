@@ -1,5 +1,9 @@
 <?php
 
+session_start();
+date_default_timezone_set('Europe/Paris');
+
+require __DIR__ . '/../vendor/autoload.php';
 //base de données
 require __DIR__ . '/../src/database.php'; // require insère le contenu d'un autre fichier, __DIR__ indique le chemin du dossier du fichier actuel
 
@@ -20,6 +24,16 @@ require __DIR__ . '/../src/Image.php';
 
 require __DIR__ . '/../src/ImageManager.php';
 
+require __DIR__ . '/../src/UtilisateurManager.php';
+
+require __DIR__ . '/../src/CommandeManager.php';
+
+require __DIR__ . '/../src/AvisManager.php';
+
+require __DIR__ . '/../src/StatistiqueManager.php';
+
+
+
 
 //controlleurs
 require __DIR__ . '/../src/Controller.php';
@@ -28,7 +42,26 @@ require __DIR__ . '/../src/MenuController.php';
 
 require __DIR__ . '/../src/PageController.php';
 
+require __DIR__ . '/../src/UtilisateurController.php';
 
+require __DIR__ . '/../src/CommandeController.php';
+
+require __DIR__ . '/../src/EmployeController.php';
+
+require __DIR__ . '/../src/Mailer.php';
+
+require __DIR__ . '/../src/AdminController.php';
+
+
+// Protection CSRF : tout envoi de formulaire doit contenir le jeton de la session
+if ($_SERVER['REQUEST_METHOD'] === 'POST') { ///verifie les envoies de formulaires en POST (pas les GET).
+    $jetonRecu = $_POST['csrf'] ?? ''; // jeton envoyé dans le champ caché ou dans un texte vide s'il est absent.
+
+    if (empty($_SESSION['csrf']) || !hash_equals($_SESSION['csrf'], $jetonRecu)) { //si la session n'a pas de jeton (type session expirée) => refus || comparaison des 2 jetons
+        (new PageController())->requeteRefusee(); //renvoi à la page requete-refusee.php
+        exit; // on stoppe tout après, aucune action, aucune execution
+    }
+}
 
 $chemin = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 if ($chemin === '/') {
@@ -49,6 +82,111 @@ if ($chemin === '/') {
 } elseif ($chemin === '/api/menus') {
     $controller = new MenuController();
     $controller->apiListe();
+} elseif ($chemin === '/inscription') {
+    $controller = new UtilisateurController();
+    $controller->inscription();
+} elseif ($chemin === '/connexion') {
+    $controller = new UtilisateurController();
+    $controller->connexion();
+} elseif ($chemin === '/deconnexion') {
+    $controller = new UtilisateurController();
+    $controller->deconnexion();
+} elseif ($chemin === '/contact') {
+    $controller = new PageController();
+    $controller->contact();
+} elseif ($chemin === '/mot-de-passe-oublie') {
+    $controller = new UtilisateurController();
+    $controller->motDePasseOublie();
+} elseif ($chemin === '/reinitialisation') {
+    $controller = new UtilisateurController();
+    $controller->reinitialisation();
+} elseif ($chemin === '/commande') {
+    $controller = new CommandeController();
+    $controller->commande();
+} elseif ($chemin === '/commande-confirmee') {
+    $controller = new CommandeController();
+    $controller->confirmation();
+} elseif ($chemin === '/mes-commandes') {
+    $controller = new CommandeController();
+    $controller->mesCommandes();
+} elseif ($chemin === '/commande/annuler') {
+    $controller = new CommandeController();
+    $controller->annuler();
+} elseif ($chemin === '/commande/modifier') {
+    $controller = new CommandeController();
+    $controller->modifier();
+} elseif ($chemin === '/commande/suivi') {
+    $controller = new CommandeController();
+    $controller->suivi();
+} elseif ($chemin === '/commande/avis') {
+    $controller = new CommandeController();
+    $controller->avis();
+} elseif ($chemin === '/mes-infos') {
+    $controller = new UtilisateurController();
+    $controller->mesInfos();
+} elseif ($chemin === '/employe') {
+    $controller = new EmployeController();
+    $controller->accueil();
+} elseif ($chemin === '/api/commandes') {
+    $controller = new EmployeController();
+    $controller->apiCommandes();
+} elseif ($chemin === '/employe/statut') {
+    $controller = new EmployeController();
+    $controller->changerStatut();
+} elseif ($chemin === '/employe/annuler') {
+    $controller = new EmployeController();
+    $controller->annulerCommande();
+} elseif ($chemin === '/employe/avis') {
+    $controller = new EmployeController();
+    $controller->avisEnAttente();
+} elseif ($chemin === '/employe/avis/traiter') {
+    $controller = new EmployeController();
+    $controller->traiterAvis();
+} elseif ($chemin === '/employe/menus') {
+    $controller = new EmployeController();
+    $controller->menus();
+} elseif ($chemin === '/employe/menus/creer') {
+    $controller = new EmployeController();
+    $controller->creerMenu();
+} elseif ($chemin === '/employe/menus/modifier') {
+    $controller = new EmployeController();
+    $controller->modifierMenu();
+} elseif ($chemin === '/employe/menus/supprimer') {
+    $controller = new EmployeController();
+    $controller->supprimerMenu();
+} elseif ($chemin === '/employe/plats') {
+    $controller = new EmployeController();
+    $controller->plats();
+} elseif ($chemin === '/employe/plats/creer') {
+    $controller = new EmployeController();
+    $controller->creerPlat();
+} elseif ($chemin === '/employe/plats/modifier') {
+    $controller = new EmployeController();
+    $controller->modifierPlat();
+} elseif ($chemin === '/employe/plats/supprimer') {
+    $controller = new EmployeController();
+    $controller->supprimerPlat();
+} elseif ($chemin === '/employe/horaires') {
+    $controller = new EmployeController();
+    $controller->horaires();
+} elseif ($chemin === '/employe/horaires/modifier') {
+    $controller = new EmployeController();
+    $controller->modifierHoraires();
+} elseif ($chemin === '/admin/employes') {
+    $controller = new AdminController();
+    $controller->employes();
+} elseif ($chemin === '/admin/employes/creer') {
+    $controller = new AdminController();
+    $controller->creerEmploye();
+} elseif ($chemin === '/admin/employes/actif') {
+    $controller = new AdminController();
+    $controller->changerActifEmploye();
+} elseif ($chemin === '/admin/statistiques') {
+    $controller = new AdminController();
+    $controller->statistiques(); 
+} elseif ($chemin === '/admin/statistiques/synchroniser') {
+    $controller = new AdminController();
+    $controller->synchroniserStatistiques();
 } else {
     $controller = new PageController();
     $controller->introuvable();

@@ -16,9 +16,9 @@ require __DIR__ . '/morceaux/header.php';
             <?php foreach ($images as $index => $image): ?>
                 <div class="carousel-item <?= $index === 0 ? 'active' : '' ?>">
                     <img src="/<?= htmlspecialchars($image->getChemin()) ?>"
-                         alt="<?= htmlspecialchars($image->getTexte()) ?>"
-                         class="d-block w-100"
-                         loading="lazy">
+                        alt="<?= htmlspecialchars($image->getTexte()) ?>"
+                        class="d-block w-100"
+                        loading="lazy">
                 </div>
             <?php endforeach; ?>
         </div>
@@ -63,4 +63,5 @@ require __DIR__ . '/morceaux/header.php';
     </ul>
 <?php endforeach; ?>
 
+<a href="/commande?menu=<?= $menu->getId() ?>" class="btn btn-primary">Commander</a>
 <?php require __DIR__ . '/morceaux/footer.php'; ?>
