@@ -7,6 +7,7 @@
 /** @var ?string $dateFin */
 /** @var Menu[] $menus */            // une liste d'objets Menu
 /** @var array $chiffresAffaires */
+/** @var array $commandesParMenu */
 require __DIR__ . '/../morceaux/header.php'; ?>
 <h1>Les statistiques</h1>
 <a href="/employe" class="btn btn-outline-secondary mb-3">← Retour à l'espace employé</a>
@@ -15,16 +16,29 @@ require __DIR__ . '/../morceaux/header.php'; ?>
         <p class="mb-0"><?= (int) $synchronise ?> commande(s) synchronisée(s) ✓</p>
     </div>
 <?php endif ?>
-<?php if ($erreur): ?>
-    <div class="alert alert-danger">
-        <p class="mb-0"><?= htmlspecialchars($erreur) ?></p>
-    </div>
-<?php endif ?>
 <div>
     <form method="post" action="/admin/statistiques/synchroniser" class="mb-4">
         <button type="submit" class="btn btn-outline-primary">Mettre à jour les statistiques</button>
     </form>
 </div>
+<?php if ($erreur): ?>
+    <div class="alert alert-danger">
+        <p class="mb-0"><?= htmlspecialchars($erreur) ?></p>
+    </div>
+<?php endif ?>
+<h2 class="h4 mt-4">Nombre de commandes par menu</h2>
+<p class="text-muted small">Toutes les commandes non annulées, tous menus confondus.</p>
+<div>
+    <?php if (empty($commandesParMenu)): ?>
+        <p>Aucune donnée. Cliquez sur « Mettre à jour les statistiques ».</p>
+    <?php else: ?>
+        <canvas id="graphique-commandes"
+            data-menus="<?= htmlspecialchars(json_encode(array_column($commandesParMenu, 'menu'))) ?>"
+            data-nombres="<?= htmlspecialchars(json_encode(array_column($commandesParMenu, 'nombre'))) ?>">
+        </canvas>
+    <?php endif ?>
+</div>
+<h2 class="h4 mt-5">Chiffre d’affaires par menu</h2>
 <div>
     <form method="get" action="/admin/statistiques" class="row g-2 align-items-end mb-3">
         <div class="col-md-4">
@@ -52,15 +66,7 @@ require __DIR__ . '/../morceaux/header.php'; ?>
         </div>
     </form>
 </div>
-<h2 class="h4 mt-4">Nombre de commandes par menu</h2>
-<?php if (empty($commandesParMenu)): ?>
-    <p>Aucune donnée. Cliquez sur « Mettre à jour les statistiques ».</p>
-<?php else: ?>
-    <canvas id="graphique-commandes"
-        data-menus="<?= htmlspecialchars(json_encode(array_column($commandesParMenu, 'menu'))) ?>"
-        data-nombres="<?= htmlspecialchars(json_encode(array_column($commandesParMenu, 'nombre'))) ?>">
-    </canvas>
-<?php endif ?>
+
 <?php if (empty($chiffresAffaires)): ?>
     <p>Aucune commande pour ces critères</p>
 <?php else: ?>
