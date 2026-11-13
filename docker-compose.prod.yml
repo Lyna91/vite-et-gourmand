@@ -1,0 +1,8 @@
+# Ajouts pour la PRODUCTION uniquement (serveur OVH)
+services:
+  nginx:
+    ports:
+      - "443:443"
+    volumes:
+      - ./docker/nginx/prod.conf:/etc/nginx/conf.d/default.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
