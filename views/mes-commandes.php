@@ -6,6 +6,7 @@
 /** @var bool $erreur */
 /** @var bool $avis */
 /** @var bool $avisImpossible */
+/** @var string $csrf */
 require __DIR__ . '/morceaux/header.php'; ?>
 <h1>Mes commandes</h1>
 <?php if ($annulee): ?>
@@ -68,6 +69,7 @@ require __DIR__ . '/morceaux/header.php'; ?>
                         <?php if ($commande['statut'] === 'en attente'): ?>
                             <a href="/commande/modifier?id=<?= $commande['id_commande'] ?>" class="btn btn-sm btn-outline-primary">Modifier</a>
                             <form method="post" action="/commande/annuler">
+                                <input type="hidden" name="csrf" value="<?= $csrf ?>">
                                 <input type="hidden" name="id_commande" value="<?= $commande['id_commande'] ?>">
                                 <button type="submit" class="btn btn-sm btn-outline-danger">Annuler</button>
                             </form>

@@ -3,13 +3,14 @@
 /** @var array $types */
 /** @var string $erreur */
 /** @var array $plat */
-
+/** @var string $csrf */
 require __DIR__ . '/../morceaux/header.php'; ?>
 <h1>Modifier un plat</h1>
 <?php if ($erreur): ?>
     <div class="alert alert-danger"><?= htmlspecialchars($erreur) ?></div>
 <?php endif ?>
 <form method="post" action="/employe/plats/modifier?id=<?= $plat['id_plat'] ?>">
+    <input type="hidden" name="csrf" value="<?= $csrf ?>">
     <div class="mb-3">
         <label for="nom" class="form-label">Nom</label>
         <input type="text" id="nom" name="nom" class="form-control" value="<?= htmlspecialchars($plat['nom']) ?>" required>

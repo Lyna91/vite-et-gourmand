@@ -2,6 +2,7 @@
 
 /** @var string[] $erreurs */
 /** @var bool $envoye */
+/** @var string $csrf */
 require __DIR__ . '/morceaux/header.php'; ?>
 <h1>Mot de passe oublié</h1>
 
@@ -21,6 +22,7 @@ require __DIR__ . '/morceaux/header.php'; ?>
     </div>
 <?php endif; ?>
 <form method="post" action="/mot-de-passe-oublie">
+    <input type="hidden" name="csrf" value="<?= $csrf ?>">
     <div class="mb-3">
         <label for="mail" class="form-label">Indiquez votre e-mail</label>
         <input type="email" id="mail" name="mail" class="form-control" required>

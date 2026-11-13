@@ -1,5 +1,6 @@
  <?php
     /** @var string[] $erreurs */
+    /** @var string $csrf */
     require __DIR__ . '/morceaux/header.php'; ?>
  <h1>Connexion</h1>
  <?php if (!empty($erreurs)): ?>
@@ -12,6 +13,7 @@
      </div>
  <?php endif; ?>
  <form method="post" action="/connexion">
+     <input type="hidden" name="csrf" value="<?= $csrf ?>">
      <div class="mb-3">
          <label for="mail" class="form-label">Email</label>
          <input type="email" id="mail" name="mail" class="form-control" required>

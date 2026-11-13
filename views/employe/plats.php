@@ -4,6 +4,7 @@
 /** @var bool $cree */
 /** @var bool $modifie */
 /** @var bool $supprime */
+/** @var string $csrf */
 require __DIR__ . '/../morceaux/header.php'; ?>
 <h1>Gérer les plats</h1>
 <a href="/employe" class="btn btn-outline-secondary mb-3">← Retour à l'espace employé</a>
@@ -41,6 +42,7 @@ require __DIR__ . '/../morceaux/header.php'; ?>
                     <td><?= htmlspecialchars($plat['type']) ?></td>
                     <td><a href="/employe/plats/modifier?id=<?= $plat['id_plat'] ?>" class="btn btn-sm btn-outline-primary">Modifier</a>
                         <form method="post" action="/employe/plats/supprimer" class="d-inline" onsubmit="return confirm('Supprimer ce plat ?');">
+                            <input type="hidden" name="csrf" value="<?= $csrf ?>">
                             <input type="hidden" name="id_plat" value="<?= $plat['id_plat'] ?>">
                             <button type="submit" class="btn btn-sm btn-outline-danger">Supprimer</button>
                         </form>

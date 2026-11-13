@@ -2,6 +2,7 @@
 
 /** @var bool $traite */
 /** @var bool $erreur */
+/** @var string $csrf */
 require __DIR__ . '/../morceaux/header.php'; ?>
 <h1>Avis en attente de validation</h1>
 <?php if ($traite): ?>
@@ -34,6 +35,7 @@ require __DIR__ . '/../morceaux/header.php'; ?>
                     <td><?= htmlspecialchars($unAvis['description_avis']) ?></td>
                     <td>
                         <form method="post" action="/employe/avis/traiter">
+                            <input type="hidden" name="csrf" value="<?= $csrf ?>">
                             <input type="hidden" name="id_avis" value="<?= $unAvis['id_avis'] ?>">
                             <button type="submit" name="statut" value="validé" class="btn btn-success btn-sm">Valider</button>
                             <button type="submit" name="statut" value="refusé" class="btn btn-danger btn-sm">Refuser</button>
