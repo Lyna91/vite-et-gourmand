@@ -52,6 +52,15 @@ require __DIR__ . '/../morceaux/header.php'; ?>
         </div>
     </form>
 </div>
+<h2 class="h4 mt-4">Nombre de commandes par menu</h2>
+<?php if (empty($commandesParMenu)): ?>
+    <p>Aucune donnée. Cliquez sur « Mettre à jour les statistiques ».</p>
+<?php else: ?>
+    <canvas id="graphique-commandes"
+        data-menus="<?= htmlspecialchars(json_encode(array_column($commandesParMenu, 'menu'))) ?>"
+        data-nombres="<?= htmlspecialchars(json_encode(array_column($commandesParMenu, 'nombre'))) ?>">
+    </canvas>
+<?php endif ?>
 <?php if (empty($chiffresAffaires)): ?>
     <p>Aucune commande pour ces critères</p>
 <?php else: ?>
@@ -74,4 +83,6 @@ require __DIR__ . '/../morceaux/header.php'; ?>
         </tbody>
     </table>
 <?php endif ?>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="/js/admin-statistiques.js"></script>
 <?php require __DIR__ . '/../morceaux/footer.php'; ?>
