@@ -101,4 +101,63 @@ class AdminController extends Controller
         }
         exit;
     }
+
+    public function synchroniserStatistiques(): void
+    {
+        $this->exigerRole([1]);
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: /admin/statistiques');
+            exit;
+        }
+
+        $statistiqueManager = new StatistiqueManager(getPdo(), getMongo());
+        $nombre = $statistiqueManager->synchroniser();
+        header('Location: /admin/statistiques?synchronise=' . ($nombre));
+        exit;
+    }
+
+    public function statistiques(): void
+    {
+        $this->exigerRole([1]);
+
+        $statistiqueManager = new StatistiqueManager(getPdo(), getMongo());
+        $menuManager = new MenuManager(getPdo());
+        $menus = $menuManager->findAll();
+        $erreur = '';
+
+        // 1. Lire les filtres (GET), vides = pas de filtre
+        $idMenu = ($_GET['menu'] ?? '') !== '' ? (int) $_GET['menu'] : null;
+        $dateDebut = ($_GET['debut'] ?? '') !== '' ? $_GET['debut'] : null;
+        $dateFin = ($_GET['fin'] ?? '') !== '' ? $_GET['fin'] : null;
+
+        // 2. Vérifier les filtres → À TOI
+        $idsMenus = array_map(fn($menu) => $menu->getId(), $menus);
+        if ($idMenu !== null && !in_array($idMenu, $idsMenus)) {
+            $erreur = "Le menu choisi n'existe pas.";
+            $idMenu = null;
+        }
+        if ($dateDebut !== null && $dateFin !== null && $dateFin < $dateDebut) {
+            $erreur = "La date de fin est antérieure à la date de début.";
+            $dateDebut = null;
+            $dateFin = null;
+        }
+
+
+        // 3. Récupérer les statistiques
+        $commandesParMenu = $statistiqueManager->commandesParMenu();
+        $chiffresAffaires = $statistiqueManager->chiffreAffairesParMenu($idMenu, $dateDebut, $dateFin);
+
+        $this->afficher('admin/statistiques', [
+            'titre' => 'Statistiques',
+            'menus' => $menus,
+            'commandesParMenu' => $commandesParMenu,
+            'chiffresAffaires' => $chiffresAffaires,
+            'idMenu' => $idMenu,
+            'dateDebut' => $dateDebut,
+            'dateFin' => $dateFin,
+            'erreur' => $erreur,
+            'synchronise' => $_GET['synchronise'] ?? null,
+        ]);
+    }
 }
