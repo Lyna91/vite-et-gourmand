@@ -3,13 +3,14 @@
 /** @var array $themes */
 /** @var array $regimes */
 /** @var string $erreur */
-
+/** @var string $csrf */
 require __DIR__ . '/../morceaux/header.php'; ?>
 <h1>Créer un menu</h1>
 <?php if ($erreur): ?>
     <div class="alert alert-danger"><?= htmlspecialchars($erreur) ?></div>
 <?php endif ?>
 <form method="post" action="/employe/menus/creer">
+    <input type="hidden" name="csrf" value="<?= $csrf ?>">
     <div class="mb-3">
         <label for="titre" class="form-label">Titre</label>
         <input type="text" id="titre" name="titre" class="form-control" required>

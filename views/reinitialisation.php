@@ -3,6 +3,7 @@
 /** @var string[] $erreurs */
 /** @var bool $valide */
 /** @var string $token */
+/** @var string $csrf */
 require __DIR__ . '/morceaux/header.php'; ?>
 <h1>Nouveau mot de passe</h1>
 <?php if (!empty($erreurs)): ?>
@@ -21,6 +22,7 @@ require __DIR__ . '/morceaux/header.php'; ?>
     </div>
 <?php else: ?>
     <form method="post" action="/reinitialisation">
+        <input type="hidden" name="csrf" value="<?= $csrf ?>">
         <div>
             <input type="hidden" name="token" value="<?= htmlspecialchars($token) ?>">
             <div>

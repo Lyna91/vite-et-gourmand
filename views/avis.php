@@ -1,6 +1,7 @@
 <?php
 
 /** @var array $commande */
+/** @var string $csrf */
 require __DIR__ . '/morceaux/header.php'; ?>
 
 <h1>Donner mon avis sur la commande <?= htmlspecialchars($commande['numero_commande']) ?></h1>
@@ -14,6 +15,7 @@ require __DIR__ . '/morceaux/header.php'; ?>
     </div>
 <?php endif; ?>
 <form id="form-avis" method="post" action="/commande/avis">
+    <input type="hidden" name="csrf" value="<?= $csrf ?>">
     <div class="mb-3">
         <input type="hidden" id="id_commande" name="id_commande" class="form-control" value="<?= htmlspecialchars($commande['id_commande']) ?>">
     </div class="mb-3">

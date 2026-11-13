@@ -2,6 +2,7 @@
 
 /** @var array $utilisateur */
 /** @var bool $succes */
+/** @var string $csrf */
 require __DIR__ . '/morceaux/header.php'; ?>
 <h1>Mes informations</h1>
 <?php if (!empty($erreurs)): ?>
@@ -19,6 +20,7 @@ require __DIR__ . '/morceaux/header.php'; ?>
     </div>
 <?php endif; ?>
 <form method="post" action="/mes-infos">
+    <input type="hidden" name="csrf" value="<?= $csrf ?>">
     <div class="mb-3">
         <label for="nom" class="form-label">Votre nom</label>
         <input type="text" id="nom" name="nom" class="form-control" value="<?= htmlspecialchars($_POST['nom'] ?? $utilisateur['nom']) ?>" required>

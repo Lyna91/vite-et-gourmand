@@ -4,6 +4,7 @@
 /** @var bool $statutModifie */
 /** @var bool $annulee */
 /** @var bool $erreur */
+/** @var string $csrf */
 require __DIR__ . '/../morceaux/header.php'; ?>
 
 <h1>Espace employé</h1>
@@ -68,6 +69,7 @@ require __DIR__ . '/../morceaux/header.php'; ?>
                 <td>
                     <?php if ($commande['statut'] !== 'annulée' && $commande['statut'] !== 'terminée'): ?>
                         <form method="post" action="/employe/statut" class="d-flex gap-1">
+                            <input type="hidden" name="csrf" value="<?= $csrf ?>">
                             <input type="hidden" name="id_commande" value="<?= $commande['id_commande'] ?>">
                             <select name="statut" class="form-select form-select-sm">
                                 <option value="accepté">Accepté</option>

@@ -6,6 +6,7 @@
 /** @var bool $dejaCommande */
 /** @var bool $erreur */
 /** @var Menu[] $menus */
+/** @var string $csrf */
 require __DIR__ . '/../morceaux/header.php'; ?>
 <h1>Gérer les menus</h1>
 <a href="/employe" class="btn btn-outline-secondary mb-3">← Retour à l'espace employé</a>
@@ -57,6 +58,7 @@ require __DIR__ . '/../morceaux/header.php'; ?>
                     <td>
                         <a href="/employe/menus/modifier?id=<?= $menu->getId() ?>" class="btn btn-sm btn-outline-primary">Modifier</a>
                         <form method="post" action="/employe/menus/supprimer" class="d-inline" onsubmit="return confirm('Supprimer ce menu ?');">
+                            <input type="hidden" name="csrf" value="<?= $csrf ?>">
                             <input type="hidden" name="id_menu" value="<?= $menu->getId() ?>">
                             <button type="submit" class="btn btn-sm btn-outline-danger">Supprimer</button>
                         </form>

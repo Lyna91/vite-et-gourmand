@@ -1,7 +1,7 @@
  <?php
     /** @var bool $succes */
     /** @var string[] $erreurs */
-
+    /** @var string $csrf */
     require __DIR__ . '/morceaux/header.php'; ?>
  <h1>Créer un compte</h1>
  <?php if (!empty($erreurs)): ?>
@@ -19,6 +19,7 @@
      </div>
  <?php endif; ?>
  <form method="post" action="/inscription">
+     <input type="hidden" name="csrf" value="<?= $csrf ?>">
      <div class="mb-3">
          <label for="nom" class="form-label">Votre nom</label>
          <input type="text" id="nom" name="nom" class="form-control" required>

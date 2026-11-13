@@ -1,13 +1,14 @@
 <?php
 
-/** @var ?string $synchronise */     // un texte, ou null si pas de synchronisation
-/** @var string $erreur */           // un texte (vide s'il n'y a pas d'erreur)
-/** @var ?int $idMenu */             // un nombre, ou null si pas de filtre
+/** @var ?string $synchronise */
+/** @var string $erreur */
+/** @var ?int $idMenu */
 /** @var ?string $dateDebut */
 /** @var ?string $dateFin */
-/** @var Menu[] $menus */            // une liste d'objets Menu
+/** @var Menu[] $menus */
 /** @var array $chiffresAffaires */
 /** @var array $commandesParMenu */
+/** @var string $csrf */
 require __DIR__ . '/../morceaux/header.php'; ?>
 <h1>Les statistiques</h1>
 <a href="/employe" class="btn btn-outline-secondary mb-3">← Retour à l'espace employé</a>
@@ -18,6 +19,7 @@ require __DIR__ . '/../morceaux/header.php'; ?>
 <?php endif ?>
 <div>
     <form method="post" action="/admin/statistiques/synchroniser" class="mb-4">
+        <input type="hidden" name="csrf" value="<?= $csrf ?>">
         <button type="submit" class="btn btn-outline-primary">Mettre à jour les statistiques</button>
     </form>
 </div>

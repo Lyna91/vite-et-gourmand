@@ -4,12 +4,14 @@
 /** @var array $regimes */
 /** @var string $erreur */
 /** @var Menu $menu */
+/** @var string $csrf */
 require __DIR__ . '/../morceaux/header.php'; ?>
 <h1>Modifier un menu</h1>
 <?php if ($erreur): ?>
     <div class="alert alert-danger"><?= htmlspecialchars($erreur) ?></div>
 <?php endif ?>
 <form method="post" action="/employe/menus/modifier?id=<?= $menu->getId() ?>">
+    <input type="hidden" name="csrf" value="<?= $csrf ?>">
     <div class="mb-3">
         <label for="titre" class="form-label">Titre</label>
         <input type="text" id="titre" name="titre" class="form-control" value="<?= htmlspecialchars($menu->getTitre()) ?>" required>

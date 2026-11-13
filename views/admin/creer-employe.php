@@ -1,6 +1,7 @@
 <?php
 
 /** @var array $employes */
+/** @var string $csrf */
 require __DIR__ . '/../morceaux/header.php'; ?>
 <h1>Créer un compte employé</h1>
 <?php if (!empty($erreurs)): ?>
@@ -11,6 +12,7 @@ require __DIR__ . '/../morceaux/header.php'; ?>
     </div>
 <?php endif ?>
 <form method="post" action="/admin/employes/creer">
+    <input type="hidden" name="csrf" value="<?= $csrf ?>">
     <div class="mb-3">
         <label for="prenom" class="form-label">Prénom</label>
         <input type="text" id="prenom" name="prenom" class="form-control" required>

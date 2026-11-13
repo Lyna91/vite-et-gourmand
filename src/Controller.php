@@ -12,7 +12,11 @@ class Controller
             // si la base ne répond pas, le footer s'affiche sans les horaires
         }
         $donnees['horaires'] = $horaires;
-        
+        if (empty($_SESSION['csrf'])) {
+            $_SESSION['csrf'] = bin2hex(random_bytes(32));
+        }
+        $donnees['csrf'] = $_SESSION['csrf'];
+
         extract($donnees);
         require __DIR__ . '/../views/' . $vue . '.php';
     }

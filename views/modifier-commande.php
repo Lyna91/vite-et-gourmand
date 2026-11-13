@@ -4,6 +4,7 @@
 /** @var array $erreurs */
 /** @var array $commande */
 /** @var string|float $distance */
+/** @var string $csrf */
 require __DIR__ . '/morceaux/header.php'; ?>
 
 <h1 class="text-center">Modifier la commande <?= htmlspecialchars($commande['numero_commande']) ?></h1>
@@ -16,6 +17,7 @@ require __DIR__ . '/morceaux/header.php'; ?>
 </div>
 <div>
     <form id="form-commande" method="post" action="/commande/modifier" data-prix="<?= $menu->getPrixParPersonne() ?>" data-mini="<?= $menu->getNbrePersonneMini() ?>">
+        <input type="hidden" name="csrf" value="<?= $csrf ?>">
         <?php if (!empty($erreurs)): ?>
             <div class="alert alert-danger">
                 <ul class="mb-0">

@@ -2,6 +2,7 @@
 
 /** @var int $idCommande */
 /** @var array $erreurs */
+/** @var string $csrf */
 require __DIR__ . '/../morceaux/header.php'; ?>
 <h1>Annuler une commande</h1>
 
@@ -18,6 +19,7 @@ require __DIR__ . '/../morceaux/header.php'; ?>
     </div>
 <?php endif; ?>
 <form method="post" action="/employe/annuler">
+    <input type="hidden" name="csrf" value="<?= $csrf ?>">
     <input type="hidden" name="id_commande" value="<?= htmlspecialchars($idCommande) ?>">
     <div class="mb-3">
         <label for="mode_contact" class="form-label">Mode de contact</label>
