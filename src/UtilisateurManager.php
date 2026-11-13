@@ -133,4 +133,35 @@ class UtilisateurManager
         $donnees['id_utilisateur'] = $idUtilisateur;
         $requete->execute($donnees);
     }
+
+    public function trouverEmployes(): array 
+    {
+        $requete = $this->pdo->query("SELECT id_utilisateur, prenom, nom, email, actif FROM utilisateur WHERE id_role = 2 ORDER BY nom");
+        return $requete->fetchAll();
+    }
+
+    public function creerEmploye(string $nom, string $prenom, string $email, string $motDePasse): void
+    {
+        $requete = $this->pdo->prepare("
+        INSERT INTO utilisateur (nom, prenom, email, telephone, adresse, cp, ville, mot_de_passe, id_role)
+        VALUES (:nom, :prenom, :email, '', '', '', '', :mot_de_passe, 2)
+    "); // id_role = 2 écrit en dur : impossible de créer un admin depuis l'application
+        $requete->execute([
+            'nom' => $nom,
+            'prenom' => $prenom,
+            'email' => $email,
+            'mot_de_passe' => password_hash($motDePasse, PASSWORD_DEFAULT),
+        ]);
+    }
+
+    public function changerActif(int $idUtilisateur, int $actif): bool
+    {
+        $requete = $this->pdo->prepare("
+        UPDATE utilisateur SET actif = :actif WHERE id_utilisateur = :id_utilisateur AND id_role = 2"); 
+        $requete->execute([
+            'id_utilisateur' => $idUtilisateur,
+            'actif' => $actif,
+        ]);
+        return $requete->rowCount() > 0;
+    }
 }
