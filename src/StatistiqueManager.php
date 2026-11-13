@@ -69,4 +69,42 @@ class StatistiqueManager
         }
         return $resultats;
     }
+
+    public function chiffreAffairesParMenu(?int $idMenu, ?string $dateDebut, ?string $dateFin): array
+    {
+        $filtre = [];
+        if ($idMenu !== null) {
+            $filtre['id_menu'] = $idMenu;
+        }
+        if ($dateDebut !== null) {
+            $filtre['date_commande']['$gte'] = $dateDebut;
+        }
+        if ($dateFin !== null) {
+            $filtre['date_commande']['$lte'] = $dateFin;
+        }
+        //Pipeline d’agrégation MongoDB
+        $etapes = [];
+        if (!empty($filtre)) {
+            $etapes[] = ['$match' => $filtre];
+        }
+        $etapes[] = ['$group' => [
+            '_id' => '$titre_menu',
+            'nombre' => ['$sum' => 1],
+            'chiffre_affaires' => ['$sum' => '$chiffre_affaires'],
+        ]];
+        $etapes[] = [
+            '$sort' => ['chiffre_affaires' => -1],
+        ];
+
+        $resultats = [];
+        foreach ($this->mongo->selectCollection('commandes')->aggregate($etapes) as $document) {
+            $resultats[] = [
+                'menu' => $document['_id'],
+                'chiffre_affaires' => $document['chiffre_affaires'],
+                'nombre' => $document['nombre'],
+
+            ];
+        }
+        return $resultats;
+    }
 }
