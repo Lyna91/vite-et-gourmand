@@ -30,6 +30,8 @@ require __DIR__ . '/../src/CommandeManager.php';
 
 require __DIR__ . '/../src/AvisManager.php';
 
+require __DIR__ . '/../src/StatistiqueManager.php';
+
 
 
 
@@ -171,7 +173,13 @@ if ($chemin === '/') {
 } elseif ($chemin === '/admin/employes/actif') {
     $controller = new AdminController();
     $controller->changerActifEmploye();
-}else {
+} elseif ($chemin === '/admin/statistiques') {
+    $controller = new AdminController();
+    $controller->statistiques(); 
+} elseif ($chemin === '/admin/statistiques/synchroniser') {
+    $controller = new AdminController();
+    $controller->synchroniserStatistiques();
+} else {
     $controller = new PageController();
     $controller->introuvable();
 }

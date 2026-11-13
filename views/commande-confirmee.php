@@ -3,5 +3,7 @@
 <div class="alert alert-success">
     <p class="mb-0">Merci ! Votre commande a bien été enregistrée. Un e-mail de confirmation vous a été envoyé.</p>
 </div>
+<a href="/mes-commandes" class="btn btn-primary">Voir mes commandes</a>
+<a href="/menus" class="btn btn-outline-secondary">Retour aux menus</a>
 <a class="btn btn-primary" href="/">Retour à l'accueil</a>
 <?php require __DIR__ . '/morceaux/footer.php'; ?>
