@@ -50,5 +50,23 @@ class StatistiqueManager
         return count($documents);
     }
 
-    
+    public function commandesParMenu(): array
+    {
+        $etapes = [ // ici c'est un pipeline d'aggregation de Mongodb
+            ['$group' => [
+                '_id' => '$titre_menu',
+                'nombre' => ['$sum' => 1],
+            ]],
+            ['$sort' => ['nombre' => -1]],
+        ];
+
+        $resultats = [];
+        foreach ($this->mongo->selectCollection('commandes')->aggregate($etapes) as $document) {
+            $resultats[] = [
+                'menu' => $document['_id'],
+                'nombre' => $document['nombre'],
+            ];
+        }
+        return $resultats;
+    }
 }
