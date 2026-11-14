@@ -72,24 +72,26 @@ require __DIR__ . '/../morceaux/header.php'; ?>
 <?php if (empty($chiffresAffaires)): ?>
     <p>Aucune commande pour ces critères</p>
 <?php else: ?>
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">Menu</th>
-                <th scope="col">Commandes</th>
-                <th scope="col">Chiffre d'affaires</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($chiffresAffaires as $ligne): ?>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
                 <tr>
-                    <td><?= htmlspecialchars($ligne['menu']) ?></td>
-                    <td><?= $ligne['nombre'] ?></td>
-                    <td><?= number_format($ligne['chiffre_affaires'], 2, ',', ' ') ?> €</td>
+                    <th scope="col">Menu</th>
+                    <th scope="col">Commandes</th>
+                    <th scope="col">Chiffre d'affaires</th>
                 </tr>
-            <?php endforeach ?>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <?php foreach ($chiffresAffaires as $ligne): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($ligne['menu']) ?></td>
+                        <td><?= $ligne['nombre'] ?></td>
+                        <td><?= number_format($ligne['chiffre_affaires'], 2, ',', ' ') ?> €</td>
+                    </tr>
+                <?php endforeach ?>
+            </tbody>
+        </table>
+    </div>
 <?php endif ?>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="/js/admin-statistiques.js"></script>
