@@ -21,7 +21,7 @@ require __DIR__ . '/../morceaux/header.php'; ?>
     </div>
     <div class="mb-3">
         <label for="conditions" class="form-label">Conditions</label>
-        <textarea id="conditions" name="conditions" class="form-control" required></textarea>
+        <textarea id="conditions" name="conditions" class="form-control"></textarea>
     </div>
     <div class="mb-3">
         <label for="stock" class="form-label">Stock</label>

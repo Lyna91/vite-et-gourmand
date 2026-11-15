@@ -38,30 +38,32 @@ require __DIR__ . '/morceaux/header.php';
 <p><strong>Thème : </strong> <?= htmlspecialchars($menu->getTheme()) ?></p>
 <p><strong>Minimum : </strong><?= $menu->getNbrePersonneMini() ?> personnes</p>
 <p><strong>Stock disponible pour ce menu : </strong> <?= $menu->getStock() ?></p>
-<div class="alert alert-warning">
-    <p class="mb-0"><strong>Les conditions : </strong> <?= htmlspecialchars($menu->getConditions()) ?></p>
-</div>
+<?php if ($menu->getConditions() !== ''): ?>
+    <div class="alert alert-warning">
+        <p class="mb-0"><strong>Les conditions : </strong> <?= htmlspecialchars($menu->getConditions()) ?></p>
+    <?php endif; ?>
+    </div>
 
-<h2>Composition du menu</h2>
+    <h2>Composition du menu</h2>
 
-<?php foreach (['Entrée', 'Plat', 'Dessert'] as $type): ?>
-    <h3><?= $type ?></h3>
-    <ul>
-        <?php foreach ($plats as $plat): ?>
-            <?php if ($plat->getType() === $type): ?>
-                <li>
-                    <?= htmlspecialchars($plat->getNom()) ?>
-                    <?php if (!empty($plat->getAllergenes())): ?>
-                        <br>
-                        <small class="text-muted">
-                            Allergènes : <?= htmlspecialchars(implode(', ', $plat->getAllergenes())) ?>
-                        </small>
-                    <?php endif; ?>
-                </li>
-            <?php endif; ?>
-        <?php endforeach; ?>
-    </ul>
-<?php endforeach; ?>
+    <?php foreach (['Entrée', 'Plat', 'Dessert'] as $type): ?>
+        <h3><?= $type ?></h3>
+        <ul>
+            <?php foreach ($plats as $plat): ?>
+                <?php if ($plat->getType() === $type): ?>
+                    <li>
+                        <?= htmlspecialchars($plat->getNom()) ?>
+                        <?php if (!empty($plat->getAllergenes())): ?>
+                            <br>
+                            <small class="text-muted">
+                                Allergènes : <?= htmlspecialchars(implode(', ', $plat->getAllergenes())) ?>
+                            </small>
+                        <?php endif; ?>
+                    </li>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        </ul>
+    <?php endforeach; ?>
 
-<a href="/commande?menu=<?= $menu->getId() ?>" class="btn btn-primary">Commander</a>
-<?php require __DIR__ . '/morceaux/footer.php'; ?>
+    <a href="/commande?menu=<?= $menu->getId() ?>" class="btn btn-primary">Commander</a>
+    <?php require __DIR__ . '/morceaux/footer.php'; ?>

@@ -27,37 +27,39 @@ require __DIR__ . '/../morceaux/header.php'; ?>
 <?php if (empty($employes)): ?>
     <p>Aucun employé</p>
 <?php else: ?>
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">Prénom</th>
-                <th scope="col">Nom</th>
-                <th scope="col">E-mail</th>
-                <th scope="col">Statut</th>
-                <th scope="col">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($employes as $employe): ?>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
                 <tr>
-                    <td><?= htmlspecialchars($employe['prenom']) ?></td>
-                    <td><?= htmlspecialchars($employe['nom']) ?></td>
-                    <td><?= htmlspecialchars($employe['email']) ?></td>
-                    <td><?= $employe['actif'] ? '<span class="badge bg-success">Actif</span>' : '<span class="badge bg-secondary">Désactivé</span>' ?></td>
-                    <td>
-                        <form method="post" action="/admin/employes/actif" class="d-inline">
-                            <input type="hidden" name="csrf" value="<?= $csrf ?>">
-                            <input type="hidden" name="id_utilisateur" value="<?= $employe['id_utilisateur'] ?>">
-                            <input type="hidden" name="actif" value="<?= $employe['actif'] ? 0 : 1 ?>">
-                            <button type="submit" class="btn btn-sm <?= $employe['actif'] ? 'btn-outline-danger' : 'btn-outline-success' ?>">
-                                <?= $employe['actif'] ? 'Désactiver' : 'Réactiver' ?>
-                            </button>
-                        </form>
-                    </td>
+                    <th scope="col">Prénom</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">E-mail</th>
+                    <th scope="col">Statut</th>
+                    <th scope="col">Actions</th>
                 </tr>
-            <?php endforeach ?>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <?php foreach ($employes as $employe): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($employe['prenom']) ?></td>
+                        <td><?= htmlspecialchars($employe['nom']) ?></td>
+                        <td><?= htmlspecialchars($employe['email']) ?></td>
+                        <td><?= $employe['actif'] ? '<span class="badge bg-success">Actif</span>' : '<span class="badge bg-secondary">Désactivé</span>' ?></td>
+                        <td>
+                            <form method="post" action="/admin/employes/actif" class="d-inline">
+                                <input type="hidden" name="csrf" value="<?= $csrf ?>">
+                                <input type="hidden" name="id_utilisateur" value="<?= $employe['id_utilisateur'] ?>">
+                                <input type="hidden" name="actif" value="<?= $employe['actif'] ? 0 : 1 ?>">
+                                <button type="submit" class="btn btn-sm <?= $employe['actif'] ? 'btn-outline-danger' : 'btn-outline-success' ?>">
+                                    <?= $employe['actif'] ? 'Désactiver' : 'Réactiver' ?>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                <?php endforeach ?>
+            </tbody>
+        </table>
+    </div>
 <?php endif ?>
 
 <?php require __DIR__ . '/../morceaux/footer.php'; ?>
