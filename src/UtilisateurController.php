@@ -123,6 +123,7 @@ class UtilisateurController extends Controller
         $this->afficher('connexion', [
             'titre' => 'Se connecter',
             'erreurs' => $erreurs,
+            'reinitialise' => isset($_GET['reinitialise']),
         ]);
     }
 
@@ -202,7 +203,7 @@ class UtilisateurController extends Controller
 
             if (empty($erreurs)) {
                 $utilisateurManager->changerMotDePasse($utilisateur['id_utilisateur'], $motDePasse);
-                header('Location: /connexion');
+                header('Location: /connexion?reinitialise=1');
                 exit;
             }
         }
