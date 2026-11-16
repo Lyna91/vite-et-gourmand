@@ -11,7 +11,7 @@
 /** @var string $csrf */
 require __DIR__ . '/../morceaux/header.php'; ?>
 <h1>Les statistiques</h1>
-<a href="/employe" class="btn btn-outline-secondary mb-3">← Retour à l'espace employé</a>
+<a href="/admin/employes" class="btn btn-outline-secondary mb-3">← Retour à l'espace admin</a>
 <?php if ($synchronise !== null): ?>
     <div class="alert alert-success">
         <p class="mb-0"><?= (int) $synchronise ?> commande(s) synchronisée(s) ✓</p>
