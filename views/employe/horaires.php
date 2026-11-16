@@ -22,7 +22,7 @@ require __DIR__ . '/../morceaux/header.php'; ?>
         <thead>
             <tr>
                 <th scope="col">Jour</th>
-                <th scope="col" colspan="3"> Ouverture . Fermeture</th>
+                <th scope="col" colspan="3"> Ouverture / Fermeture</th>
             </tr>
         </thead>
         <tbody>

@@ -44,10 +44,15 @@
             <?php foreach ($avisValides as $unAvis): ?>
                 <div class="col-md-4">
                     <div class="card h-100">
-                        <h5 class="card-title"><?= htmlspecialchars($unAvis['prenom']) ?></h5>
-                        <h5 class="card-title"><?= str_repeat('★', (int) $unAvis['note']) ?></h5>
-                        <h6 class="card-subtitle mb-2 text-body-secondary"><?= htmlspecialchars($unAvis['date_avis']) ?></h6>
-                        <p class="card-text"><?= htmlspecialchars($unAvis['description_avis']) ?></p>
+                        <div class="card-body">
+                            <h5 class="card-title"><?= htmlspecialchars($unAvis['prenom']) ?></h5>
+                            <p class="card-title fs-5">
+                                <span aria-hidden="true"><?= str_repeat('★', (int) $unAvis['note']) ?></span>
+                                <span class="visually-hidden">Note : <?= (int) $unAvis['note'] ?> sur 5</span>
+                            </p>
+                            <h6 class="card-subtitle mb-2 text-body-secondary"><?= date('d/m/Y', strtotime($unAvis['date_avis'])) ?></h6>
+                            <p class="card-text"><?= htmlspecialchars($unAvis['description_avis']) ?></p>
+                        </div>
                     </div>
                 </div>
             <?php endforeach ?>

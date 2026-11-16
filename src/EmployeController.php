@@ -90,7 +90,7 @@ class EmployeController extends Controller
             $lienContact = getenv('APP_URL') . '/contact';
 
             if ($statut === 'terminée') {
-                $message = "Bonjour" . $client['prenom'] . ",\n\n"
+                $message = "Bonjour " . $client['prenom'] . ",\n\n"
                     . "Votre commande " . $client['numero_commande'] . " est terminée. Merci de nous avoir fait confiance !\n"
                     . "Vous pouvez dès à présent vous connecter pour donner votre avis sur votre commande :\n"
                     . $lien . "\n\n"
@@ -98,7 +98,7 @@ class EmployeController extends Controller
                 $mailer->envoyer($client['email'], "Votre commande " . $client['numero_commande'] . " est terminée", $message);
             } elseif ($statut === 'en attente du retour de matériel') {
                 $message = "Bonjour " . $client['prenom'] . ",\n\n"
-                    . "Nous attendons le retour du matériel prêté pour la commande" . $client["numero_commande"] . ".\n"
+                    . "Nous attendons le retour du matériel prêté pour la commande" . $client["numero_commande"] . ".\n" 
                     . "Sans restitution sous 10 jours ouvrés, un montant de 600 € vous sera facturé, conformément à nos conditions générales de vente.\n"
                     . "Pour rendre le matériel, merci de prendre contact avec nous :\n"
                     . $lienContact . "\n\n"
