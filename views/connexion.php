@@ -1,8 +1,14 @@
  <?php
     /** @var string[] $erreurs */
     /** @var string $csrf */
+    /** @var bool $reinitialise */
     require __DIR__ . '/morceaux/header.php'; ?>
  <h1>Connexion</h1>
+ <?php if ($reinitialise): ?>
+     <div class="alert alert-success">
+         Votre mot de passe a bien été modifié. Vous pouvez vous connecter.
+     </div>
+ <?php endif ?>
  <?php if (!empty($erreurs)): ?>
      <div class="alert alert-danger">
          <ul class="mb-0">

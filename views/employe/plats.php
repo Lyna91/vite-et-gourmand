@@ -27,30 +27,32 @@ require __DIR__ . '/../morceaux/header.php'; ?>
 <?php if (empty($plats)): ?>
     <p>Aucun plat</p>
 <?php else: ?>
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">Nom</th>
-                <th scope="col">Type</th>
-                <th scope="col">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($plats as $plat): ?>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
                 <tr>
-                    <td><?= htmlspecialchars($plat['nom']) ?></td>
-                    <td><?= htmlspecialchars($plat['type']) ?></td>
-                    <td><a href="/employe/plats/modifier?id=<?= $plat['id_plat'] ?>" class="btn btn-sm btn-outline-primary">Modifier</a>
-                        <form method="post" action="/employe/plats/supprimer" class="d-inline" onsubmit="return confirm('Supprimer ce plat ?');">
-                            <input type="hidden" name="csrf" value="<?= $csrf ?>">
-                            <input type="hidden" name="id_plat" value="<?= $plat['id_plat'] ?>">
-                            <button type="submit" class="btn btn-sm btn-outline-danger">Supprimer</button>
-                        </form>
-                    </td>
-
+                    <th scope="col">Nom</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Actions</th>
                 </tr>
-            <?php endforeach ?>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <?php foreach ($plats as $plat): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($plat['nom']) ?></td>
+                        <td><?= htmlspecialchars($plat['type']) ?></td>
+                        <td><a href="/employe/plats/modifier?id=<?= $plat['id_plat'] ?>" class="btn btn-sm btn-outline-primary">Modifier</a>
+                            <form method="post" action="/employe/plats/supprimer" class="d-inline" onsubmit="return confirm('Supprimer ce plat ?');">
+                                <input type="hidden" name="csrf" value="<?= $csrf ?>">
+                                <input type="hidden" name="id_plat" value="<?= $plat['id_plat'] ?>">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Supprimer</button>
+                            </form>
+                        </td>
+
+                    </tr>
+                <?php endforeach ?>
+            </tbody>
+        </table>
+    </div>
 <?php endif ?>
 <?php require __DIR__ . '/../morceaux/footer.php'; ?>

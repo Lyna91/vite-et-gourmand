@@ -255,9 +255,6 @@ class EmployeController extends Controller
             if (empty($description)) {
                 $erreur = "La description est obligatoire";
             }
-            if (empty($conditions)) {
-                $erreur = "Ajouter une condition";
-            }
             if ($stock < 1) {
                 $erreur = "Le stock doit être au moins de 1";
             }
@@ -331,9 +328,6 @@ class EmployeController extends Controller
             }
             if (empty($description)) {
                 $erreur = "La description est obligatoire";
-            }
-            if (empty($conditions)) {
-                $erreur = "Ajouter une condition";
             }
             if ($stock < 1) {
                 $erreur = "Le stock doit être au moins de 1";

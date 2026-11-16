@@ -17,7 +17,7 @@ require __DIR__ . '/../morceaux/header.php'; ?>
         <p>Une erreur est survenue.</p>
     </div>
 <?php endif ?>
-<div>
+    <div class="table-responsive">
     <table class="table">
         <thead>
             <tr>
