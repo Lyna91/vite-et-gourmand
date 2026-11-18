@@ -183,9 +183,9 @@ INSERT INTO horaire (jour, heure_ouverture, heure_fermeture) VALUES
     ('Dimanche', '14:00', '17:00');
 
 INSERT INTO utilisateur (id_role, nom, prenom, mot_de_passe, email, telephone, adresse, cp, ville) VALUES
-    (1, 'Gourmand', 'José', '$2y$10$06rWw2DjRTEKrDhPvLZgqeLIPWEtZ88sUN3UHBQjBhlUkbkyGHtbS', 'joseg@vite-gourmand.fr', '0102202020', '1 rue de la Place', '33000','Bordeaux'),
-    (2, 'Durand', 'Philippe', '$2y$10$50BoCXZd8DnVs1jP9FHJy.p/T7.AJ2h89qlR.FxbbD./nXJen189u', 'philipe.durand@vite-gourmand.fr', '0102030201', '3 rue de la mairie', '33300', 'Bordeaux'),
-    (3, 'Dupond', 'Marie', '$2y$10$6Q7/2rFODwM4scCrEfp8Qer55qzj4NgdRn85BycOXWi6Rk614PwUu', 'marie.dupond@utilisateur.fr', '0202030401', '20 avenue du monde', '13000', 'Marseille');
+    (1, 'Gourmand', 'José', '$2y$10$C0pitb/bmwvi71IpNMCNpuptU.M3dMruIEnnL53a0nsveRIbxDiim', 'joseg@vite-gourmand.fr', '0102202020', '1 rue de la Place', '33000','Bordeaux'),
+    (2, 'Durand', 'Philippe', '$2y$10$zWoeH9/SV/4.4Woy/sv6Nuga7uPNW20LN83aQoB.qzpdl6mpf5mUK', 'philippe.durand@vite-gourmand.fr', '0102030201', '3 rue de la mairie', '33300', 'Bordeaux'),
+    (3, 'Dupond', 'Marie', '$2y$10$jWqS8GjbNy9aKxC.Il064uTiGyoiAfxTw8eQoYVHRHBu3YDsuEhxK', 'marie.dupond@utilisateur.fr', '0202030401', '20 avenue du monde', '13000', 'Marseille');
 
 INSERT INTO menu (titre, description, conditions, stock, prix_par_personne, nbre_personne_mini, id_theme, id_regime) VALUES
     ('Pour la vie', 'Un menu dédié aux amoureux du jour, composé avec amour', 'Commander six mois avant la date, à conserver au frais, prêt de matériel possible (voir CGV)', 450, 60.00, 50, 1, 1),
