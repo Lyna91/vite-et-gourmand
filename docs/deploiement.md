@@ -103,9 +103,17 @@ docker compose ps
 
 `-d` pour lancer les conteneurs en arrière plan, `--build` qui construit l'image PHP à partir du Dockerfile
 
-`docker compose ps` affiche le nombre de conteneurs et l'état de fonctionnement, 4 conteneurs (php, nginx, mysql, mongo) à l’état Up.
+`docker compose ps` affiche le nombre de conteneurs et l'état de fonctionnement, 5 conteneurs (php, nginx, mysql, mongo, mailpit) à l’état Up.
 
-Seul nginx publie un port `0.0.0.0:80->80/tcp`. MySQL et MongoDB ne sont pas joignables depuis Internet.
+Seul nginx publie des ports ouverts sur Internet (80 et 443). MySQL et MongoDB ne sont pas joignables depuis Internet, et Mailpit n'écoute que sur `127.0.0.1` (le serveur lui-même).
+
+Le dossier `vendor/` (les bibliothèques installées par Composer : PHPMailer, bibliothèque MongoDB) n'est pas dans Git : Composer le recrée à partir de `composer.json` et `composer.lock`. Il faut donc installer les dépendances dans le conteneur PHP :
+
+```bash
+docker compose exec php composer install --no-dev --optimize-autoloader
+```
+
+`--no-dev` n'installe pas les outils de développement, `--optimize-autoloader` accélère le chargement des classes en production.
 
 ### d. Importer la base de données
 
@@ -135,7 +143,7 @@ Avec `utf8mb4`, les accents s'afficheront correctement. On attend un résultat d
 
 ### e. Vérifier
 
-On vérifie dans le navigateur que tout fonctionne avec l'adresse donnée : http://152.228.135.220
+On vérifie dans le navigateur que tout fonctionne avec l'adresse du site : https://vite-et-gourmand.lynamaker.fr (voir la partie 6 pour le nom de domaine et le HTTPS).
 
 J'ai vérifié que le site fonctionne via les pages accueil, menus, détail d’un menu, page 404.
 
@@ -161,12 +169,75 @@ git pull
 docker compose up -d --build
 ```
 
+Si `composer.json` a changé (nouvelle bibliothèque), il faut relancer l'installation des dépendances :
+
+```bash
+docker compose exec php composer install --no-dev --optimize-autoloader
+```
+
+Si le site affiche une **erreur 502** après la recréation du conteneur PHP, Nginx essaie probablement encore de joindre l'ancien conteneur. Il suffit de le redémarrer :
+
+```bash
+docker compose restart nginx
+```
+
 **Attention** : ne jamais lancer `docker compose down -v` : le `-v` supprime les volumes, donc toutes les données de la base (commandes, comptes clients…)
 
 `git pull` ne touche pas au `.env` du serveur, puisqu’il n’est pas dans Git.
 
-## 6. Améliorations prévues
+## 6. Nom de domaine et HTTPS
 
-- **HTTPS** : chiffrer les échanges. Obligatoire avant la page de connexion, pour que les mots de passe ne circulent pas en clair.
-- **Un nom de domaine** : une adresse lisible à la place de l'IP, qui facilite aussi la mise en place du HTTPS.
+### a. Le nom de domaine
+
+J'ai acheté le nom de domaine `lynamaker.fr` chez OVH, pour tout centraliser chez le même hébergeur. J'ai créé le sous-domaine `vite-et-gourmand.lynamaker.fr` avec un enregistrement DNS de type **A**, qui pointe vers l'adresse IP du VPS.
+
+### b. Le certificat HTTPS (Let's Encrypt)
+
+Le HTTPS chiffre les échanges entre le navigateur et le serveur : les mots de passe ne circulent plus en clair. Le certificat est gratuit et fourni par Let's Encrypt, avec l'outil `certbot`, installé sur le serveur.
+
+J'ai utilisé le mode `--standalone` : certbot lance son propre petit serveur web sur le port 80 pour prouver que le domaine est bien à moi. Comme Nginx occupe déjà ce port, les options `--pre-hook` et `--post-hook` arrêtent Nginx avant et le relancent après :
+
+```bash
+sudo certbot certonly --standalone -d vite-et-gourmand.lynamaker.fr \
+  --pre-hook "docker compose --project-directory /home/ubuntu/vite-et-gourmand stop nginx" \
+  --post-hook "docker compose --project-directory /home/ubuntu/vite-et-gourmand start nginx"
+```
+
+`--project-directory` indique le dossier du projet : une première version avec `cd` dans le hook était refusée par certbot.
+
+Le certificat est valable 90 jours. Le renouvellement est automatique, et je l'ai testé avec :
+
+```bash
+sudo certbot renew --dry-run
+```
+
+### c. La configuration de production
+
+La configuration de production s'ajoute par-dessus celle du local, dans le fichier `docker-compose.prod.yml` :
+
+- Nginx publie aussi le port **443** (HTTPS) ;
+- il utilise la configuration `docker/nginx/prod.conf`, qui redirige tout le HTTP (et l'adresse IP) vers `https://vite-et-gourmand.lynamaker.fr` et active le certificat ;
+- les certificats du serveur (`/etc/letsencrypt`) sont partagés avec le conteneur Nginx, en lecture seule.
+
+Pour que Docker utilise automatiquement les deux fichiers, j'ai ajouté cette ligne dans le `.env` du serveur (et seulement du serveur) :
+
+```bash
+COMPOSE_FILE=docker-compose.yml:docker-compose.prod.yml
+```
+
+Ainsi, un simple `docker compose up -d` suffit sur le serveur, sans avoir à préciser les fichiers à chaque commande.
+
+## 7. Consulter les mails (Mailpit)
+
+En production aussi, les mails sont capturés par Mailpit (aucun vrai mail n'est envoyé). Mailpit n'écoute que sur `127.0.0.1`, il n'est donc pas accessible depuis Internet. Pour le consulter, j'ouvre depuis mon PC, dans un terminal à part, un **tunnel SSH**, qui fait passer la connexion de façon chiffrée par mon accès au serveur :
+
+```bash
+ssh -i ~/.ssh/id_ed25519_vps -L 8026:127.0.0.1:8025 ubuntu@152.228.135.220
+```
+
+Tant que ce terminal reste ouvert, Mailpit est consultable sur http://localhost:8026.
+
+## 8. Améliorations prévues
+
+- **Un vrai serveur d'envoi de mails (SMTP)** : remplacer Mailpit par un service d'envoi réel ; le code est prêt, il suffit de changer les variables `SMTP_` du `.env`.
 - **Des sauvegardes de la base de données** : la sauvegarde OVH copie tout le serveur, mais un export régulier de la base avec `mysqldump` permet de restaurer seulement les données.
